@@ -1,0 +1,274 @@
+@import "tailwindcss";
+
+:root {
+  --background: #F8FAFC;
+  --foreground: #000000;
+  --paper: #FFFFFF;
+  --ink: #000000;
+  --soft-gray: #F5F5F7;
+  --electric-blue: #007AFF;
+  --emerald-green: #34C759;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-paper: var(--paper);
+  --color-ink: var(--ink);
+  --color-soft-gray: var(--soft-gray);
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-urbanist), ui-sans-serif, system-ui, sans-serif;
+    @apply font-light;
+  }
+
+  h1,
+  h2,
+  h3 {
+    @apply font-bold tracking-tighter leading-tight;
+  }
+
+  h4,
+  h5,
+  h6 {
+    @apply font-semibold tracking-tight;
+  }
+
+  p {
+    @apply font-light leading-relaxed;
+  }
+}
+
+/* ─────────────────────────────────────────────────
+   Bento Card — elevated over the living background
+───────────────────────────────────────────────── */
+.bento-card {
+  @apply bg-white/70 backdrop-blur-xl border border-black/[0.06] rounded-3xl transition-all duration-500;
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.8) inset,
+    0 10px 40px -10px rgba(0, 0, 0, 0.06);
+  position: relative;
+  z-index: 1;
+}
+
+.bento-card:hover {
+  @apply bg-white/80 border-black/10 scale-[1.01];
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.9) inset,
+    0 20px 60px -15px rgba(0, 0, 0, 0.08);
+}
+
+/* ─────────────────────────────────────────────────
+   Custom Scrollbar
+───────────────────────────────────────────────── */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-black/10 rounded-full hover:bg-black/20 transition-colors;
+}
+
+/* ─────────────────────────────────────────────────
+   Mesh Gradient Blobs
+   Three absolute blobs drift slowly around the
+   viewport — radii and positions shift over time.
+───────────────────────────────────────────────── */
+.mesh-blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  will-change: transform;
+  pointer-events: none;
+}
+
+/* Electric Blue tint blob */
+.mesh-blue {
+  width: 70vw;
+  height: 70vw;
+  max-width: 900px;
+  max-height: 900px;
+  background: radial-gradient(circle, #EFF6FF 0%, transparent 70%);
+  top: -25%;
+  left: -20%;
+  animation: blob-drift-a 32s ease-in-out infinite;
+  opacity: 0.85;
+}
+
+/* Emerald Green tint blob */
+.mesh-green {
+  width: 55vw;
+  height: 55vw;
+  max-width: 700px;
+  max-height: 700px;
+  background: radial-gradient(circle, #F0FDF4 0%, transparent 70%);
+  bottom: -20%;
+  right: -15%;
+  animation: blob-drift-b 38s ease-in-out infinite;
+  opacity: 0.7;
+}
+
+/* Neutral warm center wash */
+.mesh-neutral {
+  width: 50vw;
+  height: 50vw;
+  max-width: 650px;
+  max-height: 650px;
+  background: radial-gradient(circle, rgba(248, 250, 252, 0.9) 0%, transparent 70%);
+  top: 30%;
+  left: 35%;
+  animation: blob-drift-c 28s ease-in-out infinite;
+  opacity: 0.9;
+}
+
+@keyframes blob-drift-a {
+  0% {
+    transform: translate(0, 0) scale(1);
+  }
+
+  33% {
+    transform: translate(8vw, 6vh) scale(1.06);
+  }
+
+  66% {
+    transform: translate(-4vw, 10vh) scale(0.95);
+  }
+
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+}
+
+@keyframes blob-drift-b {
+  0% {
+    transform: translate(0, 0) scale(1);
+  }
+
+  33% {
+    transform: translate(-10vw, -8vh) scale(1.08);
+  }
+
+  66% {
+    transform: translate(5vw, -4vh) scale(0.96);
+  }
+
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+}
+
+@keyframes blob-drift-c {
+  0% {
+    transform: translate(0, 0) scale(1);
+  }
+
+  50% {
+    transform: translate(-6vw, -8vh) scale(1.1);
+  }
+
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+}
+
+/* ─────────────────────────────────────────────────
+   Animated Film Grain
+   SVG noise rendered as a data-URI, animated to
+   shift its position every frame for cinematic feel.
+───────────────────────────────────────────────── */
+.grain-overlay {
+  opacity: 0.028;
+  pointer-events: none;
+  animation: grain-shift 0.12s steps(1) infinite;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 256px 256px;
+  background-repeat: repeat;
+}
+
+@keyframes grain-shift {
+  0% {
+    background-position: 0px 0px;
+  }
+
+  10% {
+    background-position: -32px -16px;
+  }
+
+  20% {
+    background-position: 16px -32px;
+  }
+
+  30% {
+    background-position: -48px 8px;
+  }
+
+  40% {
+    background-position: 24px 40px;
+  }
+
+  50% {
+    background-position: -16px -40px;
+  }
+
+  60% {
+    background-position: 40px 16px;
+  }
+
+  70% {
+    background-position: -8px 48px;
+  }
+
+  80% {
+    background-position: 32px -8px;
+  }
+
+  90% {
+    background-position: -40px 32px;
+  }
+
+  100% {
+    background-position: 0px 0px;
+  }
+}
+
+/* ─────────────────────────────────────────────────
+   Legacy mesh helpers (kept for compatibility)
+───────────────────────────────────────────────── */
+.bg-mesh {
+  background:
+    radial-gradient(at 0% 0%, rgba(239, 246, 255, 0.6) 0, transparent 50%),
+    radial-gradient(at 100% 100%, rgba(240, 253, 244, 0.5) 0, transparent 50%);
+  background-size: 200% 200%;
+}
+
+@keyframes mesh-drift {
+  0% {
+    background-position: 0% 0%;
+  }
+
+  50% {
+    background-position: 100% 100%;
+  }
+
+  100% {
+    background-position: 0% 0%;
+  }
+}
+
+.animate-mesh {
+  animation: mesh-drift 20s ease-in-out infinite;
+}
