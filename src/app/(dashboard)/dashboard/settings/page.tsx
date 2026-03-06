@@ -1,5 +1,7 @@
 "use client";
 
+export const dynamic = "force-dynamic";
+
 import { motion } from 'framer-motion';
 import { Settings, Shield, Key, Sliders, Save, LogOut, ChevronRight, Activity, Globe, RefreshCcw, Database, ShieldCheck, CheckCircle2, XCircle } from 'lucide-react';
 import { useState, useEffect } from 'react';

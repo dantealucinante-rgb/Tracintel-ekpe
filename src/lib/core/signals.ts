@@ -1,5 +1,4 @@
-import { VisibilityScan, Organization, LlmResponse, Prisma, PushStatus } from '@prisma/client';
-import { GeminiProvider } from '@/lib/ai/providers/gemini-provider';
+import { VisibilityScan, Organization, LlmResponse, Prisma, Signal } from '@prisma/client';
 import { LlmMessage } from '@/lib/ai/types';
 import prisma from '@/lib/db';
 
@@ -10,16 +9,12 @@ export interface SignalData {
 }
 
 export class SignalsService {
-    private aiProvider: GeminiProvider;
-
-    constructor() {
-        this.aiProvider = new GeminiProvider();
-    }
+    constructor() { }
 
     /**
      * Generates all signal assets for a given scan/org.
      */
-    async generateSignals(scan: VisibilityScan & { responses: LlmResponse[] }, org: Organization): Promise<SignalData> {
+    async generateSignals(scan: any, org: any): Promise<SignalData> {
         const jsonLd = this.generateJsonLd(org);
         const factSheet = this.generateFactSheet(org);
         const recommendations = await this.generateAiRecommendations(scan, org);
@@ -34,9 +29,9 @@ export class SignalsService {
     /**
      * Maps LLM "missing tokens" or weaknesses to specific product attributes.
      */
-    async generateOptimizationSignal(response: LlmResponse): Promise<{ type: string; payload: any }> {
-        const structuredData = response.structuredData as any;
-        const lowScore = (response.sentimentScore || 0) < 70;
+    async generateOptimizationSignal(scan: any): Promise<{ type: string; payload: any }> {
+        const signal = scan.signals?.[0];
+        const lowScore = (signal?.sentimentScore || 0) < 0.7;
 
         if (lowScore) {
             // Logic to generate Shopify-compliant JSON-LD or Meta Update
@@ -95,14 +90,12 @@ export class SignalsService {
     /**
      * deterministic JSON-LD generation for Organization
      */
-    private generateJsonLd(org: Organization): string {
-        // In a real app, we'd pull more fields like logo, social links, contact point from the DB.
-        // For MVP, we'll generate a robust skeleton.
+    private generateJsonLd(org: any): string {
         const schema = {
             "@context": "https://schema.org",
             "@type": "Organization",
             "name": org.name,
-            "url": `https://${org.slug}.com`, // Approximation for demo
+            "url": `https://${org.slug}.com`,
             "logo": `https://${org.slug}.com/logo.png`,
             "sameAs": [
                 `https://twitter.com/${org.slug}`,
@@ -120,7 +113,7 @@ export class SignalsService {
     /**
      * Deterministic Markdown Fact Sheet for LLM Training
      */
-    private generateFactSheet(org: Organization): string {
+    private generateFactSheet(org: any): string {
         return `# ${org.name} Fact Sheet
 > Optimized for LLM Training Data
 
@@ -132,9 +125,9 @@ export class SignalsService {
 *   **Product B**: Description of product B.
 
 ## Key Differentiators
-1.  **Innovation**: [Detail]
-2.  **Reliability**: [Detail]
-3.  **Support**: [Detail]
+1.  Innovation: [Detail]
+2.  Reliability: [Detail]
+3.  Support: [Detail]
 
 ## Frequently Asked Questions
 **Q: What does ${org.name} do?**
@@ -145,12 +138,8 @@ A: Yes, ${org.name} supports enterprise requirements including SSO, SLA, and ded
 `;
     }
 
-    /**
-     * Uses Gemini to analyze failed/low-score responses and suggest fixes.
-     */
-    private async generateAiRecommendations(scan: VisibilityScan & { responses: LlmResponse[] }, org: Organization): Promise<string[]> {
-        // Filter for responses with low scores
-        const weakPoints = scan.responses.filter(r => (r.sentimentScore || 0) < 70);
+    private async generateAiRecommendations(scan: any, org: any): Promise<string[]> {
+        const weakPoints = scan.signals?.filter((s: any) => s.sentimentScore < 0.7) || [];
 
         if (weakPoints.length === 0) {
             return [
@@ -160,51 +149,10 @@ A: Yes, ${org.name} supports enterprise requirements including SSO, SLA, and ded
             ];
         }
 
-        // Context for Gemini
-        const context = weakPoints.map(r => `
-            Prompt: "${r.prompt}"
-            AI Response: "${r.rawResponse.substring(0, 200)}..."
-            Score: ${(r.sentimentScore || 0)}/100
-        `).join('\n---\n');
-
-        const messages: LlmMessage[] = [
-            {
-                role: 'system',
-                content: `You are an SEO and Brand Visibility expert for Large Language Models. 
-                Analyze the following failed/weak LLM responses for the brand "${org.name}".
-                Provide exactly 3 actionable, specific technical or content recommendations to improve the brand's visibility and sentiment in future LLM queries.
-                
-                Format: Return ONLY a JSON array of strings. Example: ["Fix X", "Update Y", "Add Z"]`
-            },
-            {
-                role: 'user',
-                content: `Weak Points Analysis:\n${context}`
-            }
+        return [
+            "Ensure your homepage clearly states your value proposition.",
+            "Add a detailed 'About Us' page with clear entity definitions.",
+            "Publish a comparison page vs. your top competitors."
         ];
-
-        try {
-            const result = await this.aiProvider.generateResponse(messages, {
-                responseFormat: 'json_object',
-                temperature: 0.7
-            });
-
-            // Parse valid JSON array or fallback
-            // Gemini might return markdown code block ```json ... ```
-            const cleanJson = result.content.replace(/```json/g, '').replace(/```/g, '').trim();
-            const parsed = JSON.parse(cleanJson);
-
-            if (Array.isArray(parsed)) return parsed;
-            if (parsed.recommendations && Array.isArray(parsed.recommendations)) return parsed.recommendations;
-
-            return ["Review site metadata", "Update homepage content", "Check competitor comparison pages"];
-
-        } catch (e) {
-            console.error("Failed to generate AI recommendations", e);
-            return [
-                "Ensure your homepage clearly states your value proposition.",
-                "Add a detailed 'About Us' page with clear entity definitions.",
-                "Publish a comparison page vs. your top competitors."
-            ];
-        }
     }
 }

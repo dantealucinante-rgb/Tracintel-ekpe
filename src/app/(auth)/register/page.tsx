@@ -6,7 +6,7 @@ import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
 
-export default function SignUpPage() {
+export default function RegisterPage() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [name, setName] = useState("");
@@ -57,7 +57,7 @@ export default function SignUpPage() {
                             </div>
                             <h1 className="text-2xl font-bold tracking-tight text-black mb-2">Check your email</h1>
                             <p className="text-sm text-black/40 mb-8 font-medium">We've sent a magic link to {email} to verify your account.</p>
-                            <Link href="/sign-in" className="inline-flex h-12 px-8 bg-black text-white font-bold rounded-xl items-center justify-center transition-all">
+                            <Link href="/login" className="inline-flex h-12 px-8 bg-black text-white font-bold rounded-xl items-center justify-center transition-all">
                                 Go to Sign In
                             </Link>
                         </div>
@@ -130,7 +130,7 @@ export default function SignUpPage() {
                             <div className="mt-8 pt-8 border-t border-black/5 text-center">
                                 <p className="text-sm text-black/40 font-medium">
                                     Already have an account?{" "}
-                                    <Link href="/sign-in" className="text-black hover:underline">
+                                    <Link href="/login" className="text-black hover:underline">
                                         Sign In
                                     </Link>
                                 </p>

@@ -3,6 +3,7 @@
 import { motion } from 'framer-motion';
 import { ScatterChart, Scatter, XAxis, YAxis, ZAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 import { Target } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 interface VectorDisplacementProps {
     data: {
@@ -15,7 +16,7 @@ interface VectorDisplacementProps {
 
 export default function VectorDisplacementGraph({ data }: VectorDisplacementProps) {
     return (
-        <div className="bg-black text-white rounded-[2.5rem] border border-white/5 p-10 shadow-2xl h-full flex flex-col group">
+        <div className="bg-black text-white rounded-[3rem] border border-white/5 p-10 shadow-2xl h-full flex flex-col group">
             <div className="flex items-center justify-between mb-10">
                 <div>
                     <h3 className="text-2xl font-bold tracking-tighter text-white font-serif italic uppercase flex items-center gap-3">
@@ -52,7 +53,13 @@ export default function VectorDisplacementGraph({ data }: VectorDisplacementProp
                             cursor={{ strokeDasharray: '3 3' }}
                             contentStyle={{ backgroundColor: '#000', border: '1px solid #ffffff1a', borderRadius: '12px' }}
                         />
-                        <Scatter name="Keywords" data={data} fill="#007AFF">
+                        <Scatter
+                            name="Keywords"
+                            data={data}
+                            fill="#007AFF"
+                            animationDuration={1500}
+                            animationEasing="ease-in-out"
+                        >
                             {data.map((entry, index) => (
                                 <Cell key={`cell-${index}`} fill={index === 0 ? '#007AFF' : '#ffffff22'} />
                             ))}

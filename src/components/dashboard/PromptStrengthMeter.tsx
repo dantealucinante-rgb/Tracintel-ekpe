@@ -60,13 +60,13 @@ export default function PromptStrengthMeter({ description }: PromptStrengthMeter
                 <div>
                     <div className="flex justify-between items-center mb-2">
                         <span className="text-[10px] font-mono font-bold text-white/40 uppercase tracking-widest">Indexability (Parser Ease)</span>
-                        <span className="text-sm font-mono font-bold text-[#34C759]">{indexability}%</span>
+                        <span className="text-sm font-mono font-bold text-[#10b981]">{indexability}%</span>
                     </div>
                     <div className="h-1.5 bg-white/5 rounded-full overflow-hidden">
                         <motion.div
                             initial={{ width: 0 }}
                             animate={{ width: `${indexability}%` }}
-                            className="h-full bg-[#34C759] shadow-[0_0_10px_rgba(52,199,89,0.3)]"
+                            className="h-full bg-[#10b981] shadow-[0_0_10px_rgba(16,185,129,0.3)]"
                         />
                     </div>
                 </div>

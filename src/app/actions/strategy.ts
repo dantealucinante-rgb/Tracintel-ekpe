@@ -1,64 +1,39 @@
-"use server";
+'use server'
 
-import prisma from '@/lib/db';
-import { revalidatePath } from 'next/cache';
+// Server action to update organization strategy context for future visibility scans
+import { createClient as createSupabaseServer } from '@/lib/supabase/server'
+import prisma from '@/lib/db'
+import { revalidatePath } from 'next/cache'
 
-export async function saveStrategy(content: string) {
-    if (!content || content.length < 10) {
-        throw new Error('Strategy content is too short for meaningful optimization.');
-    }
-
+export async function saveStrategy(context: string) {
     try {
-        // Find or create a default org/scan to link to
-        let org = await prisma.organization.findFirst();
-        if (!org) {
-            org = await prisma.organization.create({
-                data: { name: 'Demo Org', slug: 'demo' }
-            });
+        // 1. Verify Session
+        const supabase = await createSupabaseServer()
+        const { data: { user } } = await supabase.auth.getUser()
+        if (!user) {
+            return { success: false, error: 'Unauthorized' }
         }
 
-        let scan = await prisma.visibilityScan.findFirst({
-            where: { organizationId: org.id },
-            orderBy: { createdAt: 'desc' }
-        });
+        // 2. Fetch Profile and Organization
+        const profile = await prisma.profile.findFirst({
+            where: { userId: user.id }
+        })
 
-        if (!scan) {
-            // Create a scan record if none exists
-            const ds = await prisma.dataSource.create({
-                data: {
-                    type: 'WEB',
-                    name: 'Initial Seeding',
-                    organizationId: org.id,
-                    config: {}
-                }
-            });
-            scan = await prisma.visibilityScan.create({
-                data: {
-                    organizationId: org.id,
-                    dataSourceId: ds.id,
-                    status: 'COMPLETED'
-                }
-            });
+        if (!profile) {
+            return { success: false, error: 'Organization not found' }
         }
 
-        // Save strategy as a special Signal type
-        await prisma.signal.create({
-            data: {
-                scanId: scan.id,
-                type: 'STRATEGY_INJECTION',
-                source: 'Tracintel_Command',
-                content: content,
-                metadata: {
-                    priority: 'HIGH',
-                    origin: 'Prompts_Page_Optimization'
-                }
-            }
-        });
+        // 3. Update Organization
+        await prisma.organization.update({
+            where: { id: profile.organizationId },
+            data: { strategyContext: context }
+        })
 
-        revalidatePath('/dashboard');
-        return { success: true };
+        revalidatePath('/dashboard')
+        return { success: true }
+
     } catch (error: any) {
-        console.error('Failed to save strategy:', error);
-        return { success: false, error: error.message };
+        console.error('[Action Strategy] Unexpected error:', error)
+        return { success: false, error: error.message || 'Internal server error' }
     }
 }

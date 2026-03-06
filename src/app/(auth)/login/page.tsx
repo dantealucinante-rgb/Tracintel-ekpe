@@ -6,7 +6,7 @@ import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
 
-export default function SignInPage() {
+export default function LoginPage() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [loading, setLoading] = useState(false);
@@ -95,7 +95,7 @@ export default function SignInPage() {
                     <div className="mt-8 pt-8 border-t border-black/5 text-center">
                         <p className="text-sm text-black/40 font-medium">
                             Don't have an account?{" "}
-                            <Link href="/sign-up" className="text-black hover:underline">
+                            <Link href="/register" className="text-black hover:underline">
                                 Request Access
                             </Link>
                         </p>

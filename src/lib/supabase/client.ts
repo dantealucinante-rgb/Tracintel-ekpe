@@ -1,20 +1,16 @@
+// Browser-side Supabase client for client-component authentication and data access
 import { createBrowserClient } from '@supabase/ssr'
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000'
+export const createClient = () => {
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+    const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 
-if (!supabaseUrl || !supabaseAnonKey) {
-    // Warn loudly in development; in production this will fail the first auth call gracefully
-    console.warn(
-        '[Tracintel] NEXT_PUBLIC_SUPABASE_URL or NEXT_PUBLIC_SUPABASE_ANON_KEY is missing. ' +
-        'Set these in your Vercel dashboard under Environment Variables.'
-    );
-}
+    if (!supabaseUrl || !supabaseAnonKey) {
+        console.warn('[Tracintel] Supabase browser keys missing. Ensure they are set in the environment.');
+    }
 
-export const createClient = () =>
-    createBrowserClient(
-        supabaseUrl ?? '',
-        supabaseAnonKey ?? '',
-
+    return createBrowserClient(
+        supabaseUrl || 'https://placeholder.supabase.co',
+        supabaseAnonKey || 'placeholder-key'
     )
+}

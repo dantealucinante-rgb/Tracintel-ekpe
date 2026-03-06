@@ -1,47 +1,30 @@
-import { createServerClient, type CookieOptions } from '@supabase/ssr'
+// Middleware for session management and route protection using Supabase
 import { NextResponse, type NextRequest } from 'next/server'
-
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL ?? ''
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? ''
+import { createMiddlewareClient } from '@/lib/supabase/server'
 
 export async function middleware(request: NextRequest) {
-    // Bail early if env vars are missing — prevents cryptic Supabase client crashes on Vercel
-    if (!supabaseUrl || !supabaseAnonKey) {
-        console.error(
-            '[Tracintel Middleware] Missing NEXT_PUBLIC_SUPABASE_URL or NEXT_PUBLIC_SUPABASE_ANON_KEY. ' +
-            'Add them in the Vercel Environment Variables dashboard.'
-        );
-        return NextResponse.next({ request: { headers: request.headers } });
-    }
-
-    let response = NextResponse.next({
+    const response = NextResponse.next({
         request: { headers: request.headers },
     })
 
-    const supabase = createServerClient(
-        supabaseUrl,
-        supabaseAnonKey,
-        {
-            cookies: {
-                get(name: string) {
-                    return request.cookies.get(name)?.value
-                },
-                set(name: string, value: string, options: CookieOptions) {
-                    request.cookies.set({ name, value, ...options })
-                    response = NextResponse.next({ request: { headers: request.headers } })
-                    response.cookies.set({ name, value, ...options })
-                },
-                remove(name: string, options: CookieOptions) {
-                    request.cookies.set({ name, value: '', ...options })
-                    response = NextResponse.next({ request: { headers: request.headers } })
-                    response.cookies.set({ name, value: '', ...options })
-                },
-            },
-        }
-    )
+    const supabase = createMiddlewareClient(request, response)
 
     // Refresh the session — keeps the auth cookie alive on the response
-    await supabase.auth.getUser()
+    const { data: { user } } = await supabase.auth.getUser()
+
+    // Protected routes logic
+    const isProtectedRoute =
+        request.nextUrl.pathname.startsWith('/dashboard') ||
+        request.nextUrl.pathname.startsWith('/api/scan') ||
+        request.nextUrl.pathname.startsWith('/api/strategy')
+
+    if (isProtectedRoute && !user) {
+        // Redirect to login if user is not authenticated
+        const url = request.nextUrl.clone()
+        url.pathname = '/login'
+        url.searchParams.set('redirectedFrom', request.nextUrl.pathname)
+        return NextResponse.redirect(url)
+    }
 
     return response
 }
@@ -50,6 +33,6 @@ export const config = {
     matcher: [
         '/dashboard/:path*',
         '/api/scan/:path*',
-        '/api/signal/:path*',
+        '/api/strategy/:path*',
     ],
 }

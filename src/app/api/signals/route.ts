@@ -7,7 +7,7 @@ export async function GET() {
         // 1. Get Latest Scan & Org (Mocking single org for MVP)
         const latestScan = await prisma.visibilityScan.findFirst({
             orderBy: { createdAt: 'desc' },
-            include: { responses: true }
+            include: { llmResponses: true, signals: true }
         });
 
         const org = await prisma.organization.findFirst();

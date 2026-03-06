@@ -1,6 +1,4 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
+// Simplified Prisma schema for Tracintel intelligence platform
 generator client {
   provider = "prisma-client-js"
 }
@@ -8,7 +6,6 @@ generator client {
 datasource db {
   provider  = "postgresql"
   url       = env("DATABASE_URL")
-  directUrl = env("DIRECT_URL")
 }
 
 enum PlanTier {
@@ -18,63 +15,10 @@ enum PlanTier {
   SCALE
 }
 
-model Organization {
-  id                   String         @id @default(cuid())
-  name                 String
-  slug                 String         @unique
-  planTier             PlanTier       @default(STARTER)
-  monthlyAnalysisLimit Int            @default(120)
-  modelAccess          String[]       @default([])
-  usageCount           Int            @default(0)
-  createdAt            DateTime       @default(now())
-  updatedAt            DateTime       @updatedAt
-  profiles             Profile[]
-  dataSources          DataSource[]
-  scans                VisibilityScan[]
-}
-
-model Profile {
-  id             String       @id // This matches Supabase auth.users.id
-  email          String       @unique
-  name           String?
-  organizationId String
-  organization   Organization @relation(fields: [organizationId], references: [id])
-  createdAt      DateTime     @default(now())
-  updatedAt      DateTime     @updatedAt
-
-  @@map("profiles")
-}
-
-enum DataSourceType {
-  SHOPIFY
-  WEB
-  CUSTOM
-}
-
-model DataSource {
-  id             String         @id @default(cuid())
-  type           DataSourceType
-  name           String
-  config         Json           // Stores credentials, shopify domain, etc.
-  organizationId String
-  organization   Organization   @relation(fields: [organizationId], references: [id])
-  scans          VisibilityScan[]
-  createdAt      DateTime       @default(now())
-  updatedAt      DateTime       @updatedAt
-}
-
-model VisibilityScan {
-  id             String         @id @default(cuid())
-  status         ScanStatus     @default(PENDING)
-  organizationId String
-  organization   Organization   @relation(fields: [organizationId], references: [id])
-  dataSourceId   String
-  dataSource     DataSource     @relation(fields: [dataSourceId], references: [id])
-  responses      LlmResponse[]
-  pushes         SignalPush[]
-  signals        Signal[]
-  createdAt      DateTime       @default(now())
-  completedAt    DateTime?
+enum LlmProvider {
+  GPT4
+  CLAUDE
+  GEMINI
 }
 
 enum ScanStatus {
@@ -84,54 +28,91 @@ enum ScanStatus {
   FAILED
 }
 
-model LlmResponse {
-  id               String         @id @default(cuid())
-  scanId           String
-  scan             VisibilityScan @relation(fields: [scanId], references: [id])
-  modelName        String         // e.g., 'gpt-4', 'claude-3-opus'
-  modelProvider    String         // e.g., 'openai', 'anthropic'
-  prompt           String
-  rawResponse      String
-  structuredData   Json?          // Parsed visibility metrics
-  sentimentScore   Float?
-  visibilityRank   Int?
-  latentDensity    Float?         // Probabilistic brand weight (0.0-1.0)
-  influenceSources Json?          // URLs or fragments model prioritized
-  createdAt        DateTime       @default(now())
+model Organization {
+  id          String           @id @default(cuid())
+  name        String
+  plan        PlanTier         @default(STARTER)
+  scanLimit   Int              @default(120)
+  scansUsed   Int              @default(0)
+  strategyContext String?
+  createdAt   DateTime         @default(now())
+  profiles    Profile[]
+  scans       VisibilityScan[]
+  dataSources DataSource[]
 }
 
-model SignalPush {
-  id             String         @id @default(cuid())
-  scanId         String
-  scan           VisibilityScan @relation(fields: [scanId], references: [id])
-  targetPlatform String         // e.g., 'shopify'
-  targetAction   String         // e.g., 'update_metaobject'
-  payload        Json
-  status         PushStatus     @default(PENDING)
-  createdAt      DateTime       @default(now())
-  executedAt     DateTime?
+model Profile {
+  id             String       @id @default(cuid())
+  userId         String       @unique // Maps to Supabase auth.users.id
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  email          String       @unique
+  createdAt      DateTime     @default(now())
+}
+
+model VisibilityScan {
+  id             String        @id @default(cuid())
+  organizationId String
+  organization   Organization  @relation(fields: [organizationId], references: [id])
+  dataSourceId   String?
+  dataSource     DataSource?   @relation(fields: [dataSourceId], references: [id])
+  brand          String
+  industry       String
+  competitors    String[]
+  status           ScanStatus     @default(PENDING)
+  strategyInjected Boolean        @default(false)
+  completedAt      DateTime?
+  createdAt        DateTime       @default(now())
+  llmResponses     LlmResponse[]
+  signals          Signal[]
+  signalPushes     SignalPush[]
+}
+
+model DataSource {
+  id             String           @id @default(cuid())
+  organizationId String
+  organization   Organization    @relation(fields: [organizationId], references: [id])
+  name           String
+  type           String
+  config         Json
+  createdAt      DateTime         @default(now())
+  scans          VisibilityScan[]
+}
+
+model LlmResponse {
+  id        String         @id @default(cuid())
+  scanId    String
+  scan      VisibilityScan @relation(fields: [scanId], references: [id])
+  provider     LlmProvider
+  providerUsed String?
+  rawText      String
+  createdAt    DateTime       @default(now())
 }
 
 model Signal {
   id               String         @id @default(cuid())
   scanId           String
   scan             VisibilityScan @relation(fields: [scanId], references: [id])
-  type             String         // e.g., 'MENTION', 'CITATION', 'SENTIMENT'
-  source           String         // e.g., 'Reddit', 'Discord', 'Model_Inference'
-  content          String
-  mentionFrequency Float?
-  citationDensity  Float?
-  accuracyScore    Float?
-  latentDensity    Float?
-  metadata         Json?
+  mentionFrequency Float
+  citationDensity  Float
+  sentimentScore   Float
+  latentDensity    Float
   createdAt        DateTime       @default(now())
-
-  @@map("signals")
 }
 
 enum PushStatus {
   PENDING
-  SENT
   EXECUTED
   FAILED
+}
+
+model SignalPush {
+  id             String         @id @default(cuid())
+  scanId           String
+  scan             VisibilityScan @relation(fields: [scanId], references: [id])
+  targetPlatform String         @default("SHOPIFY")
+  status           PushStatus     @default(PENDING)
+  payload          Json
+  executedAt       DateTime?
+  createdAt        DateTime       @default(now())
 }

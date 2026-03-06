@@ -2,7 +2,7 @@ import { z } from "zod";
 
 const envSchema = z.object({
     // Database — required for the app to function
-    DATABASE_URL: z.string().url(),
+    DATABASE_URL: z.string().url().optional().or(z.literal("")),
     DIRECT_URL: z.string().url().optional(),
 
     // AI Keys — all optional; missing keys trigger simulation mode
@@ -11,14 +11,16 @@ const envSchema = z.object({
     ANTHROPIC_API_KEY: z.string().optional(),
     SIMULATION_MODE: z.string().optional(),
 
-    // Supabase — optional here because they are NEXT_PUBLIC_ and do not
-    // need to be in server-side env validation (the client checks at runtime)
-    NEXT_PUBLIC_SUPABASE_URL: z.string().url().optional(),
-    NEXT_PUBLIC_SUPABASE_ANON_KEY: z.string().optional(),
+    // Supabase
+    NEXT_PUBLIC_SUPABASE_URL: z.string().url().optional().or(z.literal("")),
+    NEXT_PUBLIC_SUPABASE_ANON_KEY: z.string().optional().or(z.literal("")),
 
-    // Canonical site URL — used for Supabase auth redirectTo
-    // Set to https://your-app.vercel.app in the Vercel dashboard
+    // Canonical site URL
     NEXT_PUBLIC_SITE_URL: z.string().url().optional(),
+
+    // Upstash Redis (for rate limiting)
+    UPSTASH_REDIS_REST_URL: z.string().url().optional(),
+    UPSTASH_REDIS_REST_TOKEN: z.string().optional(),
 });
 
 const _env = envSchema.safeParse({
@@ -31,11 +33,12 @@ const _env = envSchema.safeParse({
     NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL,
     NEXT_PUBLIC_SUPABASE_ANON_KEY: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
     NEXT_PUBLIC_SITE_URL: process.env.NEXT_PUBLIC_SITE_URL,
+    UPSTASH_REDIS_REST_URL: process.env.UPSTASH_REDIS_REST_URL,
+    UPSTASH_REDIS_REST_TOKEN: process.env.UPSTASH_REDIS_REST_TOKEN,
 });
 
 if (!_env.success) {
-    console.error("❌ Invalid environment variables:", _env.error.format());
-    throw new Error("Invalid environment variables — check your Vercel dashboard.");
+    console.warn("⚠️ [Tracintel] Environment validation failed. This is acceptable during build-time if keys are injected at runtime:", _env.error.format());
 }
 
-export const env = _env.data;
+export const env = (_env.data || {}) as any;

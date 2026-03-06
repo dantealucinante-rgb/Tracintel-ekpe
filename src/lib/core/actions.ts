@@ -1,4 +1,4 @@
-import { SomMetrics } from '../ai/som';
+import { SomMetrics } from '../ai/som-engine';
 
 export interface AgenticAction {
     id: string;
@@ -18,7 +18,7 @@ export class ActionEngine {
         const actions: AgenticAction[] = [];
 
         // 1. Citation Gap Detection
-        if (metrics.citationDensity < 40) {
+        if (metrics.citationDensity < 0.4) {
             actions.push({
                 id: `cit-${Date.now()}`,
                 type: 'CITATION_FIX',
@@ -42,7 +42,7 @@ export class ActionEngine {
         }
 
         // 3. Sentiment Polarization (Accuracy) Gap
-        if (metrics.sentimentPolarization < 60) {
+        if (metrics.sentimentScore < 0.6) {
             actions.push({
                 id: `acc-${Date.now()}`,
                 type: 'CONTENT_INJECTION',

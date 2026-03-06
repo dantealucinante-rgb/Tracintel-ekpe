@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/db';
-import { env } from '@/env.mjs';
+import { env } from '@/env';
 
 export const dynamic = 'force-dynamic';
 

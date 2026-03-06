@@ -56,7 +56,7 @@ export default function Header() {
 
     return (
         <>
-            <nav className="border-b border-black/5 bg-white/80 backdrop-blur-xl sticky top-0 z-50">
+            <nav className="border-b border-black/5 bg-white/70 backdrop-blur-md sticky top-0 z-[100]">
                 <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
 
                     {/* Logo — far left */}

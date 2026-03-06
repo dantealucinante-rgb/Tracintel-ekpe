@@ -146,8 +146,8 @@ export default function DashboardLayout({
                     </button>
                 </header>
 
-                {/* Page Content — extra bottom padding on mobile to clear bottom nav */}
-                <main className="flex-1 p-4 md:p-6 pb-24 md:pb-6">
+                {/* Page Content — forced full width with no horizontal constraints */}
+                <main className="flex-1 m-0 p-0 w-full transition-all duration-500 overflow-x-hidden">
                     {children}
                 </main>
             </div>

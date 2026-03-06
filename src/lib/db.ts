@@ -1,7 +1,8 @@
+// Centralized Prisma client singleton for database access with connection pooling
 import { PrismaClient } from '@prisma/client'
 import { Pool } from 'pg'
 import { PrismaPg } from '@prisma/adapter-pg'
-import { env } from '@/env.mjs'
+import { env } from '@/env'
 
 const prismaClientSingleton = () => {
     const connectionString = env.DIRECT_URL || env.DATABASE_URL
@@ -16,11 +17,11 @@ const prismaClientSingleton = () => {
 }
 
 declare global {
-    var prismaGlobal: undefined | ReturnType<typeof prismaClientSingleton>
+    var prismaInstance: undefined | ReturnType<typeof prismaClientSingleton>
 }
 
-const prisma = globalThis.prismaGlobal ?? prismaClientSingleton()
+const prisma = globalThis.prismaInstance ?? prismaClientSingleton()
 
 export default prisma
 
-if (process.env.NODE_ENV !== 'production') globalThis.prismaGlobal = prisma
+if (process.env.NODE_ENV !== 'production') globalThis.prismaInstance = prisma

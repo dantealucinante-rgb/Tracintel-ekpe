@@ -11,6 +11,7 @@ interface BentoCardProps {
     trend?: string;
     trendType?: 'up' | 'down' | 'neutral';
     className?: string;
+    isSimulated?: boolean;
 }
 
 export function BentoCard({
@@ -20,12 +21,14 @@ export function BentoCard({
     icon: Icon,
     trend,
     trendType = 'neutral',
-    className = ""
+    className = "",
+    isSimulated = false
 }: BentoCardProps) {
     return (
         <motion.div
+            layout
             whileHover={{ y: -4, borderColor: 'rgba(0,122,255,0.2)', boxShadow: '0 20px 40px -20px rgba(0,122,255,0.1)' }}
-            className={`bg-white border border-black/5 rounded-[2rem] p-8 transition-all group flex flex-col justify-between ${className}`}
+            className={`bg-white border border-black/5 rounded-[3rem] p-8 md:p-10 transition-all group flex flex-col min-h-[420px] w-full ${className}`}
         >
             <div>
                 <div className="flex items-center justify-between mb-10">
@@ -38,6 +41,11 @@ export function BentoCard({
                                 'bg-black/5 text-black/40'
                             }`}>
                             {trend}
+                        </div>
+                    )}
+                    {isSimulated && (
+                        <div className="absolute top-8 right-8 px-2 py-0.5 bg-amber-400/10 border border-amber-400/20 rounded text-[8px] font-mono font-bold text-amber-600 tracking-widest uppercase">
+                            Simulated
                         </div>
                     )}
                 </div>
@@ -55,7 +63,7 @@ export function BentoCard({
 
 export default function BentoGrid({ children, className = "" }: { children: React.ReactNode; className?: string }) {
     return (
-        <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 ${className}`}>
+        <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 ${className}`}>
             {children}
         </div>
     );

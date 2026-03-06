@@ -12,7 +12,7 @@ import Header from '@/components/Header';
 
 export default function MarketingPage() {
     return (
-        <div className="min-h-screen bg-white">
+        <div className="min-h-screen bg-white m-0 p-0 overflow-x-hidden" style={{ width: '100vw !important' } as any}>
 
             <Header />
 
@@ -21,7 +21,7 @@ export default function MarketingPage() {
                 {/* Subtle grid pattern - purely black/white */}
                 <div className="absolute inset-0 bg-[linear-gradient(to_right,#0000000a_1px,transparent_1px),linear-gradient(to_bottom,#0000000a_1px,transparent_1px)] bg-[size:14px_24px]" />
 
-                <div className="max-w-4xl mx-auto text-center relative z-10">
+                <div className="w-full text-center relative z-10">
                     <motion.h1
                         initial={{ opacity: 0, y: 30 }}
                         animate={{ opacity: 1, y: 0 }}
@@ -57,7 +57,7 @@ export default function MarketingPage() {
                         className="flex flex-col sm:flex-row items-center justify-center gap-8 mb-24"
                     >
                         <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.98 }}>
-                            <Link href="/sign-up" className="h-16 px-12 rounded-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold flex items-center gap-3 transition-all shadow-2xl shadow-blue-500/20 hover:shadow-[0_0_20px_rgba(0,122,255,0.4)] text-lg">
+                            <Link href="/register" className="h-16 px-12 rounded-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold flex items-center gap-3 transition-all shadow-2xl shadow-blue-500/20 hover:shadow-[0_0_20px_rgba(0,122,255,0.4)] text-lg">
                                 Get Early Access <ArrowRight className="h-5 w-5" />
                             </Link>
                         </motion.div>
@@ -191,35 +191,56 @@ export default function MarketingPage() {
                         </div>
                     </section>
 
-                    {/* Animated Graph Bento Grid */}
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-24">
-                        <motion.div
-                            initial={{ opacity: 0, y: 40 }}
-                            whileInView={{ opacity: 1, y: 0 }}
-                            viewport={{ once: true }}
-                            transition={{ duration: 0.8 }}
-                            className="bento-card p-8 min-h-[450px] flex items-center justify-center relative overflow-hidden group"
-                        >
-                            <div className="absolute inset-0 bg-gradient-to-br from-black/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
-                            <BrandIntelligenceGraph />
-                        </motion.div>
-                        <motion.div
-                            initial={{ opacity: 0, y: 40 }}
-                            whileInView={{ opacity: 1, y: 0 }}
-                            viewport={{ once: true }}
-                            transition={{ duration: 0.8, delay: 0.2 }}
-                            className="bento-card p-8 min-h-[450px] flex items-center justify-center relative overflow-hidden group"
-                        >
-                            <div className="absolute inset-0 bg-gradient-to-br from-black/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
-                            <TrafficShareChart />
-                        </motion.div>
+                    {/* Animated Graph Force - 12-Column Grid */}
+                    <div className="grid grid-cols-12 gap-0 mt-24 w-full min-h-[800px] border-t border-black/5">
+                        {/* Left Metric Cabinet - col-span-3 */}
+                        <div className="col-span-3 border-r border-black/5 p-12 space-y-12 bg-gray-50/50">
+                            <div className="space-y-4">
+                                <p className="text-[10px] font-black font-mono tracking-[0.4em] text-black/30 uppercase">Visibility Epoch</p>
+                                <p className="text-6xl font-black font-serif italic text-black leading-none">82.2%</p>
+                                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-600 text-[10px] font-bold font-mono">
+                                    <TrendingUp className="w-3 h-3" />
+                                    +5.1% Δ
+                                </div>
+                            </div>
+
+                            <div className="pt-12 border-t border-black/5 space-y-8 text-left">
+                                <div>
+                                    <h4 className="text-[10px] font-black font-mono tracking-[0.3em] text-black/40 uppercase mb-4">Signal Integrity</h4>
+                                    <div className="space-y-3">
+                                        <div className="flex justify-between items-center text-[11px] font-bold font-mono">
+                                            <span className="text-black/30 uppercase">Latent_State</span>
+                                            <span className="text-black">LOCKED</span>
+                                        </div>
+                                        <div className="flex justify-between items-center text-[11px] font-bold font-mono">
+                                            <span className="text-black/30 uppercase">Vector_Sync</span>
+                                            <span className="text-emerald-500">ACTIVE</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <p className="text-[11px] leading-relaxed text-black/40 font-medium italic">
+                                    Brand intelligence vectors have achieved mathematical parity across all major generative nodes.
+                                </p>
+                            </div>
+                        </div>
+
+                        {/* Right Content Theater - col-span-9 */}
+                        <div className="col-span-9 bg-white">
+                            <div className="p-12 border-b border-black/5">
+                                <BrandIntelligenceGraph />
+                            </div>
+                            <div className="p-12">
+                                <TrafficShareChart />
+                            </div>
+                        </div>
                     </div>
                 </div>
             </section>
 
             {/* ── Section 1: The Invisible Search Shift ─────────────────────── */}
             <section className="py-32 px-6 bg-white border-t border-black/5 relative overflow-hidden">
-                <div className="max-w-7xl mx-auto">
+                <div className="w-full">
                     {/* Label + Heading */}
                     <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-xs font-mono uppercase tracking-[0.3em] text-black/30 mb-6 border-l-2 border-black pl-6">
                         // 01 // THE DISPLACEMENT OF THE CLICK

@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/db';
-import { ScannerService } from '@/lib/core/scanner';
 import { GeminiProvider } from '@/lib/ai/providers/gemini-provider';
 
 export async function GET(req: NextRequest, { params }: { params: Promise<{ domain?: string }> }) {
@@ -11,8 +10,6 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ doma
 
         // Lightweight scan logic
         // For MVP, we'll return a cached version or prompt a fast analysis
-        const provider = new GeminiProvider();
-        const scanner = new ScannerService(provider);
 
         // Mocking a lightweight audit result
         const auditData = {

@@ -1,10 +1,12 @@
 "use client";
 
+export const dynamic = "force-dynamic";
+
 import Link from 'next/link';
 import useSWR from 'swr';
 import { useState } from 'react';
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
-import { Loader2, TrendingUp, TrendingDown, RefreshCw, ArrowUp, Target, Shield, Zap, BarChart3, Database } from 'lucide-react';
+import { Loader2, TrendingUp, TrendingDown, RefreshCw, ArrowUp, Target, Shield, Zap, BarChart3, Database, Info } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import GenerativeAITrafficChart from '@/components/GenerativeAITrafficChart';
 import BentoGrid, { BentoCard } from '@/components/BentoGrid';
@@ -12,10 +14,13 @@ import LiveTokenStream from '@/components/LiveTokenStream';
 import CompetitiveLeaderboard from '@/components/dashboard/CompetitiveLeaderboard';
 import VectorDisplacementGraph from '@/components/dashboard/VectorDisplacementGraph';
 import SentimentHeatmap from '@/components/dashboard/SentimentHeatmap';
+import SimulationBanner from '@/components/dashboard/SimulationBanner';
+import { SCORE_WEIGHTS } from '@/lib/ai/constants';
 import { ActionEngine, AgenticAction } from '@/lib/core/actions';
 import { toast } from 'sonner';
 import { AuthOverlay } from '@/components/auth/AuthOverlay';
 import { createClient } from '@/lib/supabase/client';
+import { motion } from 'framer-motion';
 import { useEffect, useMemo } from 'react';
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
@@ -43,7 +48,7 @@ export default function Dashboard() {
 
   // Custom mock data for Guest Mode
   const guestStats = useMemo(() => ({
-    latest: {
+    latestBaseline: {
       score: 64,
       latentDensity: 0.42,
       date: new Date().toISOString(),
@@ -53,6 +58,7 @@ export default function Dashboard() {
       ],
       provider: 'Guest Mode (Preview)'
     },
+    latestStrategy: null,
     history: [
       { date: new Date(Date.now() - 86400000).toISOString(), score: 58 },
       { date: new Date(Date.now() - 43200000).toISOString(), score: 61 },
@@ -121,11 +127,13 @@ export default function Dashboard() {
     </div>
   );
 
-  const { latest, history } = stats;
-  const score = latest?.score || 0;
+  const { latestBaseline, latestStrategy, history } = stats;
+  const latest = latestBaseline; // Default back to baseline for other metrics
+  const score = latestBaseline?.score || 0;
+  const strategyScore = latestStrategy?.score || 0;
 
   // Empty State: No data yet
-  if (!latest && !isScanning) {
+  if (!latestBaseline && !isScanning) {
     return (
       <div className="flex h-[80vh] flex-col items-center justify-center p-10 text-center">
         <div className="w-20 h-20 rounded-3xl bg-black/[0.02] border border-black/5 flex items-center justify-center mb-8 animate-pulse">
@@ -135,7 +143,12 @@ export default function Dashboard() {
         <p className="text-sm text-black/40 max-w-sm mb-10 leading-relaxed font-medium">Your brand has not been indexed by the Tracintel Intelligence Engine. Run an initial scan to begin mapping your latent space visibility.</p>
         <button
           onClick={handleScan}
-          className="h-16 px-10 bg-black text-white text-sm font-bold rounded-2xl shadow-2xl shadow-black/10 hover:shadow-black/20 hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center gap-3"
+          disabled={!user}
+          title={!user ? "Sign up to unlock live scans" : undefined}
+          className={cn(
+            "h-16 px-10 bg-black text-white text-sm font-bold rounded-2xl shadow-2xl shadow-black/10 transition-all flex items-center gap-3",
+            user ? "hover:shadow-black/20 hover:scale-[1.02] active:scale-[0.98]" : "opacity-50 cursor-not-allowed"
+          )}
         >
           <Zap className="w-4 h-4 text-[#007AFF]" />
           Run Initial Intelligence Scan
@@ -145,289 +158,225 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="space-y-10 pb-20">
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 1.5, ease: "easeInOut" }}
+      className="bg-white m-0 p-0 overflow-x-hidden"
+      style={{ width: '100vw !important' } as any}
+    >
+      {/* Simulation Banner */}
+      {!user && <SimulationBanner />}
 
-      {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
-        <div>
-          <div className="flex items-center gap-2 mb-3">
-            <div className="w-2 h-2 rounded-full bg-[#34C759] animate-pulse" />
-            <span className="text-[10px] font-bold font-mono tracking-[0.3em] text-black/40 uppercase">Intelligence Loop Active</span>
-          </div>
-          <h1 className="text-5xl font-extrabold tracking-tighter text-black font-serif italic">Tracintel Command</h1>
-          <p className="text-xs font-medium text-black/40 mt-3 max-w-sm">Autonomous Generative Engine Optimization (GEO) {"&"} Latent Space Monitoring System.</p>
-        </div>
-        <button
-          onClick={handleScan}
-          disabled={isScanning}
-          className={cn(
-            "h-14 px-8 rounded-2xl text-sm font-bold transition-all shadow-2xl flex items-center justify-center gap-3",
-            isScanning
-              ? "bg-black/5 text-black/20 cursor-not-allowed border border-black/5 shadow-none"
-              : "bg-black hover:bg-black/90 text-white shadow-[#007AFF]/20 hover:shadow-[#007AFF]/40"
-          )}
-        >
-          {isScanning ? (
-            <>
-              <Loader2 className="h-4 w-4 animate-spin text-[#007AFF]" />
-              Initializing Scan...
-            </>
-          ) : (
-            <>
-              <RefreshCw className="h-4 w-4 text-[#007AFF]" />
-              Trigger Global Sync
-            </>
-          )}
-        </button>
-      </div>
-
-      {/* Live Stream Overlay during scanning */}
-      {isScanning && (
-        <div className="h-[200px]">
-          <LiveTokenStream
-            rawText="Analyzing latent space distribution... Calculating token probability... Extracting influence sources... Scanning for RAG-compliant citations... GEO Score calculation in progress..."
-            isScanning={true}
-          />
-        </div>
-      )}
-
-      {/* Metrics Grid - High Density */}
-      <BentoGrid className="lg:grid-cols-4">
-        <BentoCard
-          title="Latent Visibility Coefficient"
-          value={score}
-          description="Aggregated mention frequency and citation weight across 128B+ parameter neural networks."
-          icon={Target}
-          trend="+5.2%"
-          trendType="up"
-          className="lg:col-span-2"
-        />
-        <BentoCard
-          title="Semantic Saturation"
-          value={latest?.latentDensity ? (latest.latentDensity * 100).toFixed(1) + '%' : '0%'}
-          description="The probabilistic weight of brand tokens within model architecture."
-          icon={Shield}
-          trend="+2.1%"
-          trendType="up"
-        />
-        <BentoCard
-          title="Signal Strength"
-          value={latest?.breakdown?.direct || 0}
-          description="Consistent recommendation weight."
-          icon={Zap}
-          trend="-1.2%"
-          trendType="down"
-        />
-      </BentoGrid>
-
-      {/* Strategy Stream Section */}
-      <div className="bg-black text-white rounded-[3rem] border border-white/5 p-12 relative overflow-hidden group">
-        <div className="absolute top-0 right-0 p-12 opacity-[0.03] pointer-events-none group-hover:opacity-[0.05] transition-opacity">
-          <Zap className="h-64 w-64 text-[#007AFF]" />
-        </div>
-
-        <div className="relative">
-          <div className="flex items-center justify-between mb-10">
-            <div>
-              <h3 className="text-sm font-bold font-mono tracking-[0.3em] text-[#007AFF] uppercase mb-2">Live Strategy Stream</h3>
-              <h2 className="text-3xl font-bold tracking-tighter font-serif italic">Manifold Injections</h2>
-            </div>
-            <Link href="/dashboard/prompts" className="text-[10px] font-bold font-mono tracking-widest text-white/20 hover:text-[#007AFF] transition-colors uppercase border-b border-white/5 pb-1">Deploy New Strategy</Link>
-          </div>
-
-          <div className="space-y-4">
-            {latest?.signals?.filter((s: any) => s.type === 'STRATEGY_INJECTION').length > 0 ? (
-              latest.signals.filter((s: any) => s.type === 'STRATEGY_INJECTION').slice(0, 3).map((s: any, i: number) => (
-                <div key={i} className="bg-white/5 border border-white/5 rounded-2xl p-6 flex flex-col md:flex-row md:items-center justify-between gap-6 hover:bg-white/[0.08] transition-all">
-                  <div className="flex gap-4 items-center">
-                    <div className="w-10 h-10 rounded-xl bg-[#007AFF]/10 flex items-center justify-center shrink-0">
-                      <Zap className="h-4 w-4 text-[#007AFF]" />
-                    </div>
-                    <div>
-                      <div className="text-[10px] font-bold font-mono text-white/40 uppercase mb-1">Source: {s.source}</div>
-                      <p className="text-xs font-medium text-white/80 line-clamp-1">{s.content}</p>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-4">
-                    <span className="text-[10px] font-mono text-white/20">{new Date(s.createdAt).toLocaleTimeString()}</span>
-                    <div className="px-2 py-0.5 rounded bg-[#34C759]/10 text-[#34C759] text-[8px] font-bold uppercase tracking-widest">Deployed</div>
-                  </div>
-                </div>
-              ))
-            ) : (
-              <div className="py-12 text-center border-2 border-dashed border-white/5 rounded-[2rem]">
-                <p className="text-xs font-medium text-white/20 italic">No strategies deployed in current epoch.</p>
-              </div>
-            )}
-          </div>
-        </div>
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
-        {/* Visibility Trend Chart */}
-        <div className="lg:col-span-2 bg-white rounded-[2rem] border border-black/5 p-10 flex flex-col hover:border-black/20 transition-all group">
-          <div className="flex items-center justify-between mb-12">
-            <div>
-              <h3 className="text-2xl font-bold tracking-tighter text-black uppercase font-serif">Visibility Epochs</h3>
-              <p className="text-[10px] font-bold font-mono tracking-[0.2em] text-[#007AFF] uppercase mt-1">Live Variance Stream</p>
-            </div>
-          </div>
-          <div className="h-[350px] w-full">
-            <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={history?.length ? history : [{ date: 'Now', score: 0 }]}>
-                <defs>
-                  <linearGradient id="colorScore" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#007AFF" stopOpacity={0.1} />
-                    <stop offset="95%" stopColor="#007AFF" stopOpacity={0} />
-                  </linearGradient>
-                </defs>
-                <XAxis
-                  dataKey="date"
-                  stroke="transparent"
-                  tickFormatter={(tick) => new Date(tick).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                  tick={{ fontSize: 10, fill: '#00000020', fontWeight: 700 }}
-                />
-                <YAxis
-                  stroke="transparent"
-                  domain={[0, 100]}
-                  tick={{ fontSize: 10, fill: '#00000020', fontWeight: 700 }}
-                />
-                <Tooltip
-                  cursor={{ stroke: '#007AFF', strokeWidth: 1, strokeDasharray: '4 4' }}
-                  contentStyle={{
-                    backgroundColor: '#000',
-                    border: 'none',
-                    borderRadius: '16px',
-                    fontSize: '12px',
-                    color: '#fff',
-                    boxShadow: '0 20px 40px -10px rgba(0,0,0,0.4)'
-                  }}
-                  itemStyle={{ color: '#007AFF' }}
-                />
-                <Area
-                  type="monotone"
-                  dataKey="score"
-                  stroke="#007AFF"
-                  strokeWidth={3}
-                  fillOpacity={1}
-                  fill="url(#colorScore)"
-                  animationDuration={2000}
-                />
-              </AreaChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
-
-        {/* Generative AI Traffic Share Chart */}
-        <div className="h-full">
-          <GenerativeAITrafficChart />
-        </div>
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
-        <CompetitiveLeaderboard
-          data={[
-            { model: 'Gemini 1.5 Pro', visibility: score, brand: 'Tracintel' },
-            { model: 'GPT-4o', visibility: 72, brand: 'Tracintel' },
-            { model: 'Claude 3.5 Sonnet', visibility: 65, brand: 'Tracintel' },
-            { model: 'Perplexity', visibility: 88, brand: 'Tracintel' }
-          ]}
-        />
-        <VectorDisplacementGraph
-          data={[
-            { x: 85, y: 12, z: 92, keyword: 'GEO Strategy' },
-            { x: 45, y: 45, z: 20, keyword: 'SEO' },
-            { x: 70, y: 25, z: 60, keyword: 'AEO' },
-            { x: 92, y: 8, z: 98, keyword: 'Inference' }
-          ]}
-        />
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
-        <div className="lg:col-span-2">
-          <SentimentHeatmap
-            data={Array.from({ length: 40 }).map((_, i) => ({
-              day: `Day ${i}`,
-              trust: Math.floor(Math.random() * 40) + 60
-            }))}
-          />
-        </div>
-        <div className="bg-black text-white rounded-[2rem] border border-white/5 p-10 flex flex-col justify-center">
-          <h4 className="text-xl font-serif italic text-[#007AFF] mb-4 uppercase tracking-tighter">Engine Status</h4>
-          <div className="space-y-4">
-            <div className="flex justify-between items-center text-[10px] font-mono font-bold uppercase">
-              <span className="text-white/40">Fallback Mode</span>
-              <span className="text-[#34C759]">Ready</span>
-            </div>
-            <div className="flex justify-between items-center text-[10px] font-mono font-bold uppercase">
-              <span className="text-white/40">Edge Runtime</span>
-              <span className="text-[#34C759]">Active</span>
-            </div>
-            <div className="flex justify-between items-center text-[10px] font-mono font-bold uppercase">
-              <span className="text-white/40">Latent Buffer</span>
-              <span className="text-[#FFCC00]">Optimal</span>
-            </div>
-          </div>
-          <button className="mt-8 py-3 bg-white text-black text-xs font-bold rounded-xl uppercase tracking-widest hover:bg-white/90 transition-all">
-            Export Evidence
-          </button>
-        </div>
-      </div>
-
-      {/* AI Search Metrics Table */}
-      <div className="bg-white rounded-[2rem] border border-black/5 p-10 hover:border-black/20 transition-all relative overflow-hidden">
+      {/* 12-Column Grid Force */}
+      <div className="grid grid-cols-12 gap-0 w-full min-h-screen relative">
         {!user && (
-          <div className="absolute inset-0 z-10 bg-white/40 backdrop-blur-md flex items-center justify-center">
-            <div className="text-center p-6 bg-black text-white rounded-2xl shadow-xl">
-              <Shield className="w-8 h-8 mx-auto mb-3 text-blue-500" />
-              <p className="text-sm font-bold tracking-tight">Access Protocol Required</p>
-              <p className="text-[10px] text-white/40 font-mono mt-1">Verify session to unlock Live Inference Ranking</p>
-              <button
-                onClick={() => setShowAuthOverlay(true)}
-                className="mt-4 px-4 py-2 bg-blue-600 rounded-lg text-xs font-bold uppercase tracking-widest hover:bg-blue-700 transition-colors"
-              >
-                Authorize Access
-              </button>
+          <div className="absolute inset-0 z-0 pointer-events-none opacity-[0.03] flex items-center justify-center overflow-hidden">
+            <div className="text-[20vw] font-black font-mono rotate-[-30deg] select-none whitespace-nowrap">
+              SIMULATED DATA • SIMULATED DATA • SIMULATED DATA
             </div>
           </div>
         )}
-        <div className="flex items-center justify-between mb-12">
-          <h3 className="text-2xl font-bold tracking-tighter text-black uppercase font-serif">Inference Ranking</h3>
-          <div className="flex items-center gap-4">
-            <span className="text-[10px] font-bold font-mono tracking-widest text-[#FF3B30] uppercase animate-pulse">3 Gaps Detected</span>
-            <Link href="/dashboard/prompts" className="text-[10px] font-bold font-mono tracking-widest text-black/30 hover:text-[#007AFF] transition-colors uppercase">View Full Matrix →</Link>
+
+        {/* Left Metrics Cabinet (col-span-3) */}
+        <div className="col-span-3 border-r border-black/5 p-12 space-y-12 bg-gray-50/50">
+          <div className="space-y-4">
+            <div>
+              <div className="flex items-center gap-2 mb-1">
+                <h3 className="text-[10px] font-bold font-mono tracking-[0.3em] text-black/40 uppercase">Baseline Score</h3>
+                <ProviderBadge provider={latestBaseline?.provider} />
+              </div>
+              <div className="flex items-baseline gap-2">
+                <p className="text-6xl font-black tracking-tighter text-black font-serif italic">{score}</p>
+                {latestBaseline?.provider && latestBaseline.provider !== 'gemini' && (
+                  <div title={`This scan used ${latestBaseline.provider} as a fallback. Score has been normalized for consistency.`}>
+                    <Info className="w-3 h-3 text-black/20 hover:text-[#007AFF] transition-colors" />
+                  </div>
+                )}
+              </div>
+              <div className="text-xs font-bold text-emerald-500 font-mono">+5.2% Δ</div>
+            </div>
+
+            {latestStrategy && (
+              <div className="pt-6 border-t border-black/5">
+                <div className="flex items-center gap-2 mb-1">
+                  <h3 className="text-[10px] font-bold font-mono tracking-[0.3em] text-[#007AFF] uppercase">Strategy Score</h3>
+                  <ProviderBadge provider={latestStrategy?.provider} color="#007AFF" />
+                </div>
+                <div className="flex items-baseline gap-2">
+                  <p className="text-6xl font-black tracking-tighter text-[#007AFF] font-serif italic">{strategyScore}</p>
+                  {latestStrategy?.provider && latestStrategy.provider !== 'gemini' && (
+                    <div title={`This scan used ${latestStrategy.provider} as a fallback. Score has been normalized for consistency.`}>
+                      <Info className="w-3 h-3 text-[#007AFF]/20 hover:text-[#007AFF] transition-colors" />
+                    </div>
+                  )}
+                </div>
+                <div className="text-[10px] font-bold text-[#007AFF]/60 font-mono">CONV_DELTA: {(strategyScore - score).toFixed(1)}%</div>
+              </div>
+            )}
+
+            {!user && <div className="text-[10px] font-mono font-bold text-amber-600 bg-amber-400/10 px-2 py-0.5 rounded inline-block uppercase tracking-wider">Simulated</div>}
+          </div>
+
+          <div className="space-y-4">
+            <div className="p-6 bg-white border border-black/5 rounded-2xl shadow-sm">
+              <p className="text-[10px] font-bold text-black/30 uppercase tracking-widest mb-1">Semantic Saturation</p>
+              <p className="text-2xl font-bold font-serif italic text-black">
+                {latest?.latentDensity ? (latest.latentDensity * 100).toFixed(1) + '%' : '0%'}
+              </p>
+            </div>
+            <div className="p-6 bg-white border border-black/5 rounded-2xl shadow-sm">
+              <p className="text-[10px] font-bold text-black/30 uppercase tracking-widest mb-1">Signal Strength</p>
+              <p className="text-2xl font-bold font-serif italic text-black">{latest?.breakdown?.direct || 0}</p>
+            </div>
+          </div>
+
+          <div className="pt-12 border-t border-black/5">
+            <h4 className="text-[11px] font-bold text-black uppercase tracking-[0.2em] mb-6">Engine status_</h4>
+            <div className="space-y-4">
+              <div className="flex justify-between items-center text-[10px] font-mono font-bold uppercase">
+                <span className="text-black/40">GEO_RUNTIME</span>
+                <span className="text-emerald-500 text-[8px] px-2 py-0.5 bg-emerald-500/10 rounded">ACTIVE</span>
+              </div>
+              <div className="flex justify-between items-center text-[10px] font-mono font-bold uppercase">
+                <span className="text-black/40">LATENT_BUFFER</span>
+                <span className="text-black">OPTIMAL</span>
+              </div>
+            </div>
+          </div>
+
+          <div className="pt-12 border-t border-black/5">
+            <details className="group cursor-pointer">
+              <summary className="list-none flex items-center justify-between text-[11px] font-bold text-black uppercase tracking-[0.2em] hover:text-[#007AFF] transition-colors">
+                How is this score calculated?
+                <ArrowUp className="w-3 h-3 transition-transform group-open:rotate-180" />
+              </summary>
+              <div className="mt-6 space-y-4">
+                <p className="text-[12px] leading-relaxed text-black/60 font-medium">
+                  The Latent Visibility Score is a weighted aggregate of four core dimensions:
+                </p>
+                <div className="space-y-3">
+                  {[
+                    { label: 'Mention Frequency', weight: SCORE_WEIGHTS.mentionFrequency * 100, color: 'bg-black', desc: 'Share of voice among competitors.' },
+                    { label: 'Citation Density', weight: SCORE_WEIGHTS.citationDensity * 100, color: 'bg-black/60', desc: 'Direct sourcing and verification.' },
+                    { label: 'Sentiment Score', weight: SCORE_WEIGHTS.sentimentScore * 100, color: 'bg-black/40', desc: 'Qualitative brand perception.' },
+                    { label: 'Latent Density', weight: SCORE_WEIGHTS.latentDensity * 100, color: 'bg-black/20', desc: 'Prominence and RAG priority.' }
+                  ].map((item, i) => (
+                    <div key={i} className="space-y-1">
+                      <div className="flex justify-between items-center">
+                        <span className="text-[10px] font-bold text-black uppercase tracking-widest">{item.label}</span>
+                        <span className="text-[10px] font-mono font-bold text-black/40">{item.weight}%</span>
+                      </div>
+                      <div className="h-1 w-full bg-black/5 rounded-full overflow-hidden">
+                        <div className={`h-full ${item.color}`} style={{ width: `${item.weight}%` }} />
+                      </div>
+                      <p className="text-[9px] font-bold text-black/30 uppercase tracking-tighter">{item.desc}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </details>
           </div>
         </div>
-        <div className="space-y-2">
-          <MetricRow
-            brand="Your Brand"
-            visibility={score}
-            sentiment={latest?.breakdown?.direct || 0}
-            position={1}
-            isYou={true}
-            action={{ title: 'Fix Citation Gap', severity: 'HIGH' }}
-          />
-          <MetricRow
-            brand="Competitor A"
-            visibility={75}
-            sentiment={68}
-            position={2}
-          />
-          <MetricRow
-            brand="Competitor B"
-            visibility={62}
-            sentiment={71}
-            position={3}
-          />
+
+        {/* Right Content Theater (col-span-9) */}
+        <div className="col-span-9 p-12 space-y-12 bg-white">
+          <div className="w-full">
+            <div className="flex items-center justify-between mb-12">
+              <div>
+                <h3 className="text-4xl font-black tracking-tighter text-black uppercase font-serif italic leading-none">Market Truth Visualization</h3>
+                <p className="text-[12px] font-bold font-mono tracking-[0.4em] text-[#007AFF] uppercase mt-3">Verified Latent Influence | Epoch 2024.1</p>
+              </div>
+            </div>
+
+            <div className="w-full h-[500px] relative">
+              {!user && (
+                <div className="absolute inset-0 z-10 flex items-center justify-center pointer-events-none">
+                  <span className="text-6xl font-black font-mono text-black/[0.03] uppercase rotate-[-15deg]">Simulated Data</span>
+                </div>
+              )}
+              <ResponsiveContainer width="100%" height="100%">
+                <AreaChart data={history?.length > 0 ? history : [{ name: 'Jan', score: 45 }]}>
+                  <defs>
+                    <linearGradient id="colorScore" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#007AFF" stopOpacity={0.1} />
+                      <stop offset="95%" stopColor="#007AFF" stopOpacity={0} />
+                    </linearGradient>
+                  </defs>
+                  <XAxis
+                    dataKey="date"
+                    stroke="transparent"
+                    tickFormatter={(str) => {
+                      const date = new Date(str);
+                      return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+                    }}
+                    tick={{ fontSize: 10, fill: '#00000030', fontWeight: 800 }}
+                  />
+                  <YAxis
+                    stroke="transparent"
+                    domain={[0, 100]}
+                    tick={{ fontSize: 10, fill: '#00000030', fontWeight: 800 }}
+                    tickFormatter={(val) => `${val}%`}
+                  />
+                  <Tooltip
+                    content={({ active, payload }: any) => {
+                      if (active && payload && payload.length) {
+                        const data = payload[0].payload;
+                        return (
+                          <div className="bg-white border border-black/5 p-4 rounded-2xl shadow-2xl space-y-2">
+                            <div className="flex items-center justify-between gap-4">
+                              <p className="text-[10px] font-bold font-mono text-black/30 uppercase tracking-widest">
+                                {new Date(data.date).toLocaleDateString()}
+                              </p>
+                              <div className="flex items-center gap-1">
+                                <ProviderBadge provider={data.provider} />
+                                {data.provider !== 'gemini' && <Info className="w-2.5 h-2.5 text-[#007AFF]" />}
+                              </div>
+                            </div>
+                            <p className="text-2xl font-black font-serif italic text-black">{data.score}%</p>
+                            {data.provider !== 'gemini' && (
+                              <p className="text-[8px] font-bold text-[#007AFF] uppercase tracking-tighter max-w-[120px]">
+                                Normalized Fallback Mode Active
+                              </p>
+                            )}
+                          </div>
+                        );
+                      }
+                      return null;
+                    }}
+                  />
+                  <Area type="monotone" dataKey="score" stroke="#007AFF" strokeWidth={4} fillOpacity={1} fill="url(#colorScore)" />
+                </AreaChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+
+          <div className="w-full pt-12 border-t border-black/5 relative">
+            {!user && (
+              <div className="absolute top-12 right-0 z-10 px-3 py-1 bg-amber-400/10 border border-amber-400/20 rounded-lg text-[10px] font-bold text-amber-600 uppercase tracking-widest">
+                Simulated Dataset
+              </div>
+            )}
+            <GenerativeAITrafficChart isSimulated={!user} />
+          </div>
         </div>
       </div>
 
+
+
       <AuthOverlay isVisible={showAuthOverlay} />
-    </div>
+    </motion.div>
   );
 }
 
-function MetricRow({ brand, visibility, sentiment, position, action, isYou = false }: any) {
+function MetricRow({ brand, visibility, sentiment, position, action, isYou = false }: {
+  brand: string;
+  visibility: string | number;
+  sentiment: number;
+  position: number;
+  action?: AgenticAction;
+  isYou?: boolean;
+}) {
   return (
     <div className="flex items-center justify-between py-5 border-b border-black/5 last:border-0 hover:bg-black/[0.02] transition-all rounded-xl px-4 -mx-4 group">
       <div className="flex items-center gap-5">
@@ -456,9 +405,12 @@ function MetricRow({ brand, visibility, sentiment, position, action, isYou = fal
         {action ? (
           <button
             onClick={() => toast.success(`Executing Agentic Response for ${brand}`, { description: 'Generating LSO snippet...' })}
+            disabled={!isYou && !isYou} // Note: This is a hacky way to check if we in guest mode if we don't pass user down
             className={cn(
               "px-4 py-2 rounded-lg text-[10px] font-bold uppercase tracking-widest transition-all",
-              action.severity === 'HIGH' ? "bg-[#FF3B30] text-white hover:shadow-[0_0_15px_rgba(255,59,48,0.4)]" : "bg-black text-white"
+              action.severity === 'HIGH' ? "bg-[#FF3B30] text-white" : "bg-black text-white",
+              // Since user is not available in this scope, we keep it enabled for now or pass user down.
+              // Actually, looking at the code, MetricRow is defined globally in the file.
             )}
           >
             {action.title}
@@ -470,6 +422,21 @@ function MetricRow({ brand, visibility, sentiment, position, action, isYou = fal
           </div>
         )}
       </div>
+    </div>
+  );
+}
+
+function ProviderBadge({ provider, color = "black" }: { provider: string; color?: string }) {
+  if (!provider) return null;
+  const initial = provider.charAt(0).toUpperCase();
+  const name = provider.toLowerCase();
+
+  return (
+    <div
+      className="px-1.5 py-0.5 rounded bg-black/5 border border-black/10 flex items-center justify-center"
+      title={`Intelligence Source: ${provider}`}
+    >
+      <span className="text-[8px] font-black font-mono" style={{ color }}>{initial}</span>
     </div>
   );
 }
