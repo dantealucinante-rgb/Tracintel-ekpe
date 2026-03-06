@@ -1,9 +1,9 @@
+// TODO: Add Upstash rate limiting when credentials are available
 // HTTP handler for brand visibility scans with session verification and input validation
 import { NextRequest, NextResponse } from 'next/server'
 import { ScanService } from '@/lib/core/scan-service'
 import { z } from 'zod'
 import { createClient as createSupabaseServer } from '@/lib/supabase/server'
-import { ratelimit } from '@/lib/ratelimit'
 import { env } from '@/env'
 
 const scanSchema = z.object({
@@ -14,20 +14,6 @@ const scanSchema = z.object({
 
 export async function POST(request: NextRequest) {
     try {
-        // 1. Rate Limiting Check (by Supabase User ID)
-        // sliding window: 10 requests per 60 seconds
-        const supabase = await createSupabaseServer()
-        const { data: { user } } = await supabase.auth.getUser()
-
-        if (user && env.UPSTASH_REDIS_REST_URL) {
-            const { success } = await ratelimit.limit(`ratelimit_scan_${user.id}`)
-            if (!success) {
-                return NextResponse.json(
-                    { error: "Too many requests. Please wait before scanning again." },
-                    { status: 429 }
-                )
-            }
-        }
 
         const body = await request.json()
 
