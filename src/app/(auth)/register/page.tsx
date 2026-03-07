@@ -14,6 +14,7 @@ export default function RegisterPage() {
     const [name, setName] = useState("");
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const [successMessage, setSuccessMessage] = useState<string | null>(null);
     const supabase = createClient();
     const router = useRouter();
 
@@ -50,7 +51,13 @@ export default function RegisterPage() {
 
             if (signUpError) throw signUpError;
 
-            // 2. Since email confirmation is disabled, immediately sign in to get the session
+            // 2. Show brief success message
+            setSuccessMessage("Account created! Redirecting...");
+
+            // 3. Wait 2000ms for database triggers
+            await new Promise(resolve => setTimeout(resolve, 2000));
+
+            // 4. Since email confirmation is disabled, immediately sign in to get the session
             const { error: signInError } = await supabase.auth.signInWithPassword({
                 email,
                 password,
@@ -58,12 +65,22 @@ export default function RegisterPage() {
 
             if (signInError) throw signInError;
 
-            // 3. Success -> Redirect
+            // 5. Success -> Redirect
             router.push("/dashboard");
             router.refresh();
         } catch (err: any) {
             console.error("Signup error:", err);
-            setError(err.message || "An unexpected error occurred during registration");
+
+            let displayError = "Something went wrong. Please try again.";
+            const msg = err.message || "";
+
+            if (msg.toLowerCase().includes("already registered")) {
+                displayError = "This email is already in use. Try signing in instead.";
+            } else if (msg.toLowerCase().includes("password")) {
+                displayError = "Password must be at least 6 characters.";
+            }
+
+            setError(displayError);
             setLoading(false);
         }
     };
@@ -177,8 +194,14 @@ export default function RegisterPage() {
                             </div>
 
                             {error && (
-                                <p className="text-xs font-bold text-red-600 uppercase tracking-widest bg-red-50 p-4 border-l-2 border-red-600">
+                                <p className="text-[13px] font-medium text-[#B42318] bg-[#FEF3F2] p-4 border-l-2 border-[#B42318] font-sans">
                                     {error}
+                                </p>
+                            )}
+
+                            {successMessage && (
+                                <p className="text-[13px] font-medium text-[#067647] bg-[#ECFDF3] p-4 border-l-2 border-[#067647] font-sans">
+                                    {successMessage}
                                 </p>
                             )}
 
