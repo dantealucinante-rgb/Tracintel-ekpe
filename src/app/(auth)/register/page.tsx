@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Zap, Mail, Lock, User } from "lucide-react";
+import { Zap, Mail, Lock, User, Loader2 } from "lucide-react";
 import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
@@ -9,33 +9,75 @@ import { useRouter } from "next/navigation";
 export default function RegisterPage() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [confirmPassword, setConfirmPassword] = useState("");
     const [name, setName] = useState("");
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
-    const [success, setSuccess] = useState(false);
     const supabase = createClient();
+    const router = useRouter();
 
     const handleSignUp = async (e: React.FormEvent) => {
         e.preventDefault();
         setLoading(true);
         setError(null);
 
-        const { error } = await supabase.auth.signUp({
-            email,
-            password,
-            options: {
-                data: {
-                    full_name: name,
-                }
-            }
-        });
+        // Client-side validation
+        if (password !== confirmPassword) {
+            setError("Passwords do not match");
+            setLoading(false);
+            return;
+        }
 
-        if (error) {
-            setError(error.message);
+        if (password.length < 6) {
+            setError("Password must be at least 6 characters");
             setLoading(false);
-        } else {
-            setSuccess(true);
+            return;
+        }
+
+        try {
+            // 1. Sign Up
+            const { error: signUpError } = await supabase.auth.signUp({
+                email,
+                password,
+                options: {
+                    data: {
+                        full_name: name,
+                    },
+                    emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/auth/callback`,
+                }
+            });
+
+            if (signUpError) throw signUpError;
+
+            // 2. Since email confirmation is disabled, immediately sign in to get the session
+            const { error: signInError } = await supabase.auth.signInWithPassword({
+                email,
+                password,
+            });
+
+            if (signInError) throw signInError;
+
+            // 3. Success -> Redirect
+            router.push("/dashboard");
+            router.refresh(); // Ensure session is picked up by server components
+        } catch (err: any) {
+            console.error("Signup error:", err);
+            setError(err.message || "An unexpected error occurred during registration");
             setLoading(false);
+        }
+    };
+
+    const handleGoogleSignIn = async () => {
+        try {
+            const { error } = await supabase.auth.signInWithOAuth({
+                provider: 'google',
+                options: {
+                    redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/auth/callback`,
+                },
+            });
+            if (error) throw error;
+        } catch (err: any) {
+            setError(err.message || "Could not initialize Google sign in");
         }
     };
 
@@ -50,93 +92,131 @@ export default function RegisterPage() {
                 </Link>
 
                 <div className="bg-white rounded-3xl border border-black/5 p-10 shadow-2xl shadow-black/5">
-                    {success ? (
-                        <div className="text-center py-4">
-                            <div className="w-16 h-16 rounded-full bg-emerald-50 flex items-center justify-center mx-auto mb-6">
-                                <Zap className="h-8 w-8 text-emerald-500 fill-emerald-500" />
+                    <h1 className="text-2xl font-bold tracking-tight text-black mb-2">Initialize Profile</h1>
+                    <p className="text-sm text-black/40 mb-8 font-medium">Join the intelligence network today.</p>
+
+                    <form onSubmit={handleSignUp} className="space-y-4">
+                        <div className="space-y-2">
+                            <label className="text-xs font-bold uppercase tracking-widest text-black/40 px-1">Full Name</label>
+                            <div className="relative">
+                                <User className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-black/20" />
+                                <input
+                                    type="text"
+                                    value={name}
+                                    onChange={(e) => setName(e.target.value)}
+                                    placeholder="John Doe"
+                                    className="w-full h-12 bg-black/5 border-transparent focus:bg-white focus:border-black/10 focus:ring-0 rounded-xl pl-12 pr-4 text-sm font-medium transition-all"
+                                    required
+                                />
                             </div>
-                            <h1 className="text-2xl font-bold tracking-tight text-black mb-2">Check your email</h1>
-                            <p className="text-sm text-black/40 mb-8 font-medium">We've sent a magic link to {email} to verify your account.</p>
-                            <Link href="/login" className="inline-flex h-12 px-8 bg-black text-white font-bold rounded-xl items-center justify-center transition-all">
-                                Go to Sign In
-                            </Link>
                         </div>
-                    ) : (
-                        <>
-                            <h1 className="text-2xl font-bold tracking-tight text-black mb-2">Initialize Profile</h1>
-                            <p className="text-sm text-black/40 mb-8 font-medium">Join the intelligence network today.</p>
 
-                            <form onSubmit={handleSignUp} className="space-y-5">
-                                <div className="space-y-2">
-                                    <label className="text-xs font-bold uppercase tracking-widest text-black/40 px-1">Full Name</label>
-                                    <div className="relative">
-                                        <User className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-black/20" />
-                                        <input
-                                            type="text"
-                                            value={name}
-                                            onChange={(e) => setName(e.target.value)}
-                                            placeholder="John Doe"
-                                            className="w-full h-12 bg-black/5 border-transparent focus:bg-white focus:border-black/10 focus:ring-0 rounded-xl pl-12 pr-4 text-sm font-medium transition-all"
-                                            required
-                                        />
-                                    </div>
-                                </div>
-
-                                <div className="space-y-2">
-                                    <label className="text-xs font-bold uppercase tracking-widest text-black/40 px-1">Email Address</label>
-                                    <div className="relative">
-                                        <Mail className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-black/20" />
-                                        <input
-                                            type="email"
-                                            value={email}
-                                            onChange={(e) => setEmail(e.target.value)}
-                                            placeholder="name@company.com"
-                                            className="w-full h-12 bg-black/5 border-transparent focus:bg-white focus:border-black/10 focus:ring-0 rounded-xl pl-12 pr-4 text-sm font-medium transition-all"
-                                            required
-                                        />
-                                    </div>
-                                </div>
-
-                                <div className="space-y-2">
-                                    <label className="text-xs font-bold uppercase tracking-widest text-black/40 px-1">Password</label>
-                                    <div className="relative">
-                                        <Lock className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-black/20" />
-                                        <input
-                                            type="password"
-                                            value={password}
-                                            onChange={(e) => setPassword(e.target.value)}
-                                            placeholder="••••••••"
-                                            className="w-full h-12 bg-black/5 border-transparent focus:bg-white focus:border-black/10 focus:ring-0 rounded-xl pl-12 pr-4 text-sm font-medium transition-all"
-                                            required
-                                        />
-                                    </div>
-                                </div>
-
-                                {error && (
-                                    <div className="p-4 rounded-xl bg-red-50 border border-red-100 text-xs font-medium text-red-600">
-                                        {error}
-                                    </div>
-                                )}
-
-                                <button
-                                    type="submit"
-                                    disabled={loading}
-                                    className="w-full h-12 bg-black hover:bg-black/90 text-white font-bold rounded-xl transition-all shadow-xl shadow-black/10 flex items-center justify-center disabled:opacity-50"
-                                >
-                                    {loading ? "Initializing..." : "Create Account"}
-                                </button>
-                            </form>
-
-                            <div className="mt-8 pt-8 border-t border-black/5 text-center">
-                                <p className="text-sm text-black/40 font-medium">
-                                    Already have an account?{" "}
-                                    <Link href="/login" className="text-black hover:underline">
-                                        Sign In
-                                    </Link>
-                                </p>
+                        <div className="space-y-2">
+                            <label className="text-xs font-bold uppercase tracking-widest text-black/40 px-1">Email Address</label>
+                            <div className="relative">
+                                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-black/20" />
+                                <input
+                                    type="email"
+                                    value={email}
+                                    onChange={(e) => setEmail(e.target.value)}
+                                    placeholder="name@company.com"
+                                    className="w-full h-12 bg-black/5 border-transparent focus:bg-white focus:border-black/10 focus:ring-0 rounded-xl pl-12 pr-4 text-sm font-medium transition-all"
+                                    required
+                                />
                             </div>
-                        </>
-                    )}
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-4">
+                            <div className="space-y-2">
+                                <label className="text-xs font-bold uppercase tracking-widest text-black/40 px-1">Password</label>
+                                <div className="relative">
+                                    <Lock className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-black/20" />
+                                    <input
+                                        type="password"
+                                        value={password}
+                                        onChange={(e) => setPassword(e.target.value)}
+                                        placeholder="••••••••"
+                                        className="w-full h-12 bg-black/5 border-transparent focus:bg-white focus:border-black/10 focus:ring-0 rounded-xl pl-12 pr-4 text-sm font-medium transition-all text-xs"
+                                        required
+                                    />
+                                </div>
+                            </div>
+                            <div className="space-y-2">
+                                <label className="text-xs font-bold uppercase tracking-widest text-black/40 px-1">Confirm</label>
+                                <div className="relative">
+                                    <Lock className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-black/20" />
+                                    <input
+                                        type="password"
+                                        value={confirmPassword}
+                                        onChange={(e) => setConfirmPassword(e.target.value)}
+                                        placeholder="••••••••"
+                                        className="w-full h-12 bg-black/5 border-transparent focus:bg-white focus:border-black/10 focus:ring-0 rounded-xl pl-12 pr-4 text-sm font-medium transition-all text-xs"
+                                        required
+                                    />
+                                </div>
+                            </div>
+                        </div>
+
+                        {error && (
+                            <div className="p-4 rounded-xl bg-red-50 border border-red-100 text-xs font-medium text-red-600">
+                                {error}
+                            </div>
+                        )}
+
+                        <button
+                            type="submit"
+                            disabled={loading}
+                            className="w-full h-12 bg-black hover:bg-black/90 text-white font-bold rounded-xl transition-all shadow-xl shadow-black/10 flex items-center justify-center disabled:opacity-50"
+                        >
+                            {loading ? <Loader2 className="h-5 w-5 animate-spin" /> : "Create Account"}
+                        </button>
+                    </form>
+
+                    <div className="mt-6 flex flex-col gap-4">
+                        <div className="relative">
+                            <div className="absolute inset-0 flex items-center">
+                                <span className="w-full border-t border-black/5"></span>
+                            </div>
+                            <div className="relative flex justify-center text-xs uppercase">
+                                <span className="bg-white px-2 text-black/40 font-bold tracking-widest">Or continue with</span>
+                            </div>
+                        </div>
+
+                        <button
+                            onClick={handleGoogleSignIn}
+                            type="button"
+                            className="w-full h-12 bg-white border border-black/10 hover:bg-black/5 text-black font-bold rounded-xl transition-all flex items-center justify-center gap-3"
+                        >
+                            <svg className="h-5 w-5" viewBox="0 0 24 24">
+                                <path
+                                    d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
+                                    fill="#4285F4"
+                                />
+                                <path
+                                    d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+                                    fill="#34A853"
+                                />
+                                <path
+                                    d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"
+                                    fill="#FBBC05"
+                                />
+                                <path
+                                    d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
+                                    fill="#EA4335"
+                                />
+                            </svg>
+                            Google
+                        </button>
+                    </div>
+
+                    <div className="mt-8 pt-8 border-t border-black/5 text-center">
+                        <p className="text-sm text-black/40 font-medium">
+                            Already have an account?{" "}
+                            <Link href="/login" className="text-black hover:underline font-bold">
+                                Sign In
+                            </Link>
+                        </p>
+                    </div>
                 </div>
 
                 <div className="text-center mt-12">
