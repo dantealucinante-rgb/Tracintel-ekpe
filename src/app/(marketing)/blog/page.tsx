@@ -58,7 +58,7 @@ export default function BlogPage() {
                         </div>
                         <span className="font-bold tracking-tight text-black">Tracintel</span>
                     </Link>
-                    <Link href="/sign-in" className="text-sm font-medium text-black/60 hover:text-black transition-colors">
+                    <Link href="/login" className="text-sm font-medium text-black/60 hover:text-black transition-colors">
                         Log In
                     </Link>
                 </div>

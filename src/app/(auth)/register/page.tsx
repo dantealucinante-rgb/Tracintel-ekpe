@@ -1,10 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { Zap, Mail, Lock, User, Loader2 } from "lucide-react";
+import Image from "next/image";
 import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
+import { Loader2 } from "lucide-react";
 
 export default function RegisterPage() {
     const [email, setEmail] = useState("");
@@ -59,7 +60,7 @@ export default function RegisterPage() {
 
             // 3. Success -> Redirect
             router.push("/dashboard");
-            router.refresh(); // Ensure session is picked up by server components
+            router.refresh();
         } catch (err: any) {
             console.error("Signup error:", err);
             setError(err.message || "An unexpected error occurred during registration");
@@ -82,149 +83,159 @@ export default function RegisterPage() {
     };
 
     return (
-        <div className="min-h-screen bg-white flex flex-col items-center justify-center p-6">
-            <div className="w-full max-w-md">
-                <Link href="/" className="flex items-center gap-2 justify-center mb-12">
-                    <div className="w-10 h-10 rounded-xl bg-black flex items-center justify-center shadow-lg shadow-black/10">
-                        <Zap className="h-6 w-6 text-white fill-white" />
+        <div className="min-h-screen bg-white relative overflow-hidden flex flex-col font-sans selection:bg-black selection:text-white">
+            {/* Grid Overlay */}
+            <div className="absolute inset-0 bg-[linear-gradient(to_right,#0000000a_1px,transparent_1px),linear-gradient(to_bottom,#0000000a_1px,transparent_1px)] bg-[size:14px_24px] pointer-events-none" />
+
+            {/* Top Navigation / Logo */}
+            <header className="relative z-10 p-12">
+                <Link href="/" className="inline-flex items-center gap-4 group">
+                    <div className="relative w-10 h-10 bg-black flex items-center justify-center">
+                        <Image
+                            src="/2.png"
+                            alt="Logo"
+                            width={24}
+                            height={24}
+                            className="invert brightness-0"
+                        />
                     </div>
-                    <span className="font-extrabold text-2xl tracking-tighter text-black">Tracintel</span>
+                    <span className="text-2xl font-black tracking-tighter uppercase text-black">Tracintel</span>
                 </Link>
+            </header>
 
-                <div className="bg-white rounded-3xl border border-black/5 p-10 shadow-2xl shadow-black/5">
-                    <h1 className="text-2xl font-bold tracking-tight text-black mb-2">Initialize Profile</h1>
-                    <p className="text-sm text-black/40 mb-8 font-medium">Join the intelligence network today.</p>
-
-                    <form onSubmit={handleSignUp} className="space-y-4">
-                        <div className="space-y-2">
-                            <label className="text-xs font-bold uppercase tracking-widest text-black/40 px-1">Full Name</label>
-                            <div className="relative">
-                                <User className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-black/20" />
-                                <input
-                                    type="text"
-                                    value={name}
-                                    onChange={(e) => setName(e.target.value)}
-                                    placeholder="John Doe"
-                                    className="w-full h-12 bg-black/5 border-transparent focus:bg-white focus:border-black/10 focus:ring-0 rounded-xl pl-12 pr-4 text-sm font-medium transition-all"
-                                    required
-                                />
-                            </div>
-                        </div>
-
-                        <div className="space-y-2">
-                            <label className="text-xs font-bold uppercase tracking-widest text-black/40 px-1">Email Address</label>
-                            <div className="relative">
-                                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-black/20" />
-                                <input
-                                    type="email"
-                                    value={email}
-                                    onChange={(e) => setEmail(e.target.value)}
-                                    placeholder="name@company.com"
-                                    className="w-full h-12 bg-black/5 border-transparent focus:bg-white focus:border-black/10 focus:ring-0 rounded-xl pl-12 pr-4 text-sm font-medium transition-all"
-                                    required
-                                />
-                            </div>
-                        </div>
-
-                        <div className="grid grid-cols-2 gap-4">
-                            <div className="space-y-2">
-                                <label className="text-xs font-bold uppercase tracking-widest text-black/40 px-1">Password</label>
-                                <div className="relative">
-                                    <Lock className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-black/20" />
-                                    <input
-                                        type="password"
-                                        value={password}
-                                        onChange={(e) => setPassword(e.target.value)}
-                                        placeholder="••••••••"
-                                        className="w-full h-12 bg-black/5 border-transparent focus:bg-white focus:border-black/10 focus:ring-0 rounded-xl pl-12 pr-4 text-sm font-medium transition-all text-xs"
-                                        required
-                                    />
-                                </div>
-                            </div>
-                            <div className="space-y-2">
-                                <label className="text-xs font-bold uppercase tracking-widest text-black/40 px-1">Confirm</label>
-                                <div className="relative">
-                                    <Lock className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-black/20" />
-                                    <input
-                                        type="password"
-                                        value={confirmPassword}
-                                        onChange={(e) => setConfirmPassword(e.target.value)}
-                                        placeholder="••••••••"
-                                        className="w-full h-12 bg-black/5 border-transparent focus:bg-white focus:border-black/10 focus:ring-0 rounded-xl pl-12 pr-4 text-sm font-medium transition-all text-xs"
-                                        required
-                                    />
-                                </div>
-                            </div>
-                        </div>
-
-                        {error && (
-                            <div className="p-4 rounded-xl bg-red-50 border border-red-100 text-xs font-medium text-red-600">
-                                {error}
-                            </div>
-                        )}
-
-                        <button
-                            type="submit"
-                            disabled={loading}
-                            className="w-full h-12 bg-black hover:bg-black/90 text-white font-bold rounded-xl transition-all shadow-xl shadow-black/10 flex items-center justify-center disabled:opacity-50"
-                        >
-                            {loading ? <Loader2 className="h-5 w-5 animate-spin" /> : "Create Account"}
-                        </button>
-                    </form>
-
-                    <div className="mt-6 flex flex-col gap-4">
-                        <div className="relative">
-                            <div className="absolute inset-0 flex items-center">
-                                <span className="w-full border-t border-black/5"></span>
-                            </div>
-                            <div className="relative flex justify-center text-xs uppercase">
-                                <span className="bg-white px-2 text-black/40 font-bold tracking-widest">Or continue with</span>
-                            </div>
-                        </div>
-
-                        <button
-                            onClick={handleGoogleSignIn}
-                            type="button"
-                            className="w-full h-12 bg-white border border-black/10 hover:bg-black/5 text-black font-bold rounded-xl transition-all flex items-center justify-center gap-3"
-                        >
-                            <svg className="h-5 w-5" viewBox="0 0 24 24">
-                                <path
-                                    d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
-                                    fill="#4285F4"
-                                />
-                                <path
-                                    d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
-                                    fill="#34A853"
-                                />
-                                <path
-                                    d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"
-                                    fill="#FBBC05"
-                                />
-                                <path
-                                    d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
-                                    fill="#EA4335"
-                                />
-                            </svg>
-                            Google
-                        </button>
+            {/* Main Content */}
+            <main className="flex-1 flex flex-col items-center justify-center px-6 relative z-10 pb-24">
+                <div className="w-full max-w-[440px] space-y-12">
+                    <div className="space-y-4">
+                        <h1 className="text-7xl font-bold tracking-tighter text-black font-serif italic leading-none">
+                            Create Account
+                        </h1>
+                        <p className="text-xl text-zinc-500 font-light tracking-tight">
+                            Start tracking your brand&apos;s AI visibility.
+                        </p>
                     </div>
 
-                    <div className="mt-8 pt-8 border-t border-black/5 text-center">
-                        <p className="text-sm text-black/40 font-medium">
+                    <div className="space-y-10">
+                        <form onSubmit={handleSignUp} className="space-y-10">
+                            <div className="space-y-8">
+                                <div className="space-y-2 group">
+                                    <label className="text-[10px] font-black uppercase tracking-[0.3em] text-zinc-400 group-focus-within:text-black transition-colors">
+                                        Full Name
+                                    </label>
+                                    <input
+                                        type="text"
+                                        value={name}
+                                        onChange={(e) => setName(e.target.value)}
+                                        placeholder="John Doe"
+                                        className="w-full bg-transparent border-0 border-b border-zinc-200 focus:border-black focus:ring-0 px-0 py-3 text-lg font-medium transition-all placeholder:text-zinc-200"
+                                        required
+                                    />
+                                </div>
+
+                                <div className="space-y-2 group">
+                                    <label className="text-[10px] font-black uppercase tracking-[0.3em] text-zinc-400 group-focus-within:text-black transition-colors">
+                                        Email Address
+                                    </label>
+                                    <input
+                                        type="email"
+                                        value={email}
+                                        onChange={(e) => setEmail(e.target.value)}
+                                        placeholder="user@domain.com"
+                                        className="w-full bg-transparent border-0 border-b border-zinc-200 focus:border-black focus:ring-0 px-0 py-3 text-lg font-medium transition-all placeholder:text-zinc-200"
+                                        required
+                                    />
+                                </div>
+
+                                <div className="grid grid-cols-2 gap-8">
+                                    <div className="space-y-2 group">
+                                        <label className="text-[10px] font-black uppercase tracking-[0.3em] text-zinc-400 group-focus-within:text-black transition-colors">
+                                            Password
+                                        </label>
+                                        <input
+                                            type="password"
+                                            value={password}
+                                            onChange={(e) => setPassword(e.target.value)}
+                                            placeholder="••••••••"
+                                            className="w-full bg-transparent border-0 border-b border-zinc-200 focus:border-black focus:ring-0 px-0 py-3 text-lg font-medium transition-all placeholder:text-zinc-200"
+                                            required
+                                        />
+                                    </div>
+                                    <div className="space-y-2 group">
+                                        <label className="text-[10px] font-black uppercase tracking-[0.3em] text-zinc-400 group-focus-within:text-black transition-colors">
+                                            Confirm
+                                        </label>
+                                        <input
+                                            type="password"
+                                            value={confirmPassword}
+                                            onChange={(e) => setConfirmPassword(e.target.value)}
+                                            placeholder="••••••••"
+                                            className="w-full bg-transparent border-0 border-b border-zinc-200 focus:border-black focus:ring-0 px-0 py-3 text-lg font-medium transition-all placeholder:text-zinc-200"
+                                            required
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+
+                            {error && (
+                                <p className="text-xs font-bold text-red-600 uppercase tracking-widest bg-red-50 p-4 border-l-2 border-red-600">
+                                    {error}
+                                </p>
+                            )}
+
+                            <button
+                                type="submit"
+                                disabled={loading}
+                                className="w-full h-16 bg-black text-white font-black uppercase tracking-[0.2em] text-sm hover:bg-zinc-800 transition-all flex items-center justify-center disabled:opacity-50"
+                            >
+                                {loading ? <Loader2 className="h-5 w-5 animate-spin" /> : "Create Account"}
+                            </button>
+                        </form>
+
+                        <div className="space-y-8">
+                            <div className="relative flex items-center">
+                                <div className="flex-grow border-t border-zinc-100"></div>
+                                <span className="flex-shrink mx-4 text-[10px] font-black uppercase tracking-[0.4em] text-zinc-300">or</span>
+                                <div className="flex-grow border-t border-zinc-100"></div>
+                            </div>
+
+                            <button
+                                onClick={handleGoogleSignIn}
+                                type="button"
+                                className="w-full h-16 bg-white border border-zinc-200 text-black font-black uppercase tracking-[0.2em] text-sm hover:bg-zinc-50 transition-all flex items-center justify-center gap-4"
+                            >
+                                <svg className="h-5 w-5" viewBox="0 0 24 24">
+                                    <path
+                                        d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
+                                        fill="currentColor"
+                                    />
+                                    <path
+                                        d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+                                        fill="currentColor"
+                                    />
+                                    <path
+                                        d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"
+                                        fill="currentColor"
+                                    />
+                                    <path
+                                        d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
+                                        fill="currentColor"
+                                    />
+                                </svg>
+                                Continue with Google
+                            </button>
+                        </div>
+                    </div>
+
+                    <footer className="pt-12 border-t border-zinc-100 flex flex-col items-center gap-4">
+                        <p className="text-xs text-zinc-400 font-medium">
                             Already have an account?{" "}
-                            <Link href="/login" className="text-black hover:underline font-bold">
+                            <Link href="/login" className="text-black font-black uppercase tracking-widest hover:underline decoration-2">
                                 Sign In
                             </Link>
                         </p>
-                    </div>
+                    </footer>
                 </div>
-
-                <div className="text-center mt-12">
-                    <Link href="/" className="text-xs font-mono uppercase tracking-widest text-black/40 hover:text-black transition-colors">
-                        ← RETURN_TO_BASE
-                    </Link>
-                </div>
-            </div>
+            </main>
         </div>
     );
 }

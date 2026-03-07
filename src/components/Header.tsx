@@ -88,14 +88,14 @@ export default function Header() {
                         {!session ? (
                             <>
                                 <Link
-                                    href="/sign-in"
+                                    href="/login"
                                     className="text-sm font-medium tracking-tight text-black/50 hover:text-blue-600 transition-colors"
                                 >
                                     Sign In
                                 </Link>
                                 <motion.div whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }}>
                                     <Link
-                                        href="/sign-up"
+                                        href="/register"
                                         className="bg-black text-white px-6 py-2.5 rounded-full text-sm font-bold transition-all shadow-xl shadow-black/20 hover:bg-black/80"
                                     >
                                         Get Early Access
@@ -212,7 +212,7 @@ export default function Header() {
                                 <div className="mt-6 pt-6 border-t border-white/5 flex flex-col gap-3">
                                     {!session ? (
                                         <Link
-                                            href="/sign-in"
+                                            href="/login"
                                             onClick={() => setDrawerOpen(false)}
                                             className="text-sm font-medium text-white/40 hover:text-white/70 transition-colors"
                                         >
@@ -245,7 +245,7 @@ export default function Header() {
 
                                 {!session ? (
                                     <Link
-                                        href="/sign-up"
+                                        href="/register"
                                         onClick={() => setDrawerOpen(false)}
                                         className="flex items-center justify-center gap-3 w-full h-14 rounded-2xl bg-gradient-to-r from-[#007AFF] to-indigo-600 text-white font-bold text-base shadow-2xl shadow-blue-500/30 hover:shadow-[0_0_30px_rgba(0,122,255,0.5)] transition-all"
                                     >

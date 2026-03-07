@@ -43,8 +43,8 @@ export default function PricingPage() {
                     </Link>
                     <div className="flex items-center gap-6">
                         <Link href="/contact" className="text-sm font-medium text-zinc-500 hover:text-zinc-900 transition-colors">Contact Sales</Link>
-                        <Link href="/sign-in" className="text-sm font-medium text-zinc-500 hover:text-zinc-900 transition-colors">Log In</Link>
-                        <Link href="/sign-up" className="text-sm font-bold bg-zinc-900 text-white px-4 py-2 rounded-full hover:bg-zinc-700 transition-colors">Get Started</Link>
+                        <Link href="/login" className="text-sm font-medium text-zinc-500 hover:text-zinc-900 transition-colors">Log In</Link>
+                        <Link href="/register" className="text-sm font-bold bg-zinc-900 text-white px-4 py-2 rounded-full hover:bg-zinc-700 transition-colors">Get Started</Link>
                     </div>
                 </div>
             </nav>
@@ -252,7 +252,7 @@ function PricingCard({ plan, isYearly, delay }: { plan: PlanConfig; isYearly: bo
 
                 {/* CTA button */}
                 <Link
-                    href="/sign-up"
+                    href="/register"
                     className={`
                         block w-full py-3.5 rounded-full text-center font-bold text-sm transition-all
                         ${plan.highlighted

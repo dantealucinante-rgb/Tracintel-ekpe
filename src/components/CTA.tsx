@@ -23,7 +23,7 @@ export default function CTA() {
                     </p>
                     <div className="flex justify-center relative z-10">
                         <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.98 }}>
-                            <Link href="/sign-up" className="inline-flex h-16 px-12 rounded-full bg-black text-white font-bold items-center gap-3 transition-all shadow-2xl shadow-black/20 text-lg">
+                            <Link href="/register" className="h-16 px-12 rounded-full bg-black text-white font-bold flex items-center justify-center gap-3 transition-all shadow-2xl shadow-black/20 hover:bg-black/80 text-lg">
                                 Start Free Trial <ArrowRight className="h-5 w-5" />
                             </Link>
                         </motion.div>

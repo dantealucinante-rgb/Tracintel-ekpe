@@ -44,11 +44,11 @@ export default function PlaceholderPage({ title, description, comingSoonItems }:
                     <div className="flex items-center gap-4">
                         {!session ? (
                             <>
-                                <Link href="/sign-in" className="text-sm font-medium text-black/60 hover:text-black transition-colors">
+                                <Link href="/login" className="text-sm font-medium text-black/60 hover:text-black transition-colors">
                                     Log In
                                 </Link>
                                 <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-                                    <Link href="/sign-up" className="bg-black text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
+                                    <Link href="/register" className="bg-black text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
                                         Start Free Trial
                                     </Link>
                                 </motion.div>
@@ -125,7 +125,7 @@ export default function PlaceholderPage({ title, description, comingSoonItems }:
                                 </Link>
                             </motion.div>
                             <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-                                <Link href="/sign-up" className="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-black hover:bg-black/90 text-white font-medium transition-colors shadow-lg shadow-black/10">
+                                <Link href="/register" className="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-black hover:bg-black/90 text-white font-medium transition-colors shadow-lg shadow-black/10">
                                     Get Early Access
                                 </Link>
                             </motion.div>
