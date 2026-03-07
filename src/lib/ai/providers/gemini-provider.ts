@@ -12,7 +12,7 @@ export class GeminiProvider implements ILlmProvider {
     private apiKey: string;
 
     constructor(apiKey?: string) {
-        this.apiKey = apiKey || process.env.GOOGLE_GEMINI_API_KEY || process.env.GOOGLE_API_KEY || '';
+        this.apiKey = apiKey || process.env.GOOGLE_GEMINI_API_KEY || '';
         if (!this.apiKey) {
             console.warn('GeminiProvider: Missing GOOGLE_GEMINI_API_KEY');
         }
