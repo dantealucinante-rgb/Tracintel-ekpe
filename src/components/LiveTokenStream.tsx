@@ -16,7 +16,7 @@ export default function LiveTokenStream({ rawText, isScanning }: LiveTokenStream
         if (!isScanning) return;
 
         // Simulate streaming tokens
-        const allTokens = rawText.split(' ');
+        const allTokens = (rawText ?? '').split(' ');
         let currentIndex = 0;
 
         const interval = setInterval(() => {
