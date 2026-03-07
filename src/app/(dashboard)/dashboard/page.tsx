@@ -136,7 +136,7 @@ export default function Dashboard() {
     </div>
   );
 
-  const { latestBaseline, latestStrategy, history } = stats;
+  const { latestBaseline = null, latestStrategy = null, history = [] } = stats ?? {};
   const latest = latestBaseline;
   const score = latestBaseline?.score || 0;
   const strategyScore = latestStrategy?.score || 0;
@@ -182,7 +182,7 @@ export default function Dashboard() {
   );
 
   // Empty State: No data yet
-  if (!latestBaseline && !isScanning) {
+  if (!latestBaseline) {
     return (
       <div className="flex h-[80vh] flex-col items-center justify-center p-10 text-center">
         <div className="w-20 h-20 rounded-3xl bg-black/[0.02] border border-black/5 flex items-center justify-center mb-8 animate-pulse">
