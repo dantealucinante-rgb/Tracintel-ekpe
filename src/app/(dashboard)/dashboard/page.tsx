@@ -143,11 +143,11 @@ export default function Dashboard() {
 
   // Competitor Scoring Logic (Frontend Only)
   const competitorStats = useMemo(() => {
-    if (!latestBaseline?.rawText || !latestBaseline?.competitors) return [];
+    if (!latestBaseline?.rawText || !latestBaseline?.competitors || !Array.isArray(latestBaseline.competitors)) return [];
 
     const text = latestBaseline.rawText.toLowerCase();
     const competitors = latestBaseline.competitors;
-    const brand = latestBaseline.brand.toLowerCase();
+    const brand = (latestBaseline.brand || '').toLowerCase();
 
     return competitors.map((comp: string) => {
       const compLower = comp.toLowerCase();
