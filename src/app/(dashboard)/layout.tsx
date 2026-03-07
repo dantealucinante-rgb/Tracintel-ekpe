@@ -10,11 +10,12 @@ import {
     BookOpen,
     Menu,
     X,
+    LogOut,
 } from "lucide-react";
 import Link from 'next/link';
 import Image from 'next/image';
 import { useState, useEffect } from 'react';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { createClient } from "@/lib/supabase/client";
 
@@ -39,8 +40,21 @@ export default function DashboardLayout({
 }) {
     const [session, setSession] = useState<any>(null);
     const pathname = usePathname();
+    const router = useRouter();
     const [mobileNavOpen, setMobileNavOpen] = useState(false);
+    const [isSigningOut, setIsSigningOut] = useState(false);
     const supabase = createClient();
+
+    const handleSignOut = async () => {
+        try {
+            setIsSigningOut(true);
+            await supabase.auth.signOut();
+            router.push('/login');
+        } catch (error) {
+            console.error('Error signing out:', error);
+            setIsSigningOut(false);
+        }
+    };
 
     useEffect(() => {
         const getSession = async () => {
@@ -110,6 +124,19 @@ export default function DashboardLayout({
                         <span className="text-[12px] font-sans font-medium text-white transition-opacity">OPTIMAL</span>
                     </div>
                 </div>
+            </div>
+
+            {/* Sign Out Button */}
+            <div className="px-4 py-2 border-t border-[#1E293B]">
+                <button
+                    onClick={handleSignOut}
+                    disabled={isSigningOut}
+                    className="flex items-center gap-3 w-full px-4 py-3 text-[#94A3B8] hover:bg-[#1E293B] hover:text-white transition-all disabled:opacity-50 text-left font-sans rounded-lg"
+                    style={{ fontSize: '13px' }}
+                >
+                    <LogOut className="h-[18px] w-[18px]" />
+                    <span className="font-medium">{isSigningOut ? 'Signing out...' : 'Sign Out'}</span>
+                </button>
             </div>
 
             {/* User Footer */}
