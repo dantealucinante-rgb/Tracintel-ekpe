@@ -50,7 +50,7 @@ export default function SourcesPage() {
 
     if (isLoading) {
         return (
-            <div className="min-h-screen bg-[#09090b] text-[#a1a1aa] font-sans pb-20">
+            <div className="min-h-screen bg-[#F9FAFB] text-[#374151] font-sans pb-20">
                 <div className="container mx-auto px-6 pt-24">
                     <DashboardSkeleton />
                 </div>
@@ -60,20 +60,20 @@ export default function SourcesPage() {
 
     if (!stats?.latest) {
         return (
-            <div className="min-h-screen bg-[#09090b] text-[#a1a1aa] flex flex-col items-center justify-center p-10 text-center">
-                <div className="w-20 h-20 rounded-3xl bg-white/[0.02] border border-white/5 flex items-center justify-center mb-8 animate-pulse text-white/10">
-                    <Database className="w-10 h-10" />
+            <div className="min-h-screen bg-[#F9FAFB] text-[#374151] flex flex-col items-center justify-center p-10 text-center">
+                <div className="w-16 h-16 rounded-[12px] bg-white border border-[#E5E7EB] flex items-center justify-center mb-8 shadow-sm">
+                    <Database className="w-8 h-8 text-[#111827]" />
                 </div>
-                <h2 className="text-4xl font-extrabold tracking-tighter text-white font-serif italic mb-4">No Data Points Indexed</h2>
-                <p className="text-sm text-zinc-500 max-w-sm mb-10 leading-relaxed">The Dark Funnel mapping requires an initial systemic scan.</p>
+                <h2 className="text-[16px] font-bold text-[#111827] mb-2">No Data Points Indexed</h2>
+                <p className="text-[13px] text-[#6B7280] max-w-sm mb-8 leading-relaxed">The Dark Funnel mapping requires an initial systemic scan.</p>
                 <button
                     onClick={() => {
                         if (!user) setShowAuthOverlay(true);
                         else window.location.href = "/dashboard";
                     }}
-                    className="h-16 px-10 bg-white text-black text-sm font-bold rounded-2xl flex items-center gap-3 hover:bg-zinc-200 transition-all"
+                    className="h-12 px-8 bg-[#111827] text-white text-[13px] font-bold rounded-[8px] flex items-center gap-3 hover:bg-black transition-all"
                 >
-                    <Zap className="w-4 h-4 text-[#007AFF]" />
+                    <Zap className="w-4 h-4" />
                     Initialize Scanning Protocol
                 </button>
             </div>
@@ -81,26 +81,26 @@ export default function SourcesPage() {
     }
 
     return (
-        <div className="min-h-screen bg-[#09090b] text-[#a1a1aa] font-sans pb-20 selection:bg-[#007AFF] selection:text-white">
+        <div className="min-h-screen bg-[#F9FAFB] text-[#374151] font-sans pb-20">
             {/* Top Bar */}
-            <div className="border-b border-white/5 bg-black/20 backdrop-blur-md sticky top-0 z-50">
+            <div className="border-b border-[#E5E7EB] bg-white sticky top-0 z-50">
                 <div className="container mx-auto px-6 h-14 flex items-center justify-between">
                     <div className="flex items-center gap-4">
                         <div className="flex items-center gap-2">
-                            <div className="w-2 h-2 rounded-full bg-[#34C759] animate-pulse" />
-                            <span className="text-[10px] font-mono tracking-widest uppercase font-bold text-[#34C759]">Protocol: DARK_FUNNEL_ACTIVE</span>
+                            <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                            <span className="text-[10px] uppercase font-bold text-[#111827] tracking-wider">Dark Funnel Protocol Active</span>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div className="container mx-auto px-6 pt-10 space-y-10">
+            <div className="container mx-auto px-6 pt-12 space-y-12">
                 <div className="max-w-4xl">
-                    <h1 className="text-6xl font-extrabold tracking-tighter text-white font-serif italic mb-6">
-                        AI Dark Funnel <span className="text-[#007AFF]">Intelligence</span>
+                    <h1 className="text-[22px] font-bold text-[#111827] mb-4">
+                        AI Dark Funnel Intelligence
                     </h1>
-                    <p className="text-lg font-light leading-relaxed max-w-2xl px-1">
-                        Tracintel maps your brand perception across non-indexed repositories, Reddit threads, and specialized research nodes.
+                    <p className="text-[14px] text-[#374151] leading-relaxed max-w-2xl">
+                        Map and monitor your brand authority across non-indexed repositories, research nodes, and specialized AI training sets.
                     </p>
                 </div>
 
@@ -108,27 +108,22 @@ export default function SourcesPage() {
                     <div className="lg:col-span-8 space-y-8">
                         <AIAuthorityTable />
 
-                        <div className="bg-white/[0.02] border border-white/5 rounded-[2.5rem] p-12 relative overflow-hidden group">
-                            <div className="absolute top-0 right-0 p-12 opacity-[0.03] pointer-events-none">
-                                <Network className="h-64 w-64 text-[#007AFF]" />
-                            </div>
+                        <div className="bg-white border border-[#E5E7EB] rounded-[12px] p-10 shadow-sm relative overflow-hidden">
                             <div className="relative">
-                                <h2 className="text-3xl font-bold tracking-tight text-white mb-8 flex items-center gap-3 font-serif italic">
-                                    <div className="w-8 h-8 rounded-xl bg-[#007AFF]/10 flex items-center justify-center">
-                                        <Database className="h-4 w-4 text-[#007AFF]" />
-                                    </div>
-                                    Neural Ingestion Cycle
+                                <h2 className="text-[18px] font-bold text-[#111827] mb-6 flex items-center gap-3">
+                                    Entity Recognition Cycle
                                 </h2>
-                                <p className="text-zinc-400 font-light leading-relaxed mb-6">
-                                    Models digest information in epochs. To influence recommendation weights, deterministic provenance must be established at the crawl layer.
+                                <p className="text-[14px] text-[#374151] leading-relaxed mb-8">
+                                    AI models process information in distinct epochs. To maintain a high citation ranking,
+                                    deterministic authority must be confirmed at the knowledge layer.
                                 </p>
-                                <div className="p-8 bg-[#007AFF]/5 border border-[#007AFF]/20 rounded-3xl">
-                                    <h4 className="text-[#007AFF] text-sm font-bold mb-4 flex items-center gap-2">
-                                        <Zap className="h-4 w-4" />
-                                        Deterministic Control
+                                <div className="p-8 bg-gray-50 border border-[#E5E7EB] rounded-[12px]">
+                                    <h4 className="text-[11px] font-bold text-[#111827] uppercase tracking-wider mb-4 flex items-center gap-2">
+                                        <ShieldCheck className="h-4 w-4" />
+                                        Authority Verification
                                     </h4>
-                                    <p className="text-sm text-zinc-400">
-                                        Automate technical specification distribution to the exact nodes crawled by multi-modal LLM indexers.
+                                    <p className="text-[13px] text-[#6B7280]">
+                                        Ensuring technical specifications are synchronized with the exact nodes used for model grounding.
                                     </p>
                                 </div>
                             </div>
@@ -136,33 +131,32 @@ export default function SourcesPage() {
                     </div>
 
                     <div className="lg:col-span-4 space-y-8">
-                        <div className="bg-black/40 border border-white/5 rounded-3xl p-8 backdrop-blur-xl">
-                            <h3 className="text-[10px] font-bold uppercase tracking-[0.2em] mb-6 text-white/40">Inference Glossary</h3>
+                        <div className="bg-white border border-[#E5E7EB] rounded-[12px] p-8 shadow-sm">
+                            <h3 className="text-[11px] font-bold uppercase tracking-wider mb-6 text-[#6B7280]">Optimization Terms</h3>
                             <nav className="space-y-4">
-                                {["Semantic Anchor", "Vector Manifold", "Deterministic Provenance", "Latent Density"].map((item, i) => (
+                                {["Semantic Authority", "Model Manifold", "Knowledge Provenance", "Latent Space"].map((item, i) => (
                                     <div key={i} className="flex items-center justify-between group cursor-pointer">
-                                        <span className="text-xs font-bold text-white/60 group-hover:text-[#007AFF] transition-colors">{item}</span>
-                                        <ChevronRight className="h-3 w-3 text-white/20" />
+                                        <span className="text-[13px] font-medium text-[#374151] group-hover:text-[#111827] transition-colors">{item}</span>
+                                        <ChevronRight className="h-4 w-4 text-gray-300" />
                                     </div>
                                 ))}
                             </nav>
                         </div>
 
-                        {/* Domain Status Cards with Graceful Fallbacks */}
-                        <div className="space-y-4">
+                        <div className="space-y-3">
                             {[
-                                { name: "OpenAI Indexer", status: isAiConfigured ? "Active" : "Keys Required", icon: ShieldCheck, color: isAiConfigured ? "text-[#34C759]" : "text-[#FF3B30]" },
-                                { name: "Shopify Sync", status: isShopifyConnected ? "Active" : "Setup Required", icon: Link2, color: isShopifyConnected ? "text-[#34C759]" : "text-[#FFCC00]" },
-                                { name: "Google SGE Bot", status: "Monitoring", icon: Globe, color: "text-[#007AFF]" },
+                                { name: "OpenAI Indexer", status: isAiConfigured ? "Active" : "Keys Required", icon: ShieldCheck, color: isAiConfigured ? "bg-emerald-500" : "bg-red-500", text: isAiConfigured ? "text-emerald-600" : "text-red-600" },
+                                { name: "Shopify Sync", status: isShopifyConnected ? "Active" : "Setup Required", icon: Link2, color: isShopifyConnected ? "bg-emerald-500" : "bg-amber-500", text: isShopifyConnected ? "text-emerald-600" : "text-amber-600" },
+                                { name: "Google AI Bot", status: "Active", icon: Globe, color: "bg-emerald-500", text: "text-emerald-600" },
                             ].map((row, i) => (
-                                <div key={i} className="bg-white/5 border border-white/5 rounded-2xl p-4 flex items-center justify-between group hover:border-[#007AFF]/20 transition-all">
+                                <div key={i} className="bg-white border border-[#E5E7EB] rounded-[12px] p-4 flex items-center justify-between shadow-sm">
                                     <div className="flex items-center gap-3">
-                                        <row.icon className={cn("h-4 w-4", row.color)} />
-                                        <span className="text-xs font-bold text-white/60">{row.name}</span>
+                                        <row.icon className="h-4 w-4 text-[#111827]" />
+                                        <span className="text-[13px] font-medium text-[#374151]">{row.name}</span>
                                     </div>
                                     <div className="flex items-center gap-2">
-                                        {row.status.includes("Required") && <AlertCircle className="h-3 w-3 text-[#FFCC00]" />}
-                                        <span className={cn("text-[10px] font-mono uppercase font-bold", row.color)}>{row.status}</span>
+                                        <div className={cn("w-1.5 h-1.5 rounded-full animate-pulse", row.color)} />
+                                        <span className={cn("text-[11px] font-bold uppercase tracking-wider", row.text)}>{row.status}</span>
                                     </div>
                                 </div>
                             ))}

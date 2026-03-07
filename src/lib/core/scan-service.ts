@@ -149,6 +149,7 @@ export class ScanService {
                     select: {
                         provider: true,
                         providerUsed: true,
+                        rawText: true,
                         createdAt: true
                     }
                 }
@@ -190,8 +191,12 @@ export class ScanService {
 
             return {
                 id: scan.id,
+                brand: scan.brand,
+                industry: scan.industry,
+                competitors: scan.competitors,
                 score: SomEngine.calculateAggregateScore(metrics, providerUsed),
                 latentDensity: metrics.latentDensity,
+                rawText: scan.llmResponses[0]?.rawText || '',
                 date: scan.createdAt,
                 breakdown: {
                     direct: Math.round(metrics.mentionFrequency * 100),

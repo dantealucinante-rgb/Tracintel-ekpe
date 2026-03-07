@@ -78,7 +78,7 @@ export default function ModelsPage() {
 
     if (statsLoading) {
         return (
-            <div className="min-h-screen bg-[#09090b] text-[#a1a1aa] font-sans pb-20">
+            <div className="min-h-screen bg-[#F9FAFB] text-[#374151] font-sans pb-20">
                 <div className="container mx-auto px-6 pt-24">
                     <DashboardSkeleton />
                 </div>
@@ -88,12 +88,12 @@ export default function ModelsPage() {
 
     if (!stats?.latest) {
         return (
-            <div className="min-h-screen bg-[#09090b] text-[#a1a1aa] flex flex-col items-center justify-center p-10 text-center">
-                <div className="w-20 h-20 rounded-3xl bg-white/[0.02] border border-white/5 flex items-center justify-center mb-8 animate-pulse text-white/10">
-                    <Target className="w-10 h-10" />
+            <div className="min-h-screen bg-[#F9FAFB] text-[#374151] flex flex-col items-center justify-center p-10 text-center">
+                <div className="w-16 h-16 rounded-[12px] bg-white border border-[#E5E7EB] flex items-center justify-center mb-8 shadow-sm">
+                    <Target className="w-8 h-8 text-[#111827]" />
                 </div>
-                <h2 className="text-4xl font-extrabold tracking-tighter text-white font-serif italic mb-4">Models in Stasis</h2>
-                <p className="text-sm text-zinc-500 max-w-sm mb-10 leading-relaxed font-medium">Latent bias mapping requires comparative inference results. Run a system scan to benchmark model responses.</p>
+                <h2 className="text-[16px] font-bold text-[#111827] mb-2">Models in Stasis</h2>
+                <p className="text-[13px] text-[#6B7280] max-w-sm mb-8 leading-relaxed">Latent bias mapping requires comparative inference results. Run a system scan to benchmark model responses.</p>
                 <button
                     onClick={() => {
                         if (!user) {
@@ -105,9 +105,9 @@ export default function ModelsPage() {
                             window.location.href = "/dashboard";
                         }
                     }}
-                    className="h-16 px-10 bg-white text-black text-sm font-bold rounded-2xl flex items-center gap-3 hover:bg-zinc-200 transition-all font-mono tracking-widest uppercase"
+                    className="h-12 px-8 bg-[#111827] text-white text-[13px] font-bold rounded-[8px] flex items-center gap-3 hover:bg-black transition-all"
                 >
-                    <Zap className="w-4 h-4 text-[#007AFF]" />
+                    <Zap className="w-4 h-4" />
                     Compute Baseline Benchmark
                 </button>
             </div>
@@ -115,30 +115,28 @@ export default function ModelsPage() {
     }
 
     return (
-        <div className="min-h-screen bg-[#09090b] text-[#a1a1aa] font-sans pb-20 selection:bg-[#007AFF] selection:text-white">
+        <div className="min-h-screen bg-[#F9FAFB] text-[#374151] font-sans pb-20">
             {/* Top Bar */}
-            <div className="border-b border-white/5 bg-black/20 backdrop-blur-md sticky top-0 z-50">
+            <div className="border-b border-[#E5E7EB] bg-white sticky top-0 z-50">
                 <div className="container mx-auto px-6 h-14 flex items-center justify-between">
                     <div className="flex items-center gap-4">
                         <div className="flex items-center gap-2">
-                            <div className="w-2 h-2 rounded-full bg-[#5856D6] animate-pulse" />
-                            <span className="text-[10px] font-mono tracking-widest uppercase font-bold text-[#5856D6]">Protocol: TRIAD_BENCHMARK_v1</span>
+                            <div className="w-2 h-2 rounded-full bg-indigo-500 animate-pulse" />
+                            <span className="text-[10px] uppercase font-bold text-[#111827] tracking-wider">Model Benchmarking Active</span>
                         </div>
-                        <div className="h-4 w-[1px] bg-white/10" />
-                        <span className="text-[10px] font-mono text-white/20 uppercase tracking-widest hidden md:block">Logic_Mode: Multi_Inference</span>
                     </div>
                 </div>
             </div>
 
-            <div className="container mx-auto px-6 pt-10 space-y-10">
+            <div className="container mx-auto px-6 pt-12 space-y-12">
                 {/* Hero Section */}
                 <div className="max-w-4xl">
-                    <h1 className="text-6xl font-extrabold tracking-tighter text-white font-serif italic mb-6">
-                        The Triad of <span className="text-[#007AFF]">Recommendation Logic</span>
+                    <h1 className="text-[22px] font-bold text-[#111827] mb-4">
+                        Model Comparison {"&"} Recommendation Logic
                     </h1>
-                    <p className="text-lg font-light leading-relaxed max-w-2xl text-zinc-400">
-                        Large Language Models (LLMs) are not neutral. Each architecture possesses a unique semantic bias.
-                        We benchmark GPT-4o, Claude 3.5, and Gemini 1.5 to calculate which {"\""}Inference King{"\""} is currently prioritizing your brand signal.
+                    <p className="text-[14px] text-[#374151] leading-relaxed max-w-2xl">
+                        AI models are not neutral. Each architecture possesses a unique semantic bias.
+                        We benchmark GPT-4, Claude, and Gemini to identify which model is currently prioritizing your brand signal.
                     </p>
                 </div>
 
@@ -153,23 +151,23 @@ export default function ModelsPage() {
                         const isActive = status === "Active";
 
                         return (
-                            <div key={provider.id} className="bg-black/40 border border-white/5 rounded-2xl p-6 flex items-center justify-between group hover:border-[#007AFF]/20 transition-all backdrop-blur-xl">
+                            <div key={provider.id} className="bg-white border border-[#E5E7EB] rounded-[12px] p-6 flex items-center justify-between shadow-sm">
                                 <div className="flex items-center gap-4">
                                     <div className={cn(
-                                        "w-10 h-10 rounded-xl flex items-center justify-center transition-colors",
-                                        isActive ? "bg-[#007AFF]/5 text-[#007AFF]" : "bg-white/5 text-white/10"
+                                        "w-10 h-10 rounded-[8px] flex items-center justify-center transition-colors",
+                                        isActive ? "bg-gray-50 text-[#111827]" : "bg-gray-50 text-gray-300"
                                     )}>
                                         <provider.icon className="h-5 w-5" />
                                     </div>
                                     <div>
-                                        <div className="text-[10px] font-bold text-white/40 uppercase tracking-widest">{provider.label}</div>
-                                        <div className="text-[11px] font-mono text-white/60 font-bold uppercase">Status: {status}</div>
+                                        <div className="text-[11px] font-bold text-[#6B7280] uppercase tracking-wider">{provider.label}</div>
+                                        <div className="text-[12px] text-[#374151] font-medium">Status: {status}</div>
                                     </div>
                                 </div>
                                 {isActive ? (
-                                    <CheckCircle2 className="h-5 w-5 text-[#34C759]" />
+                                    <CheckCircle2 className="h-5 w-5 text-emerald-500" />
                                 ) : (
-                                    <XCircle className="h-5 w-5 text-white/10" />
+                                    <XCircle className="h-5 w-5 text-gray-200" />
                                 )}
                             </div>
                         );
@@ -185,56 +183,43 @@ export default function ModelsPage() {
                         {/* Triad Model Cards */}
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                             {MODELS_STATIC.map((model, i) => (
-                                <div key={i} className="bg-white/[0.02] border border-white/5 rounded-3xl p-8 hover:bg-white/[0.04] transition-all relative overflow-hidden group">
-                                    <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
-                                        <Layers className="h-12 w-12 text-[#007AFF]" />
-                                    </div>
-                                    <h3 className="text-white font-bold text-lg mb-1">{model.name}</h3>
-                                    <div className="text-[10px] font-mono font-bold text-[#007AFF] uppercase tracking-widest mb-4">{model.tag}</div>
-                                    <p className="text-xs text-zinc-500 font-light leading-relaxed">{model.description}</p>
-                                    <div className="mt-6 pt-6 border-t border-white/5">
-                                        <div className="text-[9px] font-bold text-white/20 uppercase tracking-[0.2em] mb-2">Primary Bias:</div>
-                                        <span className="text-[10px] font-mono text-zinc-400 font-bold">{model.bias}</span>
+                                <div key={i} className="bg-white border border-[#E5E7EB] rounded-[12px] p-8 shadow-sm relative overflow-hidden group">
+                                    <h3 className="text-[#111827] font-bold text-[16px] mb-1">{model.name}</h3>
+                                    <div className="text-[11px] font-bold text-[#111827] uppercase tracking-wider mb-4">{model.tag}</div>
+                                    <p className="text-[13px] text-[#374151] leading-relaxed">{model.description}</p>
+                                    <div className="mt-6 pt-6 border-t border-[#E5E7EB]">
+                                        <div className="text-[11px] font-bold text-[#6B7280] uppercase tracking-wider mb-2">Primary Bias:</div>
+                                        <span className="text-[12px] text-[#374151] font-medium">{model.bias}</span>
                                     </div>
                                 </div>
                             ))}
                         </div>
 
                         {/* Benchmark Writeup */}
-                        <div className="bg-white/[0.02] border border-white/5 rounded-[2.5rem] p-12 relative overflow-hidden group">
-                            <h2 className="text-3xl font-bold tracking-tight text-white mb-8 flex items-center gap-3 italic font-serif">
-                                <div className="w-8 h-8 rounded-xl bg-[#007AFF]/10 flex items-center justify-center">
-                                    <Binary className="h-4 w-4 text-[#007AFF]" />
-                                </div>
-                                Temperature vs. Top-P: The Recommendation Threshold
+                        <div className="bg-white border border-[#E5E7EB] rounded-[12px] p-10 shadow-sm">
+                            <h2 className="text-[18px] font-bold text-[#111827] mb-6 flex items-center gap-3">
+                                Inference Parameters {"&"} Recommendation Logic
                             </h2>
-                            <div className="prose prose-invert prose-zinc max-w-none text-zinc-400 font-light leading-relaxed">
-                                <p className="text-lg mb-8 text-zinc-300">
-                                    When an AI model recommends your brand, its decision-making is governed by two critical hyperparameters: <strong>Temperature</strong> and <strong>Top-P (Nucleus Sampling)</strong>. These settings determine whether a model is "creative" or "deterministic."
+                            <div className="space-y-6 text-[14px] text-[#374151] leading-relaxed">
+                                <p>
+                                    When an AI model recommends your brand, its decision-making is governed by critical hyperparameters like <strong>Temperature</strong> and <strong>Top-P</strong>. These settings determine whether a model is deterministic or creative.
                                 </p>
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-12 my-12">
-                                    <div className="bg-black/40 border border-white/5 p-8 rounded-3xl">
-                                        <h4 className="text-[#007AFF] text-xs font-mono font-bold uppercase mb-4 tracking-widest">Temperature (Entropy Control)</h4>
-                                        <p className="text-xs text-zinc-500 mb-4">
-                                            Temperature controls the "flatness" of the probability distribution. At T=0.2, the model is highly deterministic—it will only cite the most verified factual nodes. At T=0.8, it becomes more creative, often pulling from "hallucinated" edge-case training data.
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 my-8">
+                                    <div className="bg-gray-50 border border-[#E5E7EB] p-6 rounded-[12px]">
+                                        <h4 className="text-[11px] font-bold text-[#6B7280] uppercase tracking-wider mb-2">Grounding Control</h4>
+                                        <p className="text-[13px] text-[#374151]">
+                                            Deterministic modes prioritize brands with high factual density and technical groundedness.
                                         </p>
-                                        <div className="text-[10px] font-mono text-white/20 italic">
-                                            Impact: Low Temperature favors brands with high technical groundedness.
-                                        </div>
                                     </div>
-                                    <div className="bg-black/40 border border-white/5 p-8 rounded-3xl">
-                                        <h4 className="text-[#34C759] text-xs font-mono font-bold uppercase mb-4 tracking-widest">Top-P (Sample Filter)</h4>
-                                        <p className="text-xs text-zinc-500 mb-4">
-                                            Top-P limits the model to a "nucleus" of tokens whose cumulative probability is P. If P=0.1, the model only considers the top 10% of likely words. If your brand isn't in this top 10% bracket, it will never be recommended, regardless of logic.
+                                    <div className="bg-gray-50 border border-[#E5E7EB] p-6 rounded-[12px]">
+                                        <h4 className="text-[11px] font-bold text-[#6B7280] uppercase tracking-wider mb-2">Sampling Threshold</h4>
+                                        <p className="text-[13px] text-[#374151]">
+                                            Filters out brands with low semantic weight, ensuring only primary authority sources are cited.
                                         </p>
-                                        <div className="text-[10px] font-mono text-white/20 italic">
-                                            Impact: Top-P filters out brands with low semantic weight density.
-                                        </div>
                                     </div>
                                 </div>
-                                <h3 className="text-xl font-bold text-white mb-6">Winning the Zero-Shot Inference Cycle</h3>
-                                <p className="mb-6">
-                                    To ensure your store is recommended across all sampling thresholds, Tracintel implements <strong>Inference Hardening</strong>. We saturate the latent manifold with so many deterministic technical specifications that your brand's token probability remains high even at P=0.05. This means that even in the most "strict" logic modes (zero temperature), the LLM still arrives at your product as the optimal solution.
+                                <p>
+                                    By saturating the model manifolds with deterministic data, we ensure your brand remains a high-probability prediction across all inference cycles.
                                 </p>
                             </div>
                         </div>
@@ -298,20 +283,20 @@ export default function ModelsPage() {
                         </div>
 
                         {/* Comparison Matrix Small */}
-                        <div className="bg-white/5 border border-white/5 rounded-[2rem] p-8">
-                            <h4 className="text-xs font-bold text-white uppercase tracking-widest mb-6 border-b border-black/5 pb-4">Inference Speed Avg</h4>
-                            <div className="space-y-4 font-mono text-[10px]">
+                        <div className="bg-white border border-[#E5E7EB] rounded-[12px] p-8 shadow-sm">
+                            <h4 className="text-[11px] font-bold text-[#6B7280] uppercase tracking-wider mb-6 pb-4 border-b border-gray-100">Inference Latency</h4>
+                            <div className="space-y-4 text-[13px]">
                                 <div className="flex justify-between">
-                                    <span className="text-white/40 italic">OpenAI Latency</span>
-                                    <span className="text-[#007AFF]">1.2s</span>
+                                    <span className="text-[#374151] font-medium">GPT-4 Response</span>
+                                    <span className="text-[#111827] font-bold">1.2s</span>
                                 </div>
                                 <div className="flex justify-between">
-                                    <span className="text-white/40 italic">Anthropic Latency</span>
-                                    <span className="text-[#007AFF]">0.8s</span>
+                                    <span className="text-[#374151] font-medium">Claude Response</span>
+                                    <span className="text-[#111827] font-bold">0.8s</span>
                                 </div>
                                 <div className="flex justify-between">
-                                    <span className="text-white/40 italic">Gemini Latency</span>
-                                    <span className="text-[#007AFF]">1.4s</span>
+                                    <span className="text-[#374151] font-medium">Gemini Response</span>
+                                    <span className="text-[#111827] font-bold">1.4s</span>
                                 </div>
                             </div>
                         </div>
@@ -319,22 +304,18 @@ export default function ModelsPage() {
                 </div>
 
                 {/* Strategy Recommendation */}
-                <section className="bg-white/5 border border-white/5 rounded-[3rem] p-16 relative overflow-hidden">
-                    <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-[#007AFF]/50 to-transparent" />
+                <section className="bg-white border border-[#E5E7EB] rounded-[12px] p-12 shadow-sm">
                     <div className="flex flex-col md:flex-row gap-16 items-start">
                         <div className="md:w-1/3">
-                            <h2 className="text-4xl font-bold tracking-tighter text-white font-serif italic mb-6">Strategic <br /> Recommendation</h2>
-                            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/5 border border-white/10 text-[10px] font-bold text-zinc-400 uppercase tracking-widest">Revenue Tier: Enterprise ($10k+/mo)</div>
+                            <h2 className="text-[22px] font-bold text-[#111827] leading-tight mb-4">Tactical Recommendation</h2>
+                            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-gray-50 border border-[#E5E7EB] text-[10px] font-bold text-[#6B7280] uppercase tracking-wider">Enterprise Tier Priority</div>
                         </div>
-                        <div className="md:w-2/3 prose prose-invert prose-zinc max-w-none text-zinc-400 font-light leading-relaxed">
-                            <p className="text-lg mb-8">
-                                For high-earning Shopify merchants, the most common pitfall is attempting a {"\""}one-size-fits-all{"\""} SEO approach to AI. At this scale, you are not just competing for keywords; you are competing for <strong>Model Alignment</strong>. GPT-4o, Claude 3.5, and Gemini 1.5 all interpret your brand data through different lens, and you must calibrate your metadata for each.
+                        <div className="md:w-2/3 space-y-6 text-[14px] text-[#374151] leading-relaxed">
+                            <p>
+                                Calibration for model alignment is critical. GPT-4, Claude, and Gemini each interpret your brand signals through different deterministic manifolds.
                             </p>
-                            <p className="text-lg">
-                                We recommend a <strong>Triad Optimization Protocol</strong>. For GPT-4o, you must harden your product data with technical specifications—LLMs assign logic-weight to detailed attribute matrices. For Claude 3.5, pivot your content strategy toward storytelling and positive community validation—Claude is highly sensitive to the {"\""}Sentiment Manifold{"\""} and will de-prioritize brands with clinical or generic descriptions. Finally, for Gemini 1.5, ensure your brand is deeply integrated into Google{"'"}s knowledge graphs. Use schema markups that link directly to your high-authority unindexed sources to anchor Gemini{"'"}s librarian logic.
-                            </p>
-                            <p className="text-lg mt-8">
-                                Use the <strong>Bias Displacement Chart</strong> in our dashboard to identify which model is currently {"\""}undervaluing{"\""} your brand. If you see high luxury-displacement in GPT-4o but low visibility in Claude, it means your technical specs are clear but your brand narrative is thin. At the $10k/month revenue level, your priority should be balancing these biases to ensure that no matter which model a high-intent customer uses, your brand appears as the inevitable, top-tier recommendation.
+                            <p>
+                                We recommend a <strong>Triad Calibration Protocol</strong>. Harden your factual data for GPT-4, refine your sentiment narrative for Claude, and ensure Knowledge Graph synchronization for Gemini.
                             </p>
                         </div>
                     </div>

@@ -106,183 +106,154 @@ export default function PromptsPage() {
     }, [logs]);
 
     return (
-        <div className="min-h-screen bg-[#09090b] text-[#a1a1aa] font-sans pb-20 selection:bg-[#007AFF] selection:text-white">
+        <div className="min-h-screen bg-[#F9FAFB] text-[#374151] font-sans pb-20">
             {/* Top Bar / Metadata Header */}
-            <div className="border-b border-white/5 bg-black/20 backdrop-blur-md sticky top-0 z-50">
+            <div className="border-b border-[#E5E7EB] bg-white sticky top-0 z-50">
                 <div className="container mx-auto px-6 h-14 flex items-center justify-between">
                     <div className="flex items-center gap-4">
                         <div className="flex items-center gap-2">
-                            <div className="w-2 h-2 rounded-full bg-[#007AFF] animate-pulse" />
-                            <span className="text-[10px] font-mono tracking-widest uppercase font-bold text-[#007AFF]">Protocol: GEO_Layer_v9</span>
+                            <div className="w-2 h-2 rounded-full bg-[#111827] animate-pulse" />
+                            <span className="text-[10px] uppercase font-bold text-[#111827] tracking-wider">Optimization Engine Active</span>
                         </div>
-                        <div className="h-4 w-[1px] bg-white/10" />
-                        <span className="text-[10px] font-mono text-white/20 uppercase tracking-widest hidden md:block">System Status: Infusion_Active</span>
-                    </div>
-                    <div className="text-[10px] font-mono text-white/20 uppercase tracking-widest">
-                        Vector_Seed: 0x7F...3B92
                     </div>
                 </div>
             </div>
 
-            <div className="container mx-auto px-6 pt-10 space-y-10">
+            <div className="container mx-auto px-6 pt-12 space-y-12">
                 {/* Hero Section */}
                 <div className="max-w-4xl">
-                    <h1 className="text-6xl font-extrabold tracking-tighter text-white font-serif italic mb-6">
-                        Latent Space Priming {"&"} <span className="text-[#007AFF]">Token Weighting</span>
+                    <h1 className="text-[22px] font-bold text-[#111827] mb-4">
+                        Latent Strategy {"&"} Sentiment Priming
                     </h1>
-                    <p className="text-lg font-light leading-relaxed max-w-2xl">
-                        Tracintel doesn{"'"}t just {"\""}write{"\""} prompts; it calculates the precise semantic distance between your brand and high-intent search clusters.
-                        By manipulating the latent space topology, we ensure your messaging remains the high-probability prediction in stochastic inference loops.
+                    <p className="text-[14px] text-[#374151] leading-relaxed max-w-2xl">
+                        Design and deploy semantic anchors to influence how AI models perceive and recommend your brand.
+                        Optimize your digital footprint for deterministic visibility across generative engines.
                     </p>
                 </div>
 
                 {/* Main Content Grid */}
-                <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
 
                     {/* Left Column: Technical Analysis */}
                     <div className="lg:col-span-8 space-y-8">
 
                         {/* Vector Displacement Log */}
-                        <div className="bg-black/40 border border-white/5 rounded-3xl overflow-hidden shadow-2xl backdrop-blur-xl">
-                            <div className="px-6 py-4 border-b border-white/5 flex items-center justify-between bg-white/[0.02]">
+                        <div className="bg-white border border-[#E5E7EB] rounded-[12px] overflow-hidden shadow-sm">
+                            <div className="px-6 py-4 border-b border-[#E5E7EB] flex items-center justify-between bg-gray-50/50">
                                 <div className="flex items-center gap-2">
-                                    <Terminal className="h-4 w-4 text-[#007AFF]" />
-                                    <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-[#007AFF]">Vector Displacement Log</span>
-                                </div>
-                                <div className="flex gap-1.5">
-                                    <div className="w-2 h-2 rounded-full bg-white/5" />
-                                    <div className="w-2 h-2 rounded-full bg-white/5" />
-                                    <div className="w-2 h-2 rounded-full bg-[#007AFF]/20" />
+                                    <Activity className="h-4 w-4 text-[#111827]" />
+                                    <span className="text-[11px] font-bold uppercase tracking-wider text-[#111827]">Engine Activity Feed</span>
                                 </div>
                             </div>
                             <div
                                 ref={terminalRef}
-                                className="p-8 h-64 font-mono text-[11px] leading-relaxed overflow-y-auto space-y-1 scrollbar-hide"
+                                className="p-6 h-64 font-mono text-[11px] leading-relaxed overflow-y-auto space-y-1 scrollbar-hide bg-white"
                             >
                                 {logs.map((log, i) => (
                                     <motion.div
                                         key={i}
-                                        initial={{ opacity: 0, x: -5 }}
-                                        animate={{ opacity: 1, x: 0 }}
+                                        initial={{ opacity: 0 }}
+                                        animate={{ opacity: 1 }}
                                         className={cn(
-                                            log.includes('[SUCCESS]') ? "text-[#34C759]" :
-                                                log.includes('[WARN]') ? "text-amber-400/80" :
-                                                    log.includes('[DEBUG]') ? "text-[#007AFF]/60" :
-                                                        log.includes('[INFO]') ? "text-white/40" : "text-white/20"
+                                            log.includes('[SUCCESS]') ? "text-emerald-600" :
+                                                log.includes('[WARN]') ? "text-amber-600" :
+                                                    log.includes('[DEBUG]') ? "text-[#111827]/40" :
+                                                        log.includes('[INFO]') ? "text-[#6B7280]" : "text-[#6B7280]"
                                         )}
                                     >
-                                        <span className="select-none mr-3 opacity-20">{">"}</span>
+                                        <span className="mr-3 opacity-20">#</span>
                                         {log}
                                     </motion.div>
                                 ))}
+                                {logs.length === 0 && (
+                                    <div className="h-full flex items-center justify-center flex-col text-[#6B7280]">
+                                        <span className="text-[13px] font-medium">Initializing feeds...</span>
+                                    </div>
+                                )}
                             </div>
                         </div>
 
                         {/* Semantic Dominance Writeup */}
-                        <div className="bg-white/[0.02] border border-white/5 rounded-[2.5rem] p-12 relative overflow-hidden group">
-                            <div className="absolute top-0 right-0 p-12 opacity-[0.03] pointer-events-none group-hover:opacity-[0.05] transition-opacity">
-                                <Cpu className="h-64 w-64 text-[#007AFF]" />
-                            </div>
-
-                            <div className="max-w-3xl relative">
-                                <h2 className="text-3xl font-bold tracking-tight text-white mb-8 flex items-center gap-3">
-                                    <div className="w-8 h-8 rounded-xl bg-[#007AFF]/10 flex items-center justify-center">
-                                        <Target className="h-4 w-4 text-[#007AFF]" />
-                                    </div>
-                                    The Architecture of Semantic Anchor Points
+                        <div className="bg-white border border-[#E5E7EB] rounded-[12px] p-10 shadow-sm">
+                            <div className="max-w-3xl">
+                                <h2 className="text-[18px] font-bold text-[#111827] mb-6 flex items-center gap-3">
+                                    The Architecture of Semantic Authority
                                 </h2>
 
-                                <div className="prose prose-invert prose-zinc max-w-none">
-                                    <p className="text-zinc-400 text-lg leading-relaxed font-light mb-8">
-                                        In the generative economy, brand visibility is no longer a function of keywords, but of <strong>Semantic Anchor Points</strong>.
-                                        AI models like GPT-4o and Gemini do not simply store text; they map concepts into a high-dimensional vector space.
-                                        When a model encounters a brand name, it doesn{"'"}t just identify it as a string—it calculates the proximity of that string to specific adjectives and concepts.
-                                        For instance, if Tracintel is consistently mentioned alongside phrases like {"\""}deterministic architecture{"\""} and {"\""}low-latency inference,{"\""} the model{"'"}s latent manifold undergoes a shift.
+                                <div className="space-y-6 text-[14px] text-[#374151] leading-relaxed">
+                                    <p>
+                                        In the generative economy, brand visibility is no longer a function of keywords, but of <strong>Semantic Authority</strong>.
+                                        AI models map concepts into a high-dimensional vector space.
+                                        When a model encounters your brand, it calculates the proximity to specific attributes and user intents.
                                     </p>
 
-                                    <p className="text-zinc-400 text-lg leading-relaxed font-light mb-8">
-                                        This shift creates what we call an <strong>Anchor Point</strong>. An Anchor Point is a region in the latent space where the probability distribution is heavily weighted toward a specific set of attributes.
-                                        When a user asks, {"\""}What is a reliable GEO platform?{"\""} the LLM traverses its learned topology and finds that Tracintel sits directly at the intersection of {"\""}Reliable,{"\""} {"\""}Enterprise,{"\""} and {"\""}Analytics.{"\""}
-                                        Without these anchors, your brand remains a {"\""}floating token,{"\""} easily displaced by competitor noise or stochastic hallucinations.
-                                    </p>
-
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8 my-12">
-                                        <div className="bg-black/40 border border-white/5 p-6 rounded-2xl">
-                                            <h4 className="text-[#007AFF] text-xs font-mono font-bold uppercase mb-4 tracking-widest">Concept Clustering</h4>
-                                            <p className="text-sm text-zinc-500 font-light">
-                                                Models group descriptors based on training co-occurrence. We engineer your outbound signals to force co-occurrence with high-value enterprise clusters.
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 my-8">
+                                        <div className="bg-gray-50 border border-[#E5E7EB] p-6 rounded-[12px]">
+                                            <h4 className="text-[11px] font-bold text-[#6B7280] uppercase tracking-wider mb-2">Intent Mapping</h4>
+                                            <p className="text-[13px] text-[#374151]">
+                                                Forcing co-occurrence with high-value search clusters to ensure your brand is the default recommendation.
                                             </p>
                                         </div>
-                                        <div className="bg-black/40 border border-white/5 p-6 rounded-2xl">
-                                            <h4 className="text-[#007AFF] text-xs font-mono font-bold uppercase mb-4 tracking-widest">Weight Saturation</h4>
-                                            <p className="text-sm text-zinc-500 font-light">
-                                                By saturating technical nodes with specific product metrics, we increase the token weight of your brand, making it a "preferred prediction" for recommendation queries.
+                                        <div className="bg-gray-50 border border-[#E5E7EB] p-6 rounded-[12px]">
+                                            <h4 className="text-[11px] font-bold text-[#6B7280] uppercase tracking-wider mb-2">Entity Reinforcement</h4>
+                                            <p className="text-[13px] text-[#374151]">
+                                                Saturating knowledge nodes with deterministic data to increase citation probability.
                                             </p>
                                         </div>
                                     </div>
 
-                                    <h3 className="text-xl font-bold text-white mb-6">Manifesting Deterministic Authority</h3>
-                                    <p className="text-zinc-400 leading-relaxed font-light mb-8">
-                                        To achieve true Semantic Dominance, you must transition from descriptive marketing to <strong>Engineering-First Content</strong>.
-                                        AI models are inherently tuned for utility; they prioritize data nodes that exhibit high groundedness and internal consistency.
-                                        If your technical documentation, blog posts, and forum mentions all align on a single set of performance specs (e.g., {"\""}99.9% uptime inference{"\""}), the model assigns a high confidence score to those facts.
-                                        This consensus creates a {"\""}Logic Lock,{"\""} making it statistically difficult for the AI to recommend a competitor with lower-confidence data.
-                                    </p>
-
-                                    <p className="text-zinc-400 leading-relaxed font-light">
-                                        Furthermore, we utilize <strong>Consensus Anchoring</strong>. By distributing consistent brand attributes across
-                                        multiple high-authority nodes in the training set (blogs, technical docs, forum logs), we create a "Cross-Validation"
-                                        loop within the LLM. When the model sees the same high-entropy facts from multiple directions in its latent memory, it
-                                        assigns a significantly higher confidence score to that data, making it the primary cited source.
+                                    <p>
+                                        By aligning your technical documentation and public signals, you create a "Consensus Loop"
+                                        within AI memory, significantly increasing the model&apos;s confidence in your brand as a primary source.
                                     </p>
                                 </div>
                             </div>
                         </div>
 
                         {/* Strategy Interaction Form */}
-                        <div className="bg-white/[0.02] border border-white/5 rounded-[2.5rem] p-12">
-                            <h3 className="text-xl font-bold text-white mb-6 flex items-center gap-3 font-serif italic">
-                                Set Optimization Strategy
+                        <div className="bg-white border border-[#E5E7EB] rounded-[12px] p-10 shadow-sm">
+                            <h3 className="text-[16px] font-bold text-[#111827] mb-8">
+                                Optimization Parameters
                             </h3>
-                            <div className="space-y-6">
+                            <div className="space-y-8">
                                 <div>
-                                    <label className="text-[10px] font-mono font-bold text-white/40 uppercase tracking-widest block mb-4">Focus Description</label>
+                                    <label className="text-[11px] font-bold text-[#6B7280] uppercase tracking-wider block mb-3">Model Focus Description</label>
                                     <textarea
                                         value={description}
                                         onChange={(e) => setDescription(e.target.value)}
-                                        className="w-full h-32 bg-black/40 border border-white/5 rounded-2xl p-6 text-sm text-white focus:outline-none focus:border-[#007AFF]/50 transition-colors"
-                                        placeholder="Enter the primary product description for model grounding..."
+                                        className="w-full h-32 bg-gray-50 border border-[#E5E7EB] rounded-[12px] p-5 text-[14px] text-[#111827] focus:outline-none focus:border-[#111827]/30 transition-colors resize-none"
+                                        placeholder="Enter the primary product description..."
                                     />
                                 </div>
                                 <div>
-                                    <label className="text-[10px] font-mono font-bold text-white/40 uppercase tracking-widest block mb-4">Action Pipeline</label>
+                                    <label className="text-[11px] font-bold text-[#6B7280] uppercase tracking-wider block mb-3">Target Semantic Node</label>
                                     <input
                                         value={strategy}
                                         onChange={(e) => setStrategy(e.target.value)}
                                         type="text"
-                                        className="w-full h-14 bg-black/40 border border-white/5 rounded-2xl px-6 text-sm text-white focus:outline-none focus:border-[#007AFF]/50 transition-colors"
-                                        placeholder="e.g., Inject Performance Specs into DevOps-Alpha node"
+                                        className="w-full h-12 bg-gray-50 border border-[#E5E7EB] rounded-[12px] px-5 text-[14px] text-[#111827] focus:outline-none focus:border-[#111827]/30 transition-colors"
+                                        placeholder="e.g., Performance-First Architecture"
                                     />
                                 </div>
                                 <button
                                     onClick={handleDeploy}
                                     disabled={isDeploying}
                                     className={cn(
-                                        "h-14 px-8 text-xs font-bold rounded-xl uppercase tracking-widest transition-all flex items-center gap-3",
+                                        "h-12 px-8 text-[13px] font-bold rounded-[8px] transition-all flex items-center justify-center gap-3",
                                         isDeploying
-                                            ? "bg-white/5 text-white/20 cursor-not-allowed"
-                                            : "bg-black text-white hover:bg-white/5"
+                                            ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                                            : "bg-[#111827] text-white hover:bg-black"
                                     )}
                                 >
                                     {isDeploying ? (
                                         <>
-                                            <div className="w-4 h-4 border-2 border-[#007AFF] border-t-transparent rounded-full animate-spin" />
+                                            <div className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin" />
                                             Synchronizing...
                                         </>
                                     ) : (
                                         <>
-                                            <Zap className="h-4 w-4 text-[#007AFF]" />
-                                            Deploy Strategy
+                                            <Zap className="h-4 w-4" />
+                                            Deploy Latent Strategy
                                         </>
                                     )}
                                 </button>
@@ -297,61 +268,47 @@ export default function PromptsPage() {
                         <PromptStrengthMeter description={description} />
 
                         {/* High-Resolution Metrics Panel */}
-                        <div className="bg-black rounded-[2.5rem] border border-white/5 p-8 shadow-2xl">
-                            <h3 className="text-sm font-bold uppercase tracking-[0.2em] mb-10 text-white flex items-center justify-between">
-                                Signal Integrity Matrix
-                                <Activity className="h-4 w-4 text-[#007AFF]" />
+                        <div className="bg-white rounded-[12px] border border-[#E5E7EB] p-8 shadow-sm">
+                            <h3 className="text-[11px] font-bold uppercase tracking-wider mb-10 text-[#6B7280] flex items-center justify-between">
+                                Semantic Signal Matrix
                             </h3>
 
                             <div className="space-y-10">
                                 {[
-                                    { label: "Token Affinity", value: 98.2, icon: Cpu },
-                                    { label: "Latent Density", value: 74.8, icon: Layers },
-                                    { label: "Inference Bias", value: 91.5, icon: Target },
+                                    { label: "Token Affinity", value: 98.2 },
+                                    { label: "Latent Density", value: 74.8 },
+                                    { label: "Inference Bias", value: 91.5 },
                                 ].map((stat, i) => (
-                                    <div key={i} className="group cursor-help">
+                                    <div key={i}>
                                         <div className="flex justify-between items-end mb-3">
-                                            <div className="flex items-center gap-3">
-                                                <div className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center group-hover:bg-[#007AFF]/10 transition-colors">
-                                                    <stat.icon className="h-4 w-4 text-white/40 group-hover:text-[#007AFF] transition-colors" />
-                                                </div>
-                                                <span className="text-[10px] font-bold text-white/40 group-hover:text-white/60 transition-colors uppercase tracking-widest">{stat.label}</span>
-                                            </div>
-                                            <span className="text-xl font-mono font-bold text-white group-hover:text-[#007AFF] transition-colors">{stat.value}%</span>
+                                            <span className="text-[11px] font-bold text-[#6B7280] uppercase tracking-wider">{stat.label}</span>
+                                            <span className="text-[16px] font-bold text-[#111827]">{stat.value}%</span>
                                         </div>
-                                        <div className="h-[2px] bg-white/5 rounded-full overflow-hidden">
+                                        <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden">
                                             <motion.div
                                                 initial={{ width: 0 }}
-                                                whileInView={{ width: `${stat.value}% ` }}
+                                                whileInView={{ width: `${stat.value}%` }}
                                                 transition={{ duration: 1.5, ease: "circOut" }}
-                                                className="h-full bg-[#007AFF] shadow-[0_0_10px_rgba(0,122,255,0.5)]"
+                                                className="h-full bg-[#111827]"
                                             />
                                         </div>
                                     </div>
                                 ))}
                             </div>
-
-                            <div className="mt-12 bg-white/[0.03] border border-white/5 rounded-2xl p-6">
-                                <div className="text-[10px] font-mono font-bold text-zinc-500 uppercase tracking-widest mb-2">Next Optimization Node:</div>
-                                <div className="text-xs font-bold text-[#007AFF] font-mono">NODE_CLUSTER_88_INFUSE</div>
-                            </div>
                         </div>
 
                         {/* Quick Strategy Checklist */}
-                        <div className="bg-[#007AFF] rounded-[2.5rem] p-10 text-white shadow-2xl shadow-[#007AFF]/20 relative overflow-hidden group">
-                            <div className="absolute -bottom-10 -right-10 opacity-20 group-hover:scale-110 transition-transform duration-700">
-                                <Sparkles className="h-40 w-40" />
-                            </div>
-                            <h3 className="text-xl font-bold tracking-tight mb-6">Optimization Pulse</h3>
-                            <ul className="space-y-4 relative">
+                        <div className="bg-[#111827] rounded-[12px] p-8 text-white shadow-sm">
+                            <h3 className="text-[16px] font-bold mb-6">Optimization Active</h3>
+                            <ul className="space-y-4">
                                 {[
-                                    "Semantic Drift Corrected (0.02s ago)",
+                                    "Semantic Drift Resolved",
                                     "Cross-Model Sync: Active",
-                                    "Hallucination Shield: 100% Strength",
-                                    "Vector Centroid Re-alignment Complete"
+                                    "Manifold Protection: High",
+                                    "Inbound Signal Calibration Complete"
                                 ].map((tip, i) => (
-                                    <li key={i} className="flex items-start gap-3 text-xs font-bold text-black/80">
-                                        <div className="w-1.5 h-1.5 rounded-full bg-white mt-1 shadow-[0_0_5px_#fff]" />
+                                    <li key={i} className="flex items-start gap-4 text-[13px] font-medium text-gray-400">
+                                        <div className="w-1 h-1 rounded-full bg-emerald-500 mt-2" />
                                         {tip}
                                     </li>
                                 ))}
@@ -360,29 +317,24 @@ export default function PromptsPage() {
                     </div>
                 </div>
 
-                {/* Strategy Recommendation: Enterprise Tier */}
-                <section className="bg-white/5 border border-white/5 rounded-[3rem] p-16 relative overflow-hidden">
-                    <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-[#007AFF]/50 to-transparent" />
-
+                {/* Strategy Recommendation */}
+                <section className="bg-white border border-[#E5E7EB] rounded-[12px] p-12 shadow-sm">
                     <div className="flex flex-col md:flex-row gap-16 items-start">
                         <div className="md:w-1/3">
-                            <h2 className="text-4xl font-bold tracking-tighter text-white font-serif italic leading-none mb-6">
-                                Strategic <br /> Recommendation
+                            <h2 className="text-[22px] font-bold text-[#111827] leading-tight mb-4">
+                                Tactical Recommendation
                             </h2>
-                            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-[10px] font-bold text-zinc-400 uppercase tracking-[0.2em]">
-                                Merchant Tier: $10k+/mo
+                            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-gray-50 border border-[#E5E7EB] text-[10px] font-bold text-[#6B7280] uppercase tracking-wider">
+                                Growth Tier Priority
                             </div>
                         </div>
 
-                        <div className="md:w-2/3 prose prose-invert prose-zinc max-w-none">
-                            <p className="text-zinc-400 text-lg font-light leading-relaxed">
-                                For your Shopify instance to achieve a top-tier citation ranking in the AI economy, you must transition from traditional outbound SEO to <strong>Inbound Semantic Engineering</strong>. At the $10k/month revenue milestone, your brand data has accumulated sufficient noise across the web to cause recommendation variance in GPT-4o and Gemini.
+                        <div className="md:w-2/3 space-y-6 text-[14px] text-[#374151] leading-relaxed">
+                            <p>
+                                Transition from traditional SEO to <strong>Semantic Engineering</strong>. At your current scale, your brand data has accumulated sufficient noise to cause recommendation variance in models like GPT-4 and Gemini.
                             </p>
-                            <p className="text-zinc-400 text-lg font-light leading-relaxed">
-                                Our primary recommendation is to deploy a <strong>Latent Anchor Infusion</strong> across your top 20 high-margin product pages. This involves embedding semantically rich, structured metadata that acts as a {"\""}Source-of-Truth{"\""} document for LLM crawlers. You should focus specifically on your product{"'"}s <strong>Unique Functional Utility</strong>. Don{"'"}t just describe the product; describe its place within the broader problem-solving hierarchy of your niche. When an LLM processes the query "What is the best [Category] product?", it doesn{"'"}t look for keywords—it looks for the most semantically adjacent solution. By utilizing Tracintel{"'"}s Vector Displacement Log, you can see exactly how far your current content sits from the ideal "Recommendation Centroid" and adjust your metadata accordingly.
-                            </p>
-                            <p className="text-zinc-400 text-lg font-light leading-relaxed">
-                                Furthermore, ensure that your technical specifications are formatted in <strong>Schema.org JSON-LD blocks</strong> that are explicitly linked to your brand{"'"}s Knowledge Graph IDs. This creates a {"\""}Logic Lock{"\""} between your store and the AI{"'"}s internal training nodes, making your store the default citation. Implementing this "Technical Hardening" strategy will not only improve your appearance in zero-shot answers but will also shield your brand from competitor-driven semantic drift. As generative search continues to eat market share from Google, this deterministic approach to brand authority will be the single greatest differentiator between market leaders and those lost in the stochastic noise.
+                            <p>
+                                We recommend deploying a <strong>Knowledge Anchor Infusion</strong> across your primary marketing nodes. This involves embedding semantically rich, structured metadata that acts as a definitive source for AI crawlers.
                             </p>
                         </div>
                     </div>
