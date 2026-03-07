@@ -15,6 +15,7 @@ import CompetitiveLeaderboard from '@/components/dashboard/CompetitiveLeaderboar
 import VectorDisplacementGraph from '@/components/dashboard/VectorDisplacementGraph';
 import SentimentHeatmap from '@/components/dashboard/SentimentHeatmap';
 import SimulationBanner from '@/components/dashboard/SimulationBanner';
+import ScanForm from '@/components/dashboard/ScanForm';
 import { SCORE_WEIGHTS } from '@/lib/ai/constants';
 import { ActionEngine, AgenticAction } from '@/lib/core/actions';
 import { toast } from 'sonner';
@@ -68,7 +69,7 @@ export default function Dashboard() {
 
   const stats = user ? statsData : guestStats;
 
-  const handleScan = async () => {
+  const handleScan = async (scanData: { brand: string; industry: string; competitors: string[] }) => {
     if (!user) {
       setShowAuthOverlay(true);
       toast.info("Authentication Required", {
@@ -83,10 +84,20 @@ export default function Dashboard() {
     });
 
     try {
-      const res = await fetch('/api/scan', { method: 'POST' });
+      const res = await fetch('/api/scan', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(scanData),
+      });
+
       const result = await res.json();
 
-      if (!res.ok || !result.success) throw new Error(result.error || 'Scan failed');
+      if (!res.ok || !result.success) {
+        console.error('[Scan Failure]', result);
+        throw new Error(result.error || 'Scan failed');
+      }
 
       await mutateStats();
       toast.success('Sync Complete', {
@@ -141,18 +152,7 @@ export default function Dashboard() {
         </div>
         <h2 className="text-4xl font-extrabold tracking-tighter text-black font-serif italic mb-4">Unmapped Territory</h2>
         <p className="text-sm text-black/40 max-w-sm mb-10 leading-relaxed font-medium">Your brand has not been indexed by the Tracintel Intelligence Engine. Run an initial scan to begin mapping your latent space visibility.</p>
-        <button
-          onClick={handleScan}
-          disabled={!user}
-          title={!user ? "Sign up to unlock live scans" : undefined}
-          className={cn(
-            "h-16 px-10 bg-black text-white text-sm font-bold rounded-2xl shadow-2xl shadow-black/10 transition-all flex items-center gap-3",
-            user ? "hover:shadow-black/20 hover:scale-[1.02] active:scale-[0.98]" : "opacity-50 cursor-not-allowed"
-          )}
-        >
-          <Zap className="w-4 h-4 text-[#007AFF]" />
-          Run Initial Intelligence Scan
-        </button>
+        <ScanForm onScan={handleScan} isLoading={isScanning} />
       </div>
     );
   }

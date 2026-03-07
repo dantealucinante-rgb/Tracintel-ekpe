@@ -14,8 +14,12 @@ const scanSchema = z.object({
 
 export async function POST(request: NextRequest) {
     try {
-
-        const body = await request.json()
+        let body;
+        try {
+            body = await request.json();
+        } catch (e) {
+            return NextResponse.json({ error: 'Invalid or empty request body' }, { status: 400 });
+        }
 
         // 1. Validate Input with Zod
         const validated = scanSchema.safeParse(body)
