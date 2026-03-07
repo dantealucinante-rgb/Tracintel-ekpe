@@ -4,16 +4,27 @@ import Link from "next/link";
 import Image from "next/image";
 import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Loader2 } from "lucide-react";
+import { Suspense } from "react";
 
 export default function LoginPage() {
+    return (
+        <Suspense fallback={<div className="min-h-screen bg-white" />}>
+            <LoginForm />
+        </Suspense>
+    );
+}
+
+function LoginForm() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const supabase = createClient();
     const router = useRouter();
+    const searchParams = useSearchParams();
+    const message = searchParams.get('message');
 
     const handleSignIn = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -86,6 +97,11 @@ export default function LoginPage() {
 
                     <div className="space-y-10">
                         <form onSubmit={handleSignIn} className="space-y-10">
+                            {message && (
+                                <div className="text-[13px] font-medium text-[#067647] bg-[#ECFDF3] p-4 border-l-2 border-[#067647] font-sans">
+                                    {message}
+                                </div>
+                            )}
                             <div className="space-y-8">
                                 <div className="space-y-2 group">
                                     <label className="text-[10px] font-black uppercase tracking-[0.3em] text-zinc-400 group-focus-within:text-black transition-colors">

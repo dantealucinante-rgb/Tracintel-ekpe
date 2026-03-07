@@ -54,20 +54,28 @@ export default function RegisterPage() {
             // 2. Show brief success message
             setSuccessMessage("Account created! Redirecting...");
 
-            // 3. Wait 2000ms for database triggers
+            // 3. Wait 3000ms for database triggers
             await new Promise(resolve => setTimeout(resolve, 2000));
+            // wait an extra 1000ms as requested
+            await new Promise(resolve => setTimeout(resolve, 1000));
 
             // 4. Since email confirmation is disabled, immediately sign in to get the session
-            const { error: signInError } = await supabase.auth.signInWithPassword({
-                email,
-                password,
-            });
+            try {
+                const { error: signInError } = await supabase.auth.signInWithPassword({
+                    email,
+                    password,
+                });
 
-            if (signInError) throw signInError;
+                if (signInError) throw signInError;
 
-            // 5. Success -> Redirect
-            router.push("/dashboard");
-            router.refresh();
+                // 5. Success -> Redirect
+                router.push("/dashboard");
+                router.refresh();
+            } catch (signInErr: any) {
+                console.error("Auto sign-in error:", signInErr);
+                // Redirect to login with success message if auto sign-in fails
+                router.push('/login?message=Account created! Please sign in.');
+            }
         } catch (err: any) {
             console.error("Signup error:", err);
 
