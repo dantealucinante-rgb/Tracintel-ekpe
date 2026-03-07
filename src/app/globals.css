@@ -1,23 +1,25 @@
 @import "tailwindcss";
 
 :root {
-  --background: #F8FAFC;
-  --foreground: #000000;
-  --paper: #FFFFFF;
-  --ink: #000000;
-  --soft-gray: #F5F5F7;
-  --electric-blue: #007AFF;
-  --emerald-green: #34C759;
+  --color-bg: #F8F9FA;
+  --color-surface: #FFFFFF;
+  --color-border: #EAECF0;
+  --color-text-primary: #101828;
+  --color-text-secondary: #667085;
+  --color-text-tertiary: #98A2B3;
+  --color-accent: #0F172A;
+  --color-green: #12B76A;
+  --color-amber: #F79009;
+  --color-red: #F04438;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --color-paper: var(--paper);
-  --color-ink: var(--ink);
-  --color-soft-gray: var(--soft-gray);
-  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
-  --font-display: var(--font-playfair), serif;
+  --color-background: var(--color-bg);
+  --color-foreground: var(--color-text-primary);
+  --color-paper: var(--color-surface);
+  --color-border: var(--color-border);
+  --font-sans: var(--font-body), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-display), sans-serif;
   --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
 }
 
@@ -27,28 +29,26 @@
   }
 
   body {
-    background: var(--background);
-    color: var(--foreground);
+    background: var(--color-bg);
+    color: var(--color-text-primary);
     font-family: var(--font-sans);
     @apply font-normal;
   }
 
   h1,
-  h2 {
-    font-family: var(--font-display);
-    @apply font-bold leading-tight;
-  }
-
+  h2,
   h3,
   h4,
   h5,
   h6 {
-    font-family: var(--font-sans);
-    @apply font-semibold leading-tight;
+    font-family: var(--font-display);
+    @apply font-bold leading-tight;
+    color: var(--color-text-primary);
   }
 
   p {
     @apply font-normal leading-relaxed;
+    color: var(--color-text-secondary);
   }
 }
 

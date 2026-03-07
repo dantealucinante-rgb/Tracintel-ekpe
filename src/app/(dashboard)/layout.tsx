@@ -54,24 +54,22 @@ export default function DashboardLayout({
         setMobileNavOpen(false);
     }, [pathname]);
 
-    return (
-        <div className="min-h-screen bg-white flex font-sans">
+    const SidebarContent = () => (
+        <div className="flex flex-col h-full bg-[#0F172A] text-[#94A3B8]">
+            {/* Logo */}
+            <div className="h-20 flex items-center px-8">
+                <Link href="/dashboard" className="flex items-center gap-3">
+                    <div className="w-8 h-8 rounded-lg bg-white flex items-center justify-center p-1.5 shadow-lg shadow-white/10">
+                        <Image src="/1.png" alt="Logo" width={20} height={20} className="object-contain" priority />
+                    </div>
+                    <span className="font-display font-semibold text-white text-base tracking-tight">Tracintel</span>
+                </Link>
+            </div>
 
-            {/* Desktop Sidebar */}
-            <aside className="w-64 bg-white border-r border-[#E5E7EB] fixed h-full z-40 hidden md:flex flex-col">
-                {/* Logo */}
-                <div className="h-16 flex items-center px-6 border-b border-[#E5E7EB]">
-                    <Link href="/" className="flex items-center gap-2">
-                        <div className="w-8 h-8 flex items-center justify-center relative">
-                            <Image src="/1.png" alt="Tracintel Logo" fill className="object-contain" priority />
-                        </div>
-                        <span className="font-bold tracking-tight text-[#111827] text-lg">Tracintel</span>
-                    </Link>
-                </div>
-
-                {/* Nav Links */}
-                <nav className="flex-1 p-4 space-y-1">
-                    <div className="text-[11px] font-medium text-[#6B7280] uppercase tracking-wider mb-3 px-3">Navigation</div>
+            {/* Navigation */}
+            <nav className="flex-1 px-4 py-6 space-y-8 overflow-y-auto">
+                <div className="space-y-1">
+                    <div className="px-4 text-[10px] font-bold text-[#475569] uppercase tracking-[0.08em] mb-4 font-sans">Navigation</div>
                     {SIDEBAR_ITEMS.map((item) => (
                         <SidebarLink
                             key={item.href}
@@ -81,78 +79,88 @@ export default function DashboardLayout({
                             active={pathname === item.href}
                         />
                     ))}
-                    <div className="pt-6">
-                        <div className="text-[11px] font-medium text-[#6B7280] uppercase tracking-wider mb-3 px-3">Settings</div>
-                        <SidebarLink href="/dashboard/settings" icon={Settings} label="Settings" active={pathname === '/dashboard/settings'} />
-                    </div>
-                </nav>
+                </div>
 
-                {/* User Footer */}
-                <div className="p-4 border-t border-[#E5E7EB]">
-                    <div className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer">
-                        <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center overflow-hidden border border-[#E5E7EB]">
-                            {session?.user?.user_metadata?.avatar_url ? (
-                                <img src={session.user.user_metadata.avatar_url} alt="Avatar" className="w-full h-full object-cover" />
-                            ) : (
-                                <User className="h-4 w-4 text-[#6B7280]" />
-                            )}
+                <div className="space-y-1">
+                    <div className="px-4 text-[10px] font-bold text-[#475569] uppercase tracking-[0.08em] mb-4 font-sans">Settings</div>
+                    <SidebarLink
+                        href="/dashboard/settings"
+                        icon={Settings}
+                        label="Configuration"
+                        active={pathname === '/dashboard/settings'}
+                    />
+                </div>
+            </nav>
+
+            {/* System Status Strip */}
+            <div className="px-6 py-4 border-t border-[#1E293B] bg-[#0F172A]/50 backdrop-blur-md">
+                <div className="space-y-3">
+                    <div className="flex items-center justify-between group">
+                        <div className="flex items-center gap-2.5">
+                            <div className="w-1.5 h-1.5 rounded-full bg-[#12B76A] shadow-[0_0_8px_rgba(18,183,106,0.4)]" />
+                            <span className="text-[12px] font-sans text-[#94A3B8]">AI Engine</span>
                         </div>
-                        <div className="flex-1 min-w-0">
-                            <p className="text-[13px] font-bold text-[#111827] truncate">
-                                {session?.user?.email?.split('@')[0] || "ekpeandcotravels"}
-                            </p>
-                            <p className="text-[12px] text-[#6B7280] truncate font-normal">Pro Plan</p>
+                        <span className="text-[12px] font-sans font-medium text-white transition-opacity">ACTIVE</span>
+                    </div>
+                    <div className="flex items-center justify-between group">
+                        <div className="flex items-center gap-2.5">
+                            <div className="w-1.5 h-1.5 rounded-full bg-[#12B76A] shadow-[0_0_8px_rgba(18,183,106,0.4)]" />
+                            <span className="text-[12px] font-sans text-[#94A3B8]">Data Buffer</span>
                         </div>
+                        <span className="text-[12px] font-sans font-medium text-white transition-opacity">OPTIMAL</span>
                     </div>
                 </div>
+            </div>
+
+            {/* User Footer */}
+            <div className="p-4 bg-[#1E293B]">
+                <div className="flex items-center gap-3 px-3 py-2">
+                    <div className="w-8 h-8 rounded-full bg-[#334155] flex items-center justify-center text-white text-[12px] font-bold border border-white/5 shadow-inner">
+                        {session?.user?.email ? session.user.email[0].toUpperCase() : 'JD'}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                        <p className="text-[13px] font-bold text-white truncate font-sans tracking-tight">
+                            {session?.user?.email?.split('@')[0] || "Administrator"}
+                        </p>
+                        <p className="text-[11px] text-[#94A3B8] font-medium font-sans">Pro Enterprise</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+
+    return (
+        <div className="min-h-screen bg-[#F8F9FA] flex">
+            {/* Desktop Sidebar */}
+            <aside className="w-64 fixed h-full z-40 hidden md:block">
+                <SidebarContent />
             </aside>
 
             {/* Main Content */}
             <div className="flex-1 md:ml-64 flex flex-col">
                 {/* Mobile Top Bar */}
-                <header className="h-14 bg-white border-b border-[#E5E7EB] flex items-center justify-between px-4 md:hidden sticky top-0 z-30">
-                    <Link href="/" className="flex items-center gap-2">
-                        <div className="w-7 h-7 flex items-center justify-center relative">
-                            <Image src="/1.png" alt="Tracintel Logo" fill className="object-contain" priority />
+                <header className="h-16 bg-white border-b border-[#EAECF0] flex items-center justify-between px-6 md:hidden sticky top-0 z-30 shadow-sm">
+                    <Link href="/dashboard" className="flex items-center gap-2.5">
+                        <div className="w-7 h-7 bg-[#0F172A] rounded-lg flex items-center justify-center p-1.5">
+                            <Image src="/1.png" alt="Logo" width={16} height={16} className="invert brightness-0" priority />
                         </div>
-                        <span className="font-bold tracking-tight text-[#111827] text-base">Tracintel</span>
+                        <span className="font-display font-bold text-[#101828] text-base tracking-tight">Tracintel</span>
                     </Link>
-                    <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center overflow-hidden">
-                            {session?.user?.user_metadata?.avatar_url ? (
-                                <img src={session.user.user_metadata.avatar_url} alt="Avatar" className="w-full h-full object-cover" />
-                            ) : (
-                                <User className="h-4 w-4 text-[#6B7280]" />
-                            )}
-                        </div>
-                        <button
-                            onClick={() => setMobileNavOpen(true)}
-                            className="flex items-center justify-center w-9 h-9 rounded-xl hover:bg-gray-50 transition-colors"
-                            aria-label="Open navigation"
-                        >
-                            <Menu className="h-5 w-5 text-[#111827]" />
-                        </button>
-                    </div>
-                </header>
-
-                {/* Desktop Top Header Bar */}
-                <header className="h-16 bg-white border-b border-[#E5E7EB] hidden md:flex items-center justify-between px-6">
-                    <div>
-                        <h2 className="text-sm font-bold text-[#111827]">Default Workspace</h2>
-                        <p className="text-[12px] text-[#6B7280] font-normal tracking-tight">AI Search Analytics</p>
-                    </div>
-                    <button className="px-4 py-2 bg-[#111827] hover:bg-black text-white text-sm font-bold rounded-lg transition-colors">
-                        Start Free Trial
+                    <button
+                        onClick={() => setMobileNavOpen(true)}
+                        className="w-10 h-10 flex items-center justify-center rounded-xl bg-[#F8F9FA] border border-[#EAECF0] hover:bg-[#F2F4F7] transition-all"
+                    >
+                        <Menu className="h-5 w-5 text-[#101828]" />
                     </button>
                 </header>
 
-                {/* Page Content — forced full width with no horizontal constraints */}
-                <main className="flex-1 m-0 p-0 w-full transition-all duration-500 overflow-x-hidden">
+                {/* Page Content */}
+                <main className="flex-1 w-full relative">
                     {children}
                 </main>
             </div>
 
-            {/* Mobile Slide-out Sidebar Drawer */}
+            {/* Mobile Navigation Drawer */}
             <AnimatePresence>
                 {mobileNavOpen && (
                     <>
@@ -162,75 +170,21 @@ export default function DashboardLayout({
                             animate={{ opacity: 1 }}
                             exit={{ opacity: 0 }}
                             onClick={() => setMobileNavOpen(false)}
-                            className="fixed inset-0 z-[60] bg-black/50 backdrop-blur-sm md:hidden"
+                            className="fixed inset-0 z-[60] bg-[#0F172A]/40 backdrop-blur-sm md:hidden"
                         />
                         <motion.aside
                             key="mobile-sidebar"
                             initial={{ x: '-100%' }}
                             animate={{ x: 0 }}
                             exit={{ x: '-100%' }}
-                            transition={{ type: 'spring', stiffness: 400, damping: 38 }}
-                            className="fixed top-0 left-0 bottom-0 z-[70] w-72 bg-white flex flex-col md:hidden shadow-2xl"
+                            transition={{ type: 'spring', damping: 40, stiffness: 400 }}
+                            className="fixed top-0 left-0 bottom-0 z-[70] w-72 md:hidden"
                         >
-                            <div className="h-14 flex items-center justify-between px-4 border-b border-[#E5E7EB]">
-                                <Link href="/" className="flex items-center gap-2" onClick={() => setMobileNavOpen(false)}>
-                                    <div className="w-7 h-7 flex items-center justify-center relative">
-                                        <Image src="/1.png" alt="Tracintel Logo" fill className="object-contain" priority />
-                                    </div>
-                                    <span className="font-bold tracking-tight text-[#111827]">Tracintel</span>
-                                </Link>
-                                <button
-                                    onClick={() => setMobileNavOpen(false)}
-                                    className="flex items-center justify-center w-9 h-9 rounded-xl hover:bg-gray-50 transition-colors"
-                                >
-                                    <X className="h-5 w-5 text-[#6B7280]" />
-                                </button>
-                            </div>
-                            <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
-                                <div className="text-[11px] font-medium text-[#6B7280] uppercase tracking-wider mb-3 px-3">Navigation</div>
-                                {SIDEBAR_ITEMS.map((item) => (
-                                    <SidebarLink
-                                        key={item.href}
-                                        href={item.href}
-                                        icon={item.icon}
-                                        label={item.label}
-                                        active={pathname === item.href}
-                                    />
-                                ))}
-                                <div className="pt-6">
-                                    <div className="text-[11px] font-medium text-[#6B7280] uppercase tracking-wider mb-3 px-3">Settings</div>
-                                    <SidebarLink href="/dashboard/settings" icon={Settings} label="Settings" active={pathname === '/dashboard/settings'} />
-                                </div>
-                            </nav>
+                            <SidebarContent />
                         </motion.aside>
                     </>
                 )}
             </AnimatePresence>
-
-            {/* Mobile Bottom Navigation Bar */}
-            <nav className="fixed bottom-0 inset-x-0 z-50 h-16 bg-white/90 backdrop-blur-xl border-t border-[#E5E7EB] flex items-center justify-around px-2 md:hidden">
-                {BOTTOM_NAV_ITEMS.map(({ href, icon: Icon, label }) => {
-                    const isActive = pathname === href;
-                    return (
-                        <Link
-                            key={href}
-                            href={href}
-                            className="flex flex-col items-center justify-center gap-1 flex-1 py-1 group"
-                        >
-                            <Icon
-                                className={`h-5 w-5 transition-colors ${isActive ? 'text-[#111827]' : 'text-[#6B7280] group-hover:text-[#111827]'
-                                    }`}
-                            />
-                            <span
-                                className={`text-[10px] font-semibold tracking-tight transition-colors ${isActive ? 'text-[#111827]' : 'text-[#6B7280] group-hover:text-[#111827]'
-                                    }`}
-                            >
-                                {label}
-                            </span>
-                        </Link>
-                    );
-                })}
-            </nav>
         </div>
     );
 }
@@ -239,16 +193,18 @@ function SidebarLink({ href, icon: Icon, label, active }: { href: string; icon: 
     return (
         <Link
             href={href}
-            className={`flex items-center gap-3 px-3 py-2 transition-all group relative ${active
-                ? 'text-[#111827]'
-                : 'text-[#6B7280] hover:text-[#111827] hover:bg-gray-50 rounded-lg'
-                }`}
+            className={`flex items-center justify-between px-4 py-2.5 transition-all group relative font-sans ${active
+                ? 'text-white bg-[#1E293B]'
+                : 'text-[#94A3B8] hover:text-white hover:bg-[#1E293B]'
+                } rounded-md mx-2`}
         >
             {active && (
-                <div className="absolute left-0 top-1.5 bottom-1.5 w-[2px] bg-[#111827] rounded-full" />
+                <div className="absolute left-[-8px] top-2.5 bottom-2.5 w-[2px] bg-white rounded-full shadow-[0_0_8px_white]" />
             )}
-            <Icon className={`h-5 w-5 transition-colors ${active ? 'text-[#111827]' : 'text-[#6B7280] group-hover:text-[#111827]'}`} />
-            <span className="text-[14px] font-medium">{label}</span>
+            <div className="flex items-center gap-3">
+                <Icon className={`h-[18px] w-[18px] transition-colors ${active ? 'text-white' : 'text-[#94A3B8] group-hover:text-white'}`} />
+                <span className="text-[13px] font-medium">{label}</span>
+            </div>
         </Link>
     );
 }

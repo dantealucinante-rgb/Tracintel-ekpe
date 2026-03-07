@@ -1,17 +1,19 @@
 import type { Metadata } from "next";
-import { Inter, Playfair_Display } from "next/font/google";
+import { DM_Sans, Syne } from "next/font/google";
 import "./globals.css";
 import Background from "@/components/ui/Background";
 import { Toaster } from 'sonner';
 
-const inter = Inter({
-  variable: "--font-inter",
+const dmSans = DM_Sans({
+  variable: "--font-body",
   subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
 });
 
-const playfair = Playfair_Display({
-  variable: "--font-playfair",
+const syne = Syne({
+  variable: "--font-display",
   subsets: ["latin"],
+  weight: ["500", "600", "700", "800"],
 });
 
 export const metadata: Metadata = {
@@ -25,7 +27,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${inter.variable} ${playfair.variable}`}>
+    <html lang="en" className={`${dmSans.variable} ${syne.variable}`}>
       <body
         className={`antialiased bg-white text-black selection:bg-black selection:text-white m-0 p-0 overflow-x-hidden`}
       >

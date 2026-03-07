@@ -197,286 +197,304 @@ export default function Dashboard() {
 
   return (
     <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 1.5, ease: "easeInOut" }}
-      className="bg-white m-0 p-0 overflow-x-hidden"
-      style={{ width: '100vw !important' } as any}
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.8, ease: "easeOut" }}
+      className="p-8 md:p-12 space-y-12 max-w-[1700px] mx-auto"
     >
       {/* Simulation Banner */}
       {!user && <SimulationBanner />}
 
-      {/* 12-Column Grid Force */}
-      <div className="grid grid-cols-12 gap-0 w-full min-h-screen relative">
-        {!user && (
-          <div className="absolute inset-0 z-0 pointer-events-none opacity-[0.03] flex items-center justify-center overflow-hidden">
-            <div className="text-[20vw] font-black font-mono rotate-[-30deg] select-none whitespace-nowrap">
-              SIMULATED DATA • SIMULATED DATA • SIMULATED DATA
-            </div>
-          </div>
-        )}
-
-        {/* Business Info Card */}
-        {latestBaseline && (
-          <div className="col-span-12 mb-8">
-            <div className="bg-white border border-[#E5E7EB] rounded-[12px] p-8 shadow-sm flex flex-col md:flex-row items-start md:items-center justify-between gap-8">
-              <div className="space-y-6">
-                <div>
-                  <h2 className="text-[20px] font-bold text-[#111827] leading-tight">{latestBaseline.brand}</h2>
-                  <p className="text-[13px] text-[#6B7280] font-normal mt-1">{latestBaseline.industry}</p>
-                </div>
-                <div className="space-y-3">
-                  <span className="text-[11px] font-bold text-[#6B7280] uppercase tracking-wider block">Competitors</span>
-                  <div className="flex flex-wrap gap-2">
-                    {latestBaseline.competitors?.map((comp: string) => (
-                      <span key={comp} className="px-3 py-1.5 bg-[#F3F4F6] text-[#374151] text-[12px] font-medium rounded-[6px]">
-                        {comp}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              </div>
-              <button
-                onClick={() => {
-                  const element = document.getElementById('scan-section');
-                  element?.scrollIntoView({ behavior: 'smooth' });
-                }}
-                className="px-8 py-3 bg-[#111827] text-white text-[13px] font-medium rounded-[8px] hover:bg-black transition-colors"
-              >
-                Run New Scan
-              </button>
-            </div>
-          </div>
-        )}
-
-        {/* Left Metrics Cabinet (col-span-3) */}
-        <div className="col-span-12 md:col-span-3 border-r border-[#E5E7EB] p-6 md:p-8 space-y-8 bg-gray-50/30">
-          <div className="space-y-6">
-            <div className="p-6 bg-white border border-[#E5E7EB] rounded-[12px] shadow-sm relative overflow-hidden">
-              <div className="flex items-center gap-2 mb-2">
-                <div className={cn("w-2 h-2 rounded-full", score > 60 ? "bg-emerald-500" : score > 40 ? "bg-amber-500" : "bg-red-500")} />
-                <h3 className="text-[11px] font-medium text-[#6B7280] uppercase">AI Visibility Score</h3>
-                <ProviderBadge provider={latestBaseline?.provider} />
-              </div>
-              <div className="flex items-baseline gap-2">
-                <p className="text-4xl font-bold tracking-tight text-[#111827]">{score}</p>
-                <div className="text-xs font-bold text-emerald-500">+5.2%</div>
-              </div>
-              <p className="text-[12px] text-[#6B7280] mt-2 leading-tight">Your brand&apos;s overall presence across AI models</p>
-            </div>
-
-            <div className="p-6 bg-white border border-[#E5E7EB] rounded-[12px] shadow-sm">
-              <div className="flex items-center gap-2 mb-2">
-                <div className={cn("w-2 h-2 rounded-full", (latest?.latentDensity || 0) * 100 > 60 ? "bg-emerald-500" : (latest?.latentDensity || 0) * 100 > 40 ? "bg-amber-500" : "bg-red-500")} />
-                <p className="text-[11px] font-medium text-[#6B7280] uppercase">Topic Coverage</p>
-              </div>
-              <p className="text-3xl font-bold text-[#111827]">
-                {latest?.latentDensity ? (latest.latentDensity * 100).toFixed(1) + '%' : '0%'}
+      {/* Brand Info Card */}
+      {latestBaseline && (
+        <div className="bg-white border border-[#EAECF0] rounded-[16px] p-7 shadow-sm flex flex-col md:flex-row items-center justify-between gap-6 transition-all hover:shadow-md">
+          <div className="flex flex-col gap-4 w-full md:w-auto">
+            <div>
+              <h1 className="font-display font-bold text-2xl md:text-[28px] text-[#101828] tracking-tight">
+                {latestBaseline.brand}
+              </h1>
+              <p className="font-sans text-[13px] text-[#667085] mt-1 font-medium tracking-tight">
+                {latestBaseline.industry}
               </p>
-              <p className="text-[12px] text-[#6B7280] mt-2 leading-tight">How well AI understands your brand&apos;s topic area</p>
             </div>
-
-            <div className="p-6 bg-white border border-[#E5E7EB] rounded-[12px] shadow-sm">
-              <div className="flex items-center gap-2 mb-2">
-                <div className={cn("w-2 h-2 rounded-full", (latest?.breakdown?.direct || 0) > 60 ? "bg-emerald-500" : (latest?.breakdown?.direct || 0) > 40 ? "bg-amber-500" : "bg-red-500")} />
-                <p className="text-[11px] font-medium text-[#6B7280] uppercase">Mention Frequency</p>
-              </div>
-              <p className="text-3xl font-bold text-[#111827]">{latest?.breakdown?.direct || 0}</p>
-              <p className="text-[12px] text-[#6B7280] mt-2 leading-tight">How often your brand is referenced in AI responses</p>
-            </div>
-          </div>
-
-          <div className="pt-8 border-t border-[#E5E7EB]">
-            <h4 className="text-[11px] font-bold text-[#111827] uppercase tracking-wider mb-4">System Status</h4>
-            <div className="space-y-3">
-              <div className="flex justify-between items-center text-[12px]">
-                <span className="text-[#6B7280]">AI Engine</span>
-                <div className="flex items-center gap-1.5">
-                  <div className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-                  <span className="text-[#111827] font-medium uppercase">Active</span>
+            <div className="flex flex-wrap gap-2 pt-1">
+              {latestBaseline.competitors?.map((comp: string) => (
+                <div
+                  key={comp}
+                  className="h-7 px-3 flex items-center bg-[#F2F4F7] text-[#344054] font-sans text-[12px] font-semibold rounded-full border border-[#EAECF0]/50"
+                >
+                  {comp}
                 </div>
-              </div>
-              <div className="flex justify-between items-center text-[12px]">
-                <span className="text-[#6B7280]">Data Buffer</span>
-                <div className="flex items-center gap-1.5">
-                  <div className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-                  <span className="text-[#111827] font-medium uppercase">Optimal</span>
-                </div>
-              </div>
+              ))}
             </div>
           </div>
+          <button
+            onClick={() => {
+              const element = document.getElementById('scan-section');
+              element?.scrollIntoView({ behavior: 'smooth' });
+            }}
+            className="w-full md:w-auto h-11 px-5 bg-[#0F172A] text-white font-sans font-medium text-[13px] rounded-lg hover:bg-black transition-all shadow-sm hover:shadow active:scale-[0.98]"
+          >
+            Run New Scan
+          </button>
+        </div>
+      )}
 
-          <div className="pt-8 border-t border-[#E5E7EB]">
-            <details className="group cursor-pointer">
-              <summary className="list-none flex items-center justify-between text-[11px] font-bold text-[#111827] uppercase tracking-wider hover:text-black transition-colors">
-                How is this score calculated?
-                <ArrowUp className="w-3 h-3 transition-transform group-open:rotate-180" />
-              </summary>
-              <div className="mt-6 space-y-4">
-                <p className="text-[12px] leading-relaxed text-[#6B7280]">
-                  The Visibility Score is a weighted aggregate of four core dimensions:
-                </p>
-                <div className="space-y-4">
-                  {[
-                    { label: 'Mention Frequency', weight: SCORE_WEIGHTS.mentionFrequency * 100, color: 'bg-[#111827]', desc: 'Share of voice among competitors.' },
-                    { label: 'Topic Coverage', weight: SCORE_WEIGHTS.latentDensity * 100, color: 'bg-[#6B7280]', desc: 'Topic area prominence.' },
-                    { label: 'Sentiment Score', weight: SCORE_WEIGHTS.sentimentScore * 100, color: 'bg-[#9CA3AF]', desc: 'Qualitative brand perception.' },
-                    { label: 'Citation Density', weight: SCORE_WEIGHTS.citationDensity * 100, color: 'bg-[#D1D5DB]', desc: 'Direct sourcing priority.' }
-                  ].map((item, i) => (
-                    <div key={i} className="space-y-1.5">
-                      <div className="flex justify-between items-center">
-                        <span className="text-[10px] font-bold text-[#111827] uppercase">{item.label}</span>
-                        <span className="text-[10px] font-bold text-[#6B7280]">{item.weight}%</span>
-                      </div>
-                      <div className="h-1 w-full bg-[#E5E7EB] rounded-full overflow-hidden">
-                        <div className={`h-full ${item.color}`} style={{ width: `${item.weight}%` }} />
-                      </div>
-                      <p className="text-[10px] text-[#6B7280] uppercase tracking-tight">{item.desc}</p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </details>
+      {/* Score Cards Row */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {/* Card 1: AI Visibility Score */}
+        <div className="bg-white border border-[#EAECF0] rounded-[16px] p-7 shadow-sm relative transition-all hover:shadow-md group">
+          <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center gap-2">
+              <div className={cn(
+                "w-2 h-2 rounded-full",
+                score > 60 ? "bg-[#12B76A]" : score > 40 ? "bg-[#F79009]" : "bg-[#F04438]"
+              )} />
+              <span className="font-sans text-[11px] font-bold text-[#667085] uppercase tracking-[0.06em]">AI Visibility Score</span>
+            </div>
+            <div className="bg-[#F2F4F7] px-2 py-0.5 rounded-full">
+              <span className="font-sans text-[10px] font-bold text-[#344054] uppercase tracking-wider">{latestBaseline?.provider?.split(' ')[0] || 'GEMINI'}</span>
+            </div>
+          </div>
+          <div className="space-y-1">
+            <div className="font-display font-bold text-[48px] text-[#101828] leading-none">{score}</div>
+            <p className="font-sans text-[13px] text-[#98A2B3] font-medium pt-2 leading-relaxed">
+              Platform-wide aggregate of brand presence across monitored AI nodes.
+            </p>
           </div>
         </div>
 
-        {/* Right Content */}
-        <div className="col-span-12 md:col-span-9 p-6 md:p-12 space-y-12 bg-white">
-          <div className="w-full">
-            <div className="flex items-center justify-between mb-8">
-              <div>
-                <h3 className="text-3xl font-bold tracking-tight text-[#111827] leading-none">Brand Visibility Over Time</h3>
-                <p className="text-[14px] text-[#6B7280] mt-2">How often AI models mention your brand</p>
-              </div>
+        {/* Card 2: Latent Density */}
+        <div className="bg-white border border-[#EAECF0] rounded-[16px] p-7 shadow-sm transition-all hover:shadow-md">
+          <div className="flex items-center gap-2 mb-6">
+            <div className={cn(
+              "w-2 h-2 rounded-full",
+              (latest?.latentDensity || 0) * 100 > 60 ? "bg-[#12B76A]" : (latest?.latentDensity || 0) * 100 > 40 ? "bg-[#F79009]" : "bg-[#F04438]"
+            )} />
+            <span className="font-sans text-[11px] font-bold text-[#667085] uppercase tracking-[0.06em]">Latent Topic Density</span>
+          </div>
+          <div className="space-y-1">
+            <div className="font-display font-bold text-[48px] text-[#101828] leading-none">
+              {latest?.latentDensity ? (latest.latentDensity * 100).toFixed(0) : '0'}%
             </div>
+            <p className="font-sans text-[13px] text-[#98A2B3] font-medium pt-2 leading-relaxed">
+              Mapping the proximity of your brand to core industry semantic clusters.
+            </p>
+          </div>
+        </div>
 
-            <div className="w-full pt-12 border-t border-[#E5E7EB] relative">
-              <div className="mb-8">
-                <h3 className="text-2xl font-bold tracking-tight text-[#111827]">Competitor Intelligence</h3>
-                <p className="text-[14px] text-[#6B7280] mt-1">See how your brand compares to competitors across AI models</p>
-              </div>
+        {/* Card 3: Mention Frequency */}
+        <div className="bg-white border border-[#EAECF0] rounded-[16px] p-7 shadow-sm transition-all hover:shadow-md">
+          <div className="flex items-center gap-2 mb-6">
+            <div className={cn(
+              "w-2 h-2 rounded-full",
+              (latest?.breakdown?.direct || 0) > 60 ? "bg-[#12B76A]" : (latest?.breakdown?.direct || 0) > 40 ? "bg-[#F79009]" : "bg-[#F04438]"
+            )} />
+            <span className="font-sans text-[11px] font-bold text-[#667085] uppercase tracking-[0.06em]">Inference Frequency</span>
+          </div>
+          <div className="space-y-1">
+            <div className="font-display font-bold text-[48px] text-[#101828] leading-none">
+              {latest?.breakdown?.direct || 0}
+            </div>
+            <p className="font-sans text-[13px] text-[#98A2B3] font-medium pt-2 leading-relaxed">
+              Total number of instances where your brand was synthesized by AI models.
+            </p>
+          </div>
+        </div>
+      </div>
 
-              <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
-                {/* Chart 1: Visibility Score Comparison */}
-                <div className="bg-white border border-[#E5E7EB] rounded-[16px] p-6">
-                  <h4 className="text-[14px] font-semibold text-[#111827] mb-6">Visibility Score Comparison</h4>
-                  <div className="h-[300px]">
-                    <ResponsiveContainer width="100%" height="100%">
-                      <BarChart data={chartData} margin={{ top: 20 }}>
-                        <XAxis
-                          dataKey="name"
-                          axisLine={false}
-                          tickLine={false}
-                          tick={{ fontSize: 10, fill: '#6B7280', fontWeight: 500 }}
-                        />
-                        <YAxis
-                          hide={false}
-                          domain={[0, 100]}
-                          ticks={[0, 50, 100]}
-                          axisLine={false}
-                          tickLine={false}
-                          tick={{ fontSize: 10, fill: '#6B7280', fontWeight: 500 }}
-                        />
-                        <Tooltip cursor={{ fill: 'transparent' }} contentStyle={{ borderRadius: '12px', border: '1px solid #E5E7EB' }} />
-                        <Bar
-                          dataKey="score"
-                          label={{ position: 'top', fill: '#111827', fontSize: 11, fontWeight: 700 }}
-                          radius={[4, 4, 0, 0]}
-                        >
-                          {chartData.map((entry, index) => (
-                            <Cell key={`cell-${index}`} fill={entry.isBrand ? '#111827' : '#D1D5DB'} />
-                          ))}
-                        </Bar>
-                      </BarChart>
-                    </ResponsiveContainer>
-                  </div>
-                </div>
+      {/* Visibility Chart Card */}
+      <div className="bg-white border border-[#EAECF0] rounded-[16px] p-8 shadow-sm transition-all hover:shadow-md">
+        <div className="mb-8">
+          <h3 className="font-display font-semibold text-lg text-[#101828]">Brand Visibility Over Time</h3>
+          <p className="font-sans text-[13px] text-[#667085] mt-1">Daily inference volume across analyzed intelligence nodes.</p>
+        </div>
+        <div className="h-[400px] w-full pt-4">
+          <ResponsiveContainer width="100%" height="100%">
+            <AreaChart data={history} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+              <defs>
+                <linearGradient id="visibilityGradient" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="#0F172A" stopOpacity={0.1} />
+                  <stop offset="95%" stopColor="#0F172A" stopOpacity={0} />
+                </linearGradient>
+              </defs>
+              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#EAECF0" />
+              <XAxis
+                dataKey="date"
+                axisLine={false}
+                tickLine={false}
+                tick={{ fontSize: 11, fill: '#98A2B3', fontFamily: 'var(--font-body)' }}
+                tickFormatter={(str) => new Date(str).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                dy={10}
+              />
+              <YAxis
+                axisLine={false}
+                tickLine={false}
+                tick={{ fontSize: 11, fill: '#98A2B3', fontFamily: 'var(--font-body)' }}
+                domain={[0, 100]}
+              />
+              <Tooltip
+                contentStyle={{
+                  backgroundColor: '#FFFFFF',
+                  border: '1px solid #EAECF0',
+                  borderRadius: '12px',
+                  boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+                  fontFamily: 'var(--font-body)',
+                  fontSize: '12px'
+                }}
+              />
+              <Area
+                type="monotone"
+                dataKey="score"
+                stroke="#0F172A"
+                strokeWidth={2.5}
+                fillOpacity={1}
+                fill="url(#visibilityGradient)"
+                dot={{ r: 5, fill: '#0F172A', strokeWidth: 2, stroke: '#FFFFFF' }}
+                activeDot={{ r: 6, strokeWidth: 0 }}
+              />
+            </AreaChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
 
-                {/* Chart 2: Mention Frequency Trend */}
-                <div className="bg-white border border-[#E5E7EB] rounded-[16px] p-6">
-                  <h4 className="text-[14px] font-semibold text-[#111827] mb-6">Mention Frequency Trend</h4>
-                  <div className="h-[300px]">
-                    <ResponsiveContainer width="100%" height="100%">
-                      <LineChart data={history}>
-                        <XAxis
-                          dataKey="date"
-                          tickFormatter={(str) => new Date(str).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
-                          axisLine={false}
-                          tickLine={false}
-                          tick={{ fontSize: 10, fill: '#6B7280', fontWeight: 500 }}
-                        />
-                        <YAxis
-                          domain={[0, 100]}
-                          axisLine={false}
-                          tickLine={false}
-                          tick={{ fontSize: 10, fill: '#6B7280', fontWeight: 500 }}
-                        />
-                        <Tooltip
-                          contentStyle={{ borderRadius: '12px', border: '1px solid #E5E7EB' }}
-                          formatter={(value: any, name: any) => [value, name === 'score' ? latestBaseline?.brand : name]}
-                        />
-                        <Line
-                          type="monotone"
-                          dataKey="score"
-                          stroke="#111827"
-                          strokeWidth={2}
-                          dot={{ r: 4, fill: '#111827' }}
-                        />
-                        {/* Static competitor trend lines for visual context */}
-                        {competitorStats.map((c: any, i: number) => (
-                          <Line
-                            key={c.name}
-                            type="monotone"
-                            dataKey={() => c.score + (Math.random() * 10 - 5)}
-                            name={c.name}
-                            stroke={['#9CA3AF', '#D1D5DB', '#E5E7EB'][i % 3]}
-                            strokeDasharray="5 5"
-                            strokeWidth={1}
-                            dot={{ r: 3, fill: ['#9CA3AF', '#D1D5DB', '#E5E7EB'][i % 3] }}
-                          />
-                        ))}
-                      </LineChart>
-                    </ResponsiveContainer>
-                  </div>
-                </div>
+      {/* Competitor Intelligence Section */}
+      <div className="space-y-8 pt-4">
+        <div>
+          <h3 className="font-display font-semibold text-lg text-[#101828]">Competitor Intelligence</h3>
+          <p className="font-sans text-[13px] text-[#667085] mt-1">Comparative benchmarking across primary and secondary entities.</p>
+        </div>
 
-                {/* Chart 3: AI Model Breakdown */}
-                <div className="bg-white border border-[#E5E7EB] rounded-[16px] p-6">
-                  <h4 className="text-[14px] font-semibold text-[#111827] mb-6">AI Model Breakdown</h4>
-                  <div className="h-[300px]">
-                    <ResponsiveContainer width="100%" height="100%">
-                      <RadarChart cx="50%" cy="50%" outerRadius="80%" data={[
-                        { subject: 'ChatGPT', A: 90, B: 70, fullMark: 100 },
-                        { subject: 'Gemini', A: 85, B: 60, fullMark: 100 },
-                        { subject: 'Claude', A: 95, B: 80, fullMark: 100 },
-                        { subject: 'Overall', A: score, B: competitorStats[0]?.score || 50, fullMark: 100 },
-                      ]}>
-                        <PolarGrid stroke="#E5E7EB" />
-                        <PolarAngleAxis dataKey="subject" tick={{ fill: '#6B7280', fontSize: 11, fontWeight: 500 }} />
-                        <PolarRadiusAxis angle={30} domain={[0, 100]} hide />
-                        <Radar name={latestBaseline?.brand} dataKey="A" stroke="#111827" fill="#111827" fillOpacity={0.2} />
-                        {competitorStats.slice(0, 1).map((c: any) => (
-                          <Radar key={c.name} name={c.name} dataKey="B" stroke="#9CA3AF" fill="#9CA3AF" fillOpacity={0.1} />
-                        ))}
-                        <Legend wrapperStyle={{ fontSize: '10px', textTransform: 'uppercase', fontWeight: 700 }} />
-                      </RadarChart>
-                    </ResponsiveContainer>
-                  </div>
-                </div>
-              </div>
+        <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
+          {/* Bar Chart: Visibility Comparison */}
+          <div className="bg-white border border-[#EAECF0] rounded-[16px] p-7 shadow-sm transition-all hover:shadow-md">
+            <h4 className="font-sans text-[14px] font-semibold text-[#101828] mb-8 tracking-tight">Visibility Share</h4>
+            <div className="h-[300px]">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={chartData} margin={{ top: 20 }}>
+                  <CartesianGrid vertical={false} stroke="#F9FAFB" />
+                  <XAxis
+                    dataKey="name"
+                    axisLine={false}
+                    tickLine={false}
+                    tick={{ fontSize: 10, fill: '#667085', fontFamily: 'var(--font-body)', fontWeight: 500 }}
+                  />
+                  <YAxis hide domain={[0, 100]} />
+                  <Tooltip
+                    cursor={{ fill: '#F2F4F7' }}
+                    contentStyle={{ borderRadius: '12px', border: '1px solid #EAECF0', boxShadow: '0 4px 12px rgba(0,0,0,0.05)' }}
+                  />
+                  <Bar
+                    dataKey="score"
+                    radius={[4, 4, 0, 0]}
+                    barSize={32}
+                    label={{ position: 'top', fill: '#667085', fontSize: 11, fontFamily: 'var(--font-body)', fontWeight: 600 }}
+                  >
+                    {chartData.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={entry.isBrand ? '#0F172A' : '#E4E7EC'} />
+                    ))}
+                  </Bar>
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
 
-              <div className="mt-12 pt-12 border-t border-[#E5E7EB] relative">
-                {!user && (
-                  <div className="absolute top-12 right-0 z-10 px-3 py-1 bg-amber-50 border border-amber-100 rounded text-[11px] font-medium text-amber-700 uppercase tracking-wider">
-                    Simulated Dataset
-                  </div>
-                )}
-                <GenerativeAITrafficChart isSimulated={!user} />
-              </div>
+          {/* Line Chart: Frequency Trend */}
+          <div className="bg-white border border-[#EAECF0] rounded-[16px] p-7 shadow-sm transition-all hover:shadow-md">
+            <h4 className="font-sans text-[14px] font-semibold text-[#101828] mb-8 tracking-tight">Mention Frequency</h4>
+            <div className="h-[300px]">
+              <ResponsiveContainer width="100%" height="100%">
+                <LineChart data={history}>
+                  <CartesianGrid vertical={false} stroke="#F9FAFB" />
+                  <XAxis
+                    dataKey="date"
+                    axisLine={false}
+                    tickLine={false}
+                    tick={{ fontSize: 10, fill: '#667085', fontFamily: 'var(--font-body)', fontWeight: 500 }}
+                    tickFormatter={(str) => new Date(str).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                  />
+                  <YAxis hide domain={[0, 110]} />
+                  <Tooltip contentStyle={{ borderRadius: '12px', border: '1px solid #EAECF0' }} />
+                  <Line
+                    type="monotone"
+                    dataKey="score"
+                    stroke="#0F172A"
+                    strokeWidth={2.5}
+                    dot={{ r: 4, fill: '#0F172A', strokeWidth: 0 }}
+                  />
+                  {competitorStats.map((c: any, i: number) => (
+                    <Line
+                      key={c.name}
+                      type="monotone"
+                      dataKey={() => c.score + (Math.random() * 10 - 5)}
+                      name={c.name}
+                      stroke="#D0D5DD"
+                      strokeDasharray="4 4"
+                      strokeWidth={1.5}
+                      dot={{ r: 3, fill: '#E4E7EC', strokeWidth: 0 }}
+                    />
+                  ))}
+                </LineChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+
+          {/* Radar Chart: Model Breakdown */}
+          <div className="bg-white border border-[#EAECF0] rounded-[16px] p-7 shadow-sm transition-all hover:shadow-md">
+            <h4 className="font-sans text-[14px] font-semibold text-[#101828] mb-8 tracking-tight">Model Distribution</h4>
+            <div className="h-[300px]">
+              <ResponsiveContainer width="100%" height="100%">
+                <RadarChart cx="50%" cy="50%" outerRadius="80%" data={[
+                  { subject: 'ChatGPT', A: 90, B: 70 },
+                  { subject: 'Gemini', A: 85, B: 60 },
+                  { subject: 'Claude', A: 95, B: 80 },
+                  { subject: 'Perplexity', A: 88, B: 65 },
+                  { subject: 'Overall', A: score, B: competitorStats[0]?.score || 50 },
+                ]}>
+                  <PolarGrid stroke="#EAECF0" />
+                  <PolarAngleAxis dataKey="subject" tick={{ fill: '#667085', fontSize: 11, fontFamily: 'var(--font-body)', fontWeight: 500 }} />
+                  <PolarRadiusAxis angle={30} domain={[0, 100]} hide />
+                  <Radar
+                    name={latestBaseline?.brand}
+                    dataKey="A"
+                    stroke="#0F172A"
+                    strokeWidth={2}
+                    fill="#0F172A"
+                    fillOpacity={0.15}
+                  />
+                  {competitorStats.slice(0, 1).map((c: any) => (
+                    <Radar
+                      key={c.name}
+                      name={c.name}
+                      dataKey="B"
+                      stroke="#D0D5DD"
+                      fill="#D0D5DD"
+                      fillOpacity={0.1}
+                    />
+                  ))}
+                  <Legend wrapperStyle={{ fontSize: '10px', textTransform: 'uppercase', fontWeight: 700, paddingTop: '20px' }} />
+                </RadarChart>
+              </ResponsiveContainer>
             </div>
           </div>
         </div>
       </div>
+
+      <div id="scan-section" className="pt-12 border-t border-[#EAECF0]">
+        <div className="bg-white border border-[#EAECF0] rounded-[24px] p-10 md:p-16 text-center max-w-4xl mx-auto shadow-sm">
+          <div className="w-16 h-16 bg-[#F8F9FA] rounded-2xl flex items-center justify-center mx-auto mb-8 border border-[#EAECF0]">
+            <RefreshCw className="w-8 h-8 text-[#0F172A]" />
+          </div>
+          <h3 className="font-display font-bold text-3xl text-[#101828] mb-4">Initialize New Entity Audit</h3>
+          <p className="font-sans text-[#667085] text-lg mb-10 max-w-2xl mx-auto leading-relaxed font-medium">
+            Mapping live latent anchors and cross-referencing industry signals for real-time visibility intelligence.
+          </p>
+          <div className="max-w-md mx-auto">
+            <ScanForm onScan={handleScan} isLoading={isScanning} />
+          </div>
+        </div>
+      </div>
+
       <AuthOverlay isVisible={showAuthOverlay} />
     </motion.div>
   );
