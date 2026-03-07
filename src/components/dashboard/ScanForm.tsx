@@ -30,52 +30,66 @@ export default function ScanForm({ onScan, isLoading }: ScanFormProps) {
     };
 
     return (
-        <form onSubmit={handleSubmit} className="w-full max-w-md mx-auto space-y-6">
-            <div className="space-y-4">
-                <div className="group relative">
+        <form onSubmit={handleSubmit} className="w-full">
+            <div className="flex flex-col gap-[20px] mb-[28px] text-left">
+                <div className="flex flex-col gap-2">
+                    <label className="font-sans text-[11px] font-bold text-[#667085] uppercase tracking-[0.06em]">
+                        Brand Name
+                    </label>
                     <input
                         type="text"
-                        placeholder="Brand Name"
+                        placeholder="e.g. Apple, Nike, Tracintel"
                         value={brand}
                         onChange={(e) => setBrand(e.target.value)}
                         required
-                        className="w-full h-12 bg-transparent border-b border-[#E5E7EB] focus:border-[#111827] transition-colors outline-none text-[15px] font-medium placeholder:text-[#9CA3AF]"
+                        className="w-full bg-white border border-[#D0D5DD] rounded-[10px] px-[14px] py-[12px] font-sans text-[14px] text-[#101828] focus:border-[#101828] focus:outline-none transition-colors placeholder:text-[#98A2B3]"
                     />
                 </div>
-                <div className="group relative">
+
+                <div className="flex flex-col gap-2">
+                    <label className="font-sans text-[11px] font-bold text-[#667085] uppercase tracking-[0.06em]">
+                        Industry
+                    </label>
                     <input
                         type="text"
-                        placeholder="Industry"
+                        placeholder="e.g. Technology, Healthcare, Fashion"
                         value={industry}
                         onChange={(e) => setIndustry(e.target.value)}
                         required
-                        className="w-full h-12 bg-transparent border-b border-[#E5E7EB] focus:border-[#111827] transition-colors outline-none text-[15px] font-medium placeholder:text-[#9CA3AF]"
+                        className="w-full bg-white border border-[#D0D5DD] rounded-[10px] px-[14px] py-[12px] font-sans text-[14px] text-[#101828] focus:border-[#101828] focus:outline-none transition-colors placeholder:text-[#98A2B3]"
                     />
                 </div>
-                <div className="group relative">
+
+                <div className="flex flex-col gap-2 relative">
+                    <label className="font-sans text-[11px] font-bold text-[#667085] uppercase tracking-[0.06em]">
+                        Competitors
+                    </label>
                     <input
                         type="text"
-                        placeholder="Competitors (comma separated)"
+                        placeholder="e.g. Google, Microsoft, Samsung"
                         value={competitors}
                         onChange={(e) => setCompetitors(e.target.value)}
                         required
-                        className="w-full h-12 bg-transparent border-b border-[#E5E7EB] focus:border-[#111827] transition-colors outline-none text-[15px] font-medium placeholder:text-[#9CA3AF]"
+                        className="w-full bg-white border border-[#D0D5DD] rounded-[10px] px-[14px] py-[12px] font-sans text-[14px] text-[#101828] focus:border-[#101828] focus:outline-none transition-colors placeholder:text-[#98A2B3] mb-1"
                     />
+                    <span className="font-sans text-[11px] text-[#98A2B3]">
+                        Separate multiple competitors with a comma
+                    </span>
                 </div>
             </div>
 
             <button
                 type="submit"
                 disabled={isLoading || !brand || !industry || !competitors}
-                className="w-full h-12 bg-[#111827] text-white text-sm font-bold rounded-lg hover:bg-black active:scale-[0.98] transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed shadow-sm md:mt-4"
+                className="w-full bg-[#101828] text-white font-sans font-semibold text-[14px] py-[14px] rounded-[10px] hover:bg-[#1E293B] transition-colors flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
             >
                 {isLoading ? (
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                ) : (
                     <>
-                        <Zap className="w-4 h-4 fill-emerald-500 text-emerald-500" />
-                        Run Intelligence Scan
+                        <Loader2 className="h-4 w-4 animate-spin opacity-70" />
+                        Scanning...
                     </>
+                ) : (
+                    "Run Visibility Scan"
                 )}
             </button>
         </form>

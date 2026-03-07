@@ -184,13 +184,12 @@ export default function Dashboard() {
   // Empty State: No data yet
   if (!latestBaseline) {
     return (
-      <div className="flex h-[80vh] flex-col items-center justify-center p-10 text-center">
-        <div className="w-20 h-20 rounded-3xl bg-black/[0.02] border border-black/5 flex items-center justify-center mb-8 animate-pulse">
-          <Target className="w-10 h-10 text-black/20" />
+      <div className="flex min-h-[85vh] flex-col items-center justify-center p-6 bg-[#F9FAFB]">
+        <div className="w-full max-w-[480px] bg-white border border-[#EAECF0] rounded-[20px] p-[40px] shadow-sm flex flex-col items-center text-center">
+          <h2 className="text-[26px] font-bold text-[#101828] font-display mb-[24px]">Start Your First Scan</h2>
+          <p className="text-[14px] text-[#667085] font-sans mb-[24px] max-w-[380px] leading-relaxed">Enter your brand details below to see how AI models perceive you compared to your competitors.</p>
+          <ScanForm onScan={handleScan} isLoading={isScanning} />
         </div>
-        <h2 className="text-4xl font-extrabold tracking-tighter text-black font-serif italic mb-4">Unmapped Territory</h2>
-        <p className="text-sm text-black/40 max-w-sm mb-10 leading-relaxed font-medium">Your brand has not been indexed by the Tracintel Intelligence Engine. Run an initial scan to begin mapping your latent space visibility.</p>
-        <ScanForm onScan={handleScan} isLoading={isScanning} />
       </div>
     );
   }
