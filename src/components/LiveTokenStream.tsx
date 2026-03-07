@@ -39,11 +39,11 @@ export default function LiveTokenStream({ rawText, isScanning }: LiveTokenStream
     }, [tokens]);
 
     return (
-        <div className="w-full h-full bg-black border border-white/10 rounded-lg p-6 font-mono text-[11px] leading-relaxed overflow-hidden flex flex-col">
-            <div className="flex items-center gap-2 mb-4 border-b border-white/5 pb-2">
-                <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                <span className="text-white/40 uppercase tracking-[0.2em] font-bold">Inference_Stream_v4.0</span>
-                <span className="ml-auto text-white/20">JSON_PARSER: ACTIVE</span>
+        <div className="w-full h-full bg-white border border-[#E5E7EB] rounded-[16px] p-6 text-[13px] leading-relaxed overflow-hidden flex flex-col shadow-sm">
+            <div className="flex items-center gap-2 mb-4 border-b border-[#E5E7EB] pb-3">
+                <div className="w-2 h-2 rounded-full bg-emerald-500" />
+                <span className="text-[#111827] font-bold tracking-tight">Intelligence Stream</span>
+                <span className="ml-auto text-[10px] font-bold text-emerald-600 uppercase tracking-wider bg-emerald-50 px-2 py-0.5 rounded border border-emerald-100">Active Scan</span>
             </div>
 
             <div
@@ -58,7 +58,7 @@ export default function LiveTokenStream({ rawText, isScanning }: LiveTokenStream
                                 initial={{ opacity: 0, y: 5 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{ duration: 0.1 }}
-                                className="text-white/70"
+                                className="text-[#374151] font-medium"
                             >
                                 {token}
                             </motion.span>
@@ -74,7 +74,7 @@ export default function LiveTokenStream({ rawText, isScanning }: LiveTokenStream
                 </AnimatePresence>
             </div>
 
-            <div className="mt-4 pt-4 border-t border-white/5 flex justify-between text-[9px] text-white/20 uppercase tracking-widest">
+            <div className="mt-4 pt-4 border-t border-[#E5E7EB] flex justify-between text-[10px] font-bold text-[#6B7280] uppercase tracking-wider">
                 <span>Tokens: {tokens.length}</span>
                 <span>Latency: 42ms</span>
             </div>

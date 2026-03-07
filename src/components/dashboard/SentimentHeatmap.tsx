@@ -13,14 +13,14 @@ interface SentimentHeatmapProps {
 
 export default function SentimentHeatmap({ data }: SentimentHeatmapProps) {
     return (
-        <div className="bg-white rounded-[3rem] border border-black/5 p-10 shadow-2xl h-full flex flex-col group hover:border-[#10b981]/20 transition-all">
-            <div className="flex items-center justify-between mb-10">
+        <div className="bg-white rounded-[24px] border border-[#E5E7EB] p-8 shadow-sm h-full flex flex-col group transition-all">
+            <div className="flex items-center justify-between mb-8">
                 <div>
-                    <h3 className="text-2xl font-bold tracking-tighter text-black font-serif italic uppercase flex items-center gap-3">
-                        <ShieldCheck className="w-6 h-6 text-[#10b981]" />
-                        Trust Heatmap
+                    <h3 className="text-xl font-bold tracking-tight text-[#111827] flex items-center gap-2">
+                        <ShieldCheck className="w-5 h-5 text-emerald-500" />
+                        Sentiment Trend Map
                     </h3>
-                    <p className="text-[10px] font-mono font-bold text-black/20 uppercase tracking-[0.2em] mt-1">30-Day Sentiment Volatility</p>
+                    <p className="text-[13px] text-[#6B7280] font-medium mt-1">Analysis of brand perception over the last 30 days</p>
                 </div>
             </div>
 
@@ -37,20 +37,20 @@ export default function SentimentHeatmap({ data }: SentimentHeatmapProps) {
                             border: item.trust > 90 ? '1.5px solid #10b981' : 'none'
                         }}
                     >
-                        <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover/item:opacity-100 transition-opacity bg-black/80 rounded-lg">
-                            <span className="text-[9px] font-mono font-bold text-white">{item.trust}%</span>
+                        <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover/item:opacity-100 transition-opacity bg-[#111827]/90 rounded-lg">
+                            <span className="text-[10px] font-bold text-white">{item.trust}%</span>
                         </div>
                     </motion.div>
                 ))}
             </div>
 
-            <div className="mt-8 pt-6 border-t border-black/5 flex items-center justify-between">
-                <div className="flex items-center gap-1.5 font-mono text-[10px] text-black/20 font-bold uppercase">
+            <div className="mt-8 pt-6 border-t border-[#E5E7EB] flex items-center justify-between">
+                <div className="flex items-center gap-2 text-[10px] text-[#6B7280] font-bold uppercase tracking-wider">
                     <span>Low</span>
-                    <div className="w-20 h-2 bg-gradient-to-r from-emerald-50 to-[#10b981] rounded-full" />
-                    <span>Extreme</span>
+                    <div className="w-20 h-1.5 bg-gradient-to-r from-emerald-50 to-emerald-500 rounded-full" />
+                    <span>High</span>
                 </div>
-                <span className="text-[10px] font-mono font-bold text-[#10b981] uppercase">Bias: Verified</span>
+                <span className="text-[10px] font-bold text-emerald-600 uppercase tracking-wider">Validated</span>
             </div>
         </div>
     );

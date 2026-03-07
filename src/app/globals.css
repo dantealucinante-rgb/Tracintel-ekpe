@@ -16,8 +16,9 @@
   --color-paper: var(--paper);
   --color-ink: var(--ink);
   --color-soft-gray: var(--soft-gray);
-  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
-  --font-mono: var(--font-geist-mono), ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-playfair), serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
 }
 
 @layer base {
@@ -28,24 +29,26 @@
   body {
     background: var(--background);
     color: var(--foreground);
-    font-family: var(--font-urbanist), ui-sans-serif, system-ui, sans-serif;
-    @apply font-light;
+    font-family: var(--font-sans);
+    @apply font-normal;
   }
 
   h1,
-  h2,
-  h3 {
-    @apply font-bold tracking-tighter leading-tight;
+  h2 {
+    font-family: var(--font-display);
+    @apply font-bold leading-tight;
   }
 
+  h3,
   h4,
   h5,
   h6 {
-    @apply font-semibold tracking-tight;
+    font-family: var(--font-sans);
+    @apply font-semibold leading-tight;
   }
 
   p {
-    @apply font-light leading-relaxed;
+    @apply font-normal leading-relaxed;
   }
 }
 

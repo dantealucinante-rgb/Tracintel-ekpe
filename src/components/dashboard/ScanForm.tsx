@@ -35,31 +35,31 @@ export default function ScanForm({ onScan, isLoading }: ScanFormProps) {
                 <div className="group relative">
                     <input
                         type="text"
-                        placeholder="BRAND NAME"
+                        placeholder="Brand Name"
                         value={brand}
                         onChange={(e) => setBrand(e.target.value)}
                         required
-                        className="w-full h-12 bg-transparent border-b border-black/10 focus:border-black transition-colors outline-none text-sm font-bold tracking-widest uppercase placeholder:text-black/20"
+                        className="w-full h-12 bg-transparent border-b border-[#E5E7EB] focus:border-[#111827] transition-colors outline-none text-[15px] font-medium placeholder:text-[#9CA3AF]"
                     />
                 </div>
                 <div className="group relative">
                     <input
                         type="text"
-                        placeholder="INDUSTRY"
+                        placeholder="Industry"
                         value={industry}
                         onChange={(e) => setIndustry(e.target.value)}
                         required
-                        className="w-full h-12 bg-transparent border-b border-black/10 focus:border-black transition-colors outline-none text-sm font-bold tracking-widest uppercase placeholder:text-black/20"
+                        className="w-full h-12 bg-transparent border-b border-[#E5E7EB] focus:border-[#111827] transition-colors outline-none text-[15px] font-medium placeholder:text-[#9CA3AF]"
                     />
                 </div>
                 <div className="group relative">
                     <input
                         type="text"
-                        placeholder="COMPETITORS (COMMA SEPARATED)"
+                        placeholder="Competitors (comma separated)"
                         value={competitors}
                         onChange={(e) => setCompetitors(e.target.value)}
                         required
-                        className="w-full h-12 bg-transparent border-b border-black/10 focus:border-black transition-colors outline-none text-sm font-bold tracking-widest uppercase placeholder:text-black/20"
+                        className="w-full h-12 bg-transparent border-b border-[#E5E7EB] focus:border-[#111827] transition-colors outline-none text-[15px] font-medium placeholder:text-[#9CA3AF]"
                     />
                 </div>
             </div>
@@ -67,14 +67,14 @@ export default function ScanForm({ onScan, isLoading }: ScanFormProps) {
             <button
                 type="submit"
                 disabled={isLoading || !brand || !industry || !competitors}
-                className="w-full h-14 bg-black text-white text-xs font-bold rounded-xl uppercase tracking-[0.3em] hover:bg-black/90 active:scale-[0.98] transition-all flex items-center justify-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full h-12 bg-[#111827] text-white text-sm font-bold rounded-lg hover:bg-black active:scale-[0.98] transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed shadow-sm md:mt-4"
             >
                 {isLoading ? (
                     <Loader2 className="h-4 w-4 animate-spin" />
                 ) : (
                     <>
-                        <Zap className="w-4 h-4 text-[#007AFF]" />
-                        Initialize Neural Mapping
+                        <Zap className="w-4 h-4 fill-emerald-500 text-emerald-500" />
+                        Run Intelligence Scan
                     </>
                 )}
             </button>
