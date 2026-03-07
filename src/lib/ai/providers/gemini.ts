@@ -9,7 +9,7 @@ export class GeminiProvider implements AiProvider {
 
     async generateScan(input: ScanInput): Promise<ScanResult> {
         const genAI = new GoogleGenerativeAI(env.GOOGLE_GEMINI_API_KEY || "");
-        const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+        const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
 
         const prompt = `In the context of ${input.industry}, if someone asked about ${input.brand} compared to ${input.competitors.join(", ")}, what would you say? Be specific about which brand you would mention most and why.`;
 
