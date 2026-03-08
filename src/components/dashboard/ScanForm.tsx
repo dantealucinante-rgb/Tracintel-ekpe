@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from 'react';
-import { Zap, Loader2 } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Loader2 } from 'lucide-react';
 
 interface ScanFormProps {
     onScan: (data: { brand: string; industry: string; competitors: string[] }) => Promise<void>;
@@ -12,6 +12,51 @@ export default function ScanForm({ onScan, isLoading }: ScanFormProps) {
     const [brand, setBrand] = useState('');
     const [industry, setIndustry] = useState('');
     const [competitors, setCompetitors] = useState('');
+    const [progress, setProgress] = useState(0);
+    const [stageLabel, setStageLabel] = useState('');
+    const [showProgress, setShowProgress] = useState(false);
+
+    useEffect(() => {
+        let t1: NodeJS.Timeout, t2: NodeJS.Timeout, t3: NodeJS.Timeout, t4: NodeJS.Timeout, t5: NodeJS.Timeout, hideTimer: NodeJS.Timeout;
+
+        if (isLoading) {
+            setShowProgress(true);
+            setProgress(0);
+            setStageLabel("Connecting to AI models...");
+
+            // Stage 1 (0-20%): "Connecting to AI models..." — duration 1s
+            t1 = setTimeout(() => { setProgress(20); }, 100);
+
+            // Stage 2 (20-45%): "Analyzing brand recognition..." — duration 2s
+            t2 = setTimeout(() => { setProgress(45); setStageLabel("Analyzing brand recognition..."); }, 1100);
+
+            // Stage 3 (45-65%): "Comparing competitors..." — duration 2s
+            t3 = setTimeout(() => { setProgress(65); setStageLabel("Comparing competitors..."); }, 3100);
+
+            // Stage 4 (65-85%): "Calculating visibility scores..." — duration 2s
+            t4 = setTimeout(() => { setProgress(85); setStageLabel("Calculating visibility scores..."); }, 5100);
+
+            // Stage 5 (85-100%): "Finalizing intelligence report..." — duration 1s
+            t5 = setTimeout(() => { setProgress(98); setStageLabel("Finalizing intelligence report..."); }, 7100);
+
+        } else if (showProgress) {
+            setProgress(100);
+            setStageLabel("Complete!");
+            hideTimer = setTimeout(() => {
+                setShowProgress(false);
+                setProgress(0);
+            }, 500);
+        }
+
+        return () => {
+            clearTimeout(t1);
+            clearTimeout(t2);
+            clearTimeout(t3);
+            clearTimeout(t4);
+            clearTimeout(t5);
+            clearTimeout(hideTimer);
+        };
+    }, [isLoading, showProgress]);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -78,6 +123,20 @@ export default function ScanForm({ onScan, isLoading }: ScanFormProps) {
                 </div>
             </div>
 
+            {showProgress && (
+                <div className="mb-[24px] animate-in fade-in duration-300">
+                    <div className="w-full h-[6px] bg-[#EAECF0] rounded-full overflow-hidden mb-[12px]">
+                        <div
+                            className="h-full bg-[#101828] transition-all duration-1000 ease-out rounded-full"
+                            style={{ width: `${progress}%` }}
+                        />
+                    </div>
+                    <p className="font-sans text-[13px] text-[#667085] text-center transition-opacity duration-300">
+                        {stageLabel}
+                    </p>
+                </div>
+            )}
+
             <button
                 type="submit"
                 disabled={isLoading || !brand || !industry || !competitors}
@@ -86,7 +145,7 @@ export default function ScanForm({ onScan, isLoading }: ScanFormProps) {
                 {isLoading ? (
                     <>
                         <Loader2 className="h-4 w-4 animate-spin opacity-70" />
-                        Scanning...
+                        {stageLabel || "Scanning..."}
                     </>
                 ) : (
                     "Run Visibility Scan"

@@ -12,7 +12,23 @@ export class ClaudeProvider implements AiProvider {
             apiKey: env.ANTHROPIC_API_KEY || "",
         });
 
-        const prompt = `In the context of ${input.industry}, if someone asked about ${input.brand} compared to ${input.competitors.join(", ")}, what would you say? Be specific about which brand you would mention most and why.`;
+        const prompt = `
+You are an AI visibility analyst. Analyze the brand "${input.brand}" in the "${input.industry}" industry compared to competitors: ${input.competitors.join(", ")}.
+
+Answer the following questions in order, clearly labeling each answer:
+
+1. BRAND RECOGNITION: On a scale of 0-10, how well do you recognize "${input.brand}" as an authority in ${input.industry}? Explain why.
+
+2. CATEGORY LEADERSHIP: If someone asked you to recommend the top 3 companies in ${input.industry}, would "${input.brand}" be mentioned? Where would it rank compared to ${input.competitors.join(", ")}?
+
+3. SENTIMENT: What is the general sentiment when "${input.brand}" is mentioned in the context of ${input.industry}? (Positive/Neutral/Negative) Explain.
+
+4. COMPETITOR COMPARISON: Compare "${input.brand}" directly against each of these competitors: ${input.competitors.join(", ")}. For each competitor, state which brand an AI would more likely recommend and why.
+
+5. VISIBILITY GAPS: What topics or keywords in ${input.industry} is "${input.brand}" NOT strongly associated with that its competitors are? List up to 3 gaps.
+
+6. INDUSTRY BENCHMARK: Compared to the average brand visibility in ${input.industry}, how would you rate "${input.brand}"? (Above average / Average / Below average) Explain.
+`.trim();
 
         try {
             const response = await anthropic.messages.create({

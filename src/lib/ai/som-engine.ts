@@ -8,7 +8,25 @@ export interface SomMetrics {
 
 import { SCORE_WEIGHTS, PROVIDER_MULTIPLIERS } from './constants';
 
+export const INDUSTRY_BENCHMARKS: Record<string, number> = {
+    'technology': 45,
+    'healthcare': 38,
+    'finance': 42,
+    'retail': 40,
+    'food': 35,
+    'fashion': 43,
+    'education': 36,
+    'default': 40
+};
+
 export class SomEngine {
+    static getBenchmark(industry: string): number {
+        const ind = industry.toLowerCase();
+        for (const [key, val] of Object.entries(INDUSTRY_BENCHMARKS)) {
+            if (ind.includes(key)) return val;
+        }
+        return INDUSTRY_BENCHMARKS['default'];
+    }
     /**
      * Calculates visibility metrics on a 0.0 to 1.0 scale.
      */

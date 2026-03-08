@@ -4,31 +4,22 @@ import { OpenAIProvider } from "./openai";
 import { ClaudeProvider } from "./claude";
 import { ScanInput, ScanResult } from "./types";
 
-/**
- * Executes a visibility scan trying Gemini first, then GPT-4, then Claude.
- */
-export async function runWithFallback(input: ScanInput): Promise<ScanResult & { provider: string }> {
-    const providers = [
-        new GeminiProvider(),
-        new OpenAIProvider(),
-        new ClaudeProvider()
-    ];
+export async function runAllProviders(input: ScanInput) {
+    const providers = {
+        gemini: new GeminiProvider(),
+        openai: new OpenAIProvider(),
+        claude: new ClaudeProvider()
+    };
 
-    let lastError: any = null;
+    const [geminiResult, openaiResult, claudeResult] = await Promise.allSettled([
+        providers.gemini.generateScan(input),
+        providers.openai.generateScan(input),
+        providers.claude.generateScan(input)
+    ]);
 
-    for (const provider of providers) {
-        try {
-            const result = await provider.generateScan(input);
-            return {
-                ...result,
-                provider: provider.name.toLowerCase()
-            };
-        } catch (error) {
-            lastError = error;
-            continue; // Try next provider
-        }
-    }
-
-    console.error(`[AI Orchestrator] All AI providers failed.`);
-    throw lastError || new Error("All AI providers failed to generate a response.");
+    return {
+        gemini: geminiResult,
+        openai: openaiResult,
+        claude: claudeResult
+    };
 }

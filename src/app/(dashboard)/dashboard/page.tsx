@@ -302,6 +302,105 @@ export default function Dashboard() {
         </div>
       </div>
 
+      {/* Intelligence Report Row */}
+      <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 -mt-4">
+        {/* Per-Model Scores */}
+        <div className="bg-white border border-[#EAECF0] rounded-[16px] p-7 shadow-sm transition-all hover:shadow-md">
+          <h4 className="font-sans text-[14px] font-semibold text-[#101828] mb-6 tracking-tight">Per-Model Scores</h4>
+          <div className="grid grid-cols-3 gap-4 divide-x divide-[#EAECF0]">
+            {/* Gemini */}
+            <div className="flex flex-col gap-2 px-2">
+              <div className="flex items-center gap-2">
+                <div className="w-2 h-2 rounded-full bg-[#1A73E8]" />
+                <span className="font-sans text-[11px] font-bold text-[#667085] uppercase tracking-[0.06em]">Gemini</span>
+              </div>
+              {latestBaseline?.perModelScores?.gemini?.status === 'success' ? (
+                <div className="font-display font-semibold text-[28px] text-[#101828] leading-none">
+                  {latestBaseline.perModelScores.gemini.score}
+                </div>
+              ) : (
+                <div className="flex gap-2 items-center pt-2">
+                  <div className="font-display font-semibold text-[20px] text-[#98A2B3] leading-none">—</div>
+                  <span className="font-sans text-[11px] text-[#98A2B3]">Unavailable</span>
+                </div>
+              )}
+            </div>
+
+            {/* OpenAI */}
+            <div className="flex flex-col gap-2 px-4">
+              <div className="flex items-center gap-2">
+                <div className="w-2 h-2 rounded-full bg-[#10A37F]" />
+                <span className="font-sans text-[11px] font-bold text-[#667085] uppercase tracking-[0.06em]">OpenAI</span>
+              </div>
+              {latestBaseline?.perModelScores?.openai?.status === 'success' ? (
+                <div className="font-display font-semibold text-[28px] text-[#101828] leading-none">
+                  {latestBaseline.perModelScores.openai.score}
+                </div>
+              ) : (
+                <div className="flex gap-2 items-center pt-2">
+                  <div className="font-display font-semibold text-[20px] text-[#98A2B3] leading-none">—</div>
+                  <span className="font-sans text-[11px] text-[#98A2B3]">Unavailable</span>
+                </div>
+              )}
+            </div>
+
+            {/* Claude */}
+            <div className="flex flex-col gap-2 pl-4">
+              <div className="flex items-center gap-2">
+                <div className="w-2 h-2 rounded-full bg-[#D97706]" />
+                <span className="font-sans text-[11px] font-bold text-[#667085] uppercase tracking-[0.06em]">Claude</span>
+              </div>
+              {latestBaseline?.perModelScores?.claude?.status === 'success' ? (
+                <div className="font-display font-semibold text-[28px] text-[#101828] leading-none">
+                  {latestBaseline.perModelScores.claude.score}
+                </div>
+              ) : (
+                <div className="flex gap-2 items-center pt-2">
+                  <div className="font-display font-semibold text-[20px] text-[#98A2B3] leading-none">—</div>
+                  <span className="font-sans text-[11px] text-[#98A2B3]">Unavailable</span>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* Industry Benchmark */}
+        <div className="bg-white border border-[#EAECF0] rounded-[16px] p-7 shadow-sm transition-all hover:shadow-md">
+          <div className="flex items-center justify-between mb-6">
+            <h4 className="font-sans text-[14px] font-semibold text-[#101828] tracking-tight">Industry Benchmark</h4>
+            {latestBaseline?.benchmarkDelta !== undefined && (
+              <div className={cn(
+                "font-sans text-[13px] font-medium px-2.5 py-1 rounded-full",
+                latestBaseline.benchmarkDelta > 0 ? "bg-[#ECFDF3] text-[#027A48]" : latestBaseline.benchmarkDelta < 0 ? "bg-[#FEF3F2] text-[#B42318]" : "bg-[#F2F4F7] text-[#344054]"
+              )}>
+                {latestBaseline.benchmarkDelta > 0 ? `+${latestBaseline.benchmarkDelta} above average` : latestBaseline.benchmarkDelta < 0 ? `${latestBaseline.benchmarkDelta} below average` : "Average"}
+              </div>
+            )}
+          </div>
+
+          <div className="space-y-4">
+            <div className="flex justify-between font-sans text-[13px] text-[#667085]">
+              <span>Your Score: <strong className="text-[#101828]">{score}</strong></span>
+              <span>Industry Average: <strong className="text-[#101828]">{latestBaseline?.benchmarkScore || 40}</strong></span>
+            </div>
+
+            <div className="relative w-full h-[8px] bg-[#EAECF0] rounded-full overflow-hidden">
+              <div
+                className="absolute top-0 left-0 h-full bg-[#D0D5DD] rounded-full transition-all"
+                style={{ width: `${Math.min(100, latestBaseline?.benchmarkScore || 40)}%`, zIndex: 10 }}
+              />
+              <div
+                className={cn(
+                  "absolute top-0 opacity-80 left-0 h-full rounded-full transition-all mix-blend-multiply",
+                  (latestBaseline?.benchmarkDelta || 0) >= 0 ? "bg-[#101828]" : "bg-[#F04438]"
+                )}
+                style={{ width: `${score}%`, zIndex: 20 }}
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+
       {/* Visibility Chart Card */}
       <div className="bg-white border border-[#EAECF0] rounded-[16px] p-8 shadow-sm transition-all hover:shadow-md">
         <div className="mb-8">

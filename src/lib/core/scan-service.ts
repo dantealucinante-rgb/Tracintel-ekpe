@@ -1,7 +1,7 @@
 // Core service for orchestrating visibility scans, usage validation, and data persistence
 import { createClient as createSupabaseServer } from '@/lib/supabase/server'
 import prisma from '@/lib/db'
-import { runWithFallback } from '@/lib/ai/providers'
+import { runAllProviders } from '@/lib/ai/providers'
 import { ScanInput } from '@/lib/ai/providers/types'
 import { LlmProvider } from '@prisma/client'
 import { SomEngine } from '@/lib/ai/som-engine'
@@ -38,7 +38,7 @@ export class ScanService {
         }
 
         const runScan = async (strategyContext?: string) => {
-            const result = await runWithFallback({
+            const results = await runAllProviders({
                 ...input,
                 strategyContext
             })
@@ -56,30 +56,75 @@ export class ScanService {
                     }
                 })
 
-                // Create LLM Response
+                // Create LLM Responses
                 const providerMap: Record<string, LlmProvider> = {
                     gemini: 'GEMINI',
                     openai: 'GPT4',
                     claude: 'CLAUDE'
                 };
 
-                await tx.llmResponse.create({
-                    data: {
-                        scanId: scan.id,
-                        provider: providerMap[result.provider] || 'GEMINI' as LlmProvider,
-                        providerUsed: result.provider,
-                        rawText: result.rawText
+                const perModelScores: Record<string, any> = {};
+                let totalScore = 0;
+                let successCount = 0;
+
+                let aggregatedMetrics = {
+                    mentionFrequency: 0,
+                    citationDensity: 0,
+                    sentimentScore: 0,
+                    latentDensity: 0
+                };
+
+                for (const [providerName, result] of Object.entries(results)) {
+                    if (result.status === 'fulfilled') {
+                        const val = result.value;
+                        const score = SomEngine.calculateAggregateScore(val, providerName);
+
+                        perModelScores[providerName] = { score, status: 'success' };
+                        totalScore += score;
+                        successCount++;
+
+                        // Add to aggregate metrics
+                        aggregatedMetrics.mentionFrequency += val.mentionFrequency;
+                        aggregatedMetrics.citationDensity += val.citationDensity;
+                        aggregatedMetrics.sentimentScore += val.sentimentScore;
+                        aggregatedMetrics.latentDensity += val.latentDensity;
+
+                        await tx.llmResponse.create({
+                            data: {
+                                scanId: scan.id,
+                                provider: providerMap[providerName] || 'GEMINI' as LlmProvider,
+                                providerUsed: providerName,
+                                rawText: val.rawText
+                            }
+                        });
+                    } else {
+                        console.error(`[ScanService] Provider ${providerName} failed:`, result.reason);
+                        perModelScores[providerName] = { score: 0, status: 'failed' };
                     }
-                })
+                }
+
+                if (successCount === 0) {
+                    throw new Error("All AI providers failed during the scan.");
+                }
+
+                // Average the metrics
+                aggregatedMetrics = {
+                    mentionFrequency: aggregatedMetrics.mentionFrequency / successCount,
+                    citationDensity: aggregatedMetrics.citationDensity / successCount,
+                    sentimentScore: aggregatedMetrics.sentimentScore / successCount,
+                    latentDensity: aggregatedMetrics.latentDensity / successCount,
+                };
+
+                const finalAverageScore = Math.round(totalScore / successCount);
 
                 // Create Signal
                 await tx.signal.create({
                     data: {
                         scanId: scan.id,
-                        mentionFrequency: result.mentionFrequency,
-                        citationDensity: result.citationDensity,
-                        sentimentScore: result.sentimentScore,
-                        latentDensity: result.latentDensity
+                        mentionFrequency: aggregatedMetrics.mentionFrequency,
+                        citationDensity: aggregatedMetrics.citationDensity,
+                        sentimentScore: aggregatedMetrics.sentimentScore,
+                        latentDensity: aggregatedMetrics.latentDensity
                     }
                 })
 
@@ -89,17 +134,23 @@ export class ScanService {
                     data: { scansUsed: { increment: 1 } }
                 })
 
+                const benchmarkScore = SomEngine.getBenchmark(input.industry);
+                const benchmarkDelta = finalAverageScore - benchmarkScore;
+
                 return {
                     scanId: scan.id,
                     strategyInjected: !!strategyContext,
-                    provider: result.provider,
+                    provider: 'multi-model',
                     metrics: {
-                        score: SomEngine.calculateAggregateScore(result, result.provider),
-                        mentionFrequency: result.mentionFrequency,
-                        citationDensity: result.citationDensity,
-                        sentimentScore: result.sentimentScore,
-                        latentDensity: result.latentDensity
-                    }
+                        score: finalAverageScore,
+                        mentionFrequency: aggregatedMetrics.mentionFrequency,
+                        citationDensity: aggregatedMetrics.citationDensity,
+                        sentimentScore: aggregatedMetrics.sentimentScore,
+                        latentDensity: aggregatedMetrics.latentDensity
+                    },
+                    perModelScores,
+                    benchmarkScore,
+                    benchmarkDelta
                 }
             })
         }
@@ -181,7 +232,8 @@ export class ScanService {
         const formatScan = (scan?: any) => {
             if (!scan) return null
             const signal = scan.signals[0]
-            const providerUsed = scan.llmResponses[0]?.providerUsed || 'gemini'
+            const providerUsed = scan.llmResponses.length > 1 ? 'multi-model' : (scan.llmResponses[0]?.providerUsed || 'gemini');
+
             const metrics = signal ? {
                 mentionFrequency: signal.mentionFrequency,
                 citationDensity: signal.citationDensity,
@@ -189,12 +241,36 @@ export class ScanService {
                 latentDensity: signal.latentDensity
             } : { mentionFrequency: 0, citationDensity: 0, sentimentScore: 0, latentDensity: 0 };
 
+            const overallScore = SomEngine.calculateAggregateScore(metrics, providerUsed);
+            const benchmarkScore = SomEngine.getBenchmark(scan.industry);
+            const benchmarkDelta = overallScore - benchmarkScore;
+
+            // Reconstruct perModelScores
+            const perModelScores: Record<string, any> = {};
+            if (scan.llmResponses.length > 1) {
+                // It's a parallel multi-model scan
+                perModelScores['gemini'] = { score: 0, status: 'failed' };
+                perModelScores['openai'] = { score: 0, status: 'failed' };
+                perModelScores['claude'] = { score: 0, status: 'failed' };
+
+                scan.llmResponses.forEach((r: any) => {
+                    const p = r.providerUsed;
+                    const modelMetrics = SomEngine.calculateMetrics(r.rawText, scan.brand, scan.competitors);
+                    const modelScore = SomEngine.calculateAggregateScore(modelMetrics, p);
+                    perModelScores[p] = { score: modelScore, status: 'success' };
+                });
+            } else if (scan.llmResponses.length === 1) {
+                // Legacy scan
+                const p = scan.llmResponses[0].providerUsed || 'gemini';
+                perModelScores[p] = { score: overallScore, status: 'success' };
+            }
+
             return {
                 id: scan.id,
                 brand: scan.brand,
                 industry: scan.industry,
                 competitors: scan.competitors,
-                score: SomEngine.calculateAggregateScore(metrics, providerUsed),
+                score: overallScore,
                 latentDensity: metrics.latentDensity,
                 rawText: scan.llmResponses[0]?.rawText || '',
                 date: scan.createdAt,
@@ -203,7 +279,10 @@ export class ScanService {
                     som: {}
                 },
                 signals: scan.signals,
-                provider: providerUsed
+                provider: providerUsed,
+                perModelScores,
+                benchmarkScore,
+                benchmarkDelta
             }
         }
 
