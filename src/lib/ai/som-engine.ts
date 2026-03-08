@@ -27,6 +27,39 @@ export class SomEngine {
         }
         return INDUSTRY_BENCHMARKS['default'];
     }
+
+    /**
+     * Extracts an explicitly stated AI score from the raw generated text.
+     */
+    static extractAiProvidedScore(rawText: string): number | null {
+        const match = rawText.match(/(?:visibility score|overall score|score)[:\s]+(\d+)(?:\/100)?/i);
+        if (match && match[1]) {
+            const score = parseInt(match[1], 10);
+            if (!isNaN(score) && score >= 0 && score <= 100) {
+                return score;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Extracts explicitly stated competitor scores from the raw text.
+     */
+    static extractCompetitorScores(rawText: string, competitors: string[]): Record<string, number> {
+        const scores: Record<string, number> = {};
+        for (const competitor of competitors) {
+            const safeComp = competitor.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+            const match = rawText.match(new RegExp(`${safeComp}[:\\s]+(?:score[:\\s]+)?(\\d+)(?:\\/100)?`, 'i'));
+            if (match && match[1]) {
+                const score = parseInt(match[1], 10);
+                if (!isNaN(score) && score >= 0 && score <= 100) {
+                    scores[competitor] = score;
+                }
+            }
+        }
+        return scores;
+    }
+
     /**
      * Calculates visibility metrics on a 0.0 to 1.0 scale.
      */
@@ -90,7 +123,12 @@ export class SomEngine {
      * @param provider - Lowercase identifier of the LLM provider for normalization
      * @returns A rounded integer score between 0 and 100
      */
-    static calculateAggregateScore(metrics: SomMetrics, provider?: string): number {
+    static calculateAggregateScore(metrics: SomMetrics, provider?: string, rawText?: string): number {
+        if (rawText) {
+            const extracted = SomEngine.extractAiProvidedScore(rawText);
+            if (extracted !== null) return extracted;
+        }
+
         const multiplier = provider ? (PROVIDER_MULTIPLIERS[provider as keyof typeof PROVIDER_MULTIPLIERS] || 1.0) : 1.0;
 
         const rawScore =

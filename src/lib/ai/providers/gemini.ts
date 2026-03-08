@@ -9,24 +9,35 @@ export class GeminiProvider implements AiProvider {
 
     async generateScan(input: ScanInput): Promise<ScanResult> {
         const genAI = new GoogleGenerativeAI(env.GOOGLE_GEMINI_API_KEY || "");
-        const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
+        const model = genAI.getGenerativeModel({
+            model: "gemini-2.0-flash",
+            tools: [{ googleSearch: {} }] as any
+        });
 
         const prompt = `
-You are an AI visibility analyst. Analyze the brand "${input.brand}" in the "${input.industry}" industry compared to competitors: ${input.competitors.join(", ")}.
+Search the web and research the brand "${input.brand}" operating in the "${input.industry}" industry. 
+Then compare it against these competitors: ${input.competitors.join(", ")}.
 
-Answer the following questions in order, clearly labeling each answer:
+Based on your research, provide a detailed analysis answering:
 
-1. BRAND RECOGNITION: On a scale of 0-10, how well do you recognize "${input.brand}" as an authority in ${input.industry}? Explain why.
+1. BRAND RECOGNITION (score 0-10): How established and recognized is "${input.brand}" in ${input.industry}? 
+   What is their website, founding year, and key products/services if findable?
 
-2. CATEGORY LEADERSHIP: If someone asked you to recommend the top 3 companies in ${input.industry}, would "${input.brand}" be mentioned? Where would it rank compared to ${input.competitors.join(", ")}?
+2. CATEGORY LEADERSHIP: In ${input.industry}, rank these brands by AI visibility: ${[input.brand, ...input.competitors].join(", ")}
+   Who would an AI most likely recommend first? Give a clear ranking 1st through ${input.competitors.length + 1}.
 
-3. SENTIMENT: What is the general sentiment when "${input.brand}" is mentioned in the context of ${input.industry}? (Positive/Neutral/Negative) Explain.
+3. SENTIMENT: What is the online and AI sentiment around "${input.brand}"? 
+   Positive/Neutral/Negative? Why?
 
-4. COMPETITOR COMPARISON: Compare "${input.brand}" directly against each of these competitors: ${input.competitors.join(", ")}. For each competitor, state which brand an AI would more likely recommend and why.
+4. COMPETITOR GAPS: What specific advantages do ${input.competitors.join(", ")} have over "${input.brand}" in terms of AI visibility and online presence?
 
-5. VISIBILITY GAPS: What topics or keywords in ${input.industry} is "${input.brand}" NOT strongly associated with that its competitors are? List up to 3 gaps.
+5. INDUSTRY BENCHMARK: Is "${input.brand}" above average, average, or below average visibility for ${input.industry}? 
+   Justify with specific evidence from your research.
 
-6. INDUSTRY BENCHMARK: Compared to the average brand visibility in ${input.industry}, how would you rate "${input.brand}"? (Above average / Average / Below average) Explain.
+6. VISIBILITY SCORE: Give "${input.brand}" an overall AI visibility score from 0-100 based on your research.
+   Also give each competitor a score: ${input.competitors.map(c => `${c}: X/100`).join(", ")}
+
+Be specific, cite real facts you find, and base all scores on actual research not assumptions.
 `.trim();
 
         try {

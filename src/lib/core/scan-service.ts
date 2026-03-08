@@ -77,7 +77,7 @@ export class ScanService {
                 for (const [providerName, result] of Object.entries(results)) {
                     if (result.status === 'fulfilled') {
                         const val = result.value;
-                        const score = SomEngine.calculateAggregateScore(val, providerName);
+                        const score = SomEngine.calculateAggregateScore(val, providerName, val.rawText);
 
                         perModelScores[providerName] = { score, status: 'success' };
                         totalScore += score;
@@ -222,7 +222,7 @@ export class ScanService {
                 const providerUsed = s.llmResponses[0]?.providerUsed || 'gemini';
                 return {
                     date: s.createdAt.toISOString(),
-                    score: signal ? SomEngine.calculateAggregateScore(signal, providerUsed) : 0,
+                    score: signal ? SomEngine.calculateAggregateScore(signal, providerUsed, s.llmResponses[0]?.rawText) : 0,
                     provider: providerUsed
                 };
             })
@@ -241,7 +241,7 @@ export class ScanService {
                 latentDensity: signal.latentDensity
             } : { mentionFrequency: 0, citationDensity: 0, sentimentScore: 0, latentDensity: 0 };
 
-            const overallScore = SomEngine.calculateAggregateScore(metrics, providerUsed);
+            const overallScore = SomEngine.calculateAggregateScore(metrics, providerUsed, scan.llmResponses[0]?.rawText);
             const benchmarkScore = SomEngine.getBenchmark(scan.industry);
             const benchmarkDelta = overallScore - benchmarkScore;
 
@@ -256,7 +256,7 @@ export class ScanService {
                 scan.llmResponses.forEach((r: any) => {
                     const p = r.providerUsed;
                     const modelMetrics = SomEngine.calculateMetrics(r.rawText, scan.brand, scan.competitors);
-                    const modelScore = SomEngine.calculateAggregateScore(modelMetrics, p);
+                    const modelScore = SomEngine.calculateAggregateScore(modelMetrics, p, r.rawText);
                     perModelScores[p] = { score: modelScore, status: 'success' };
                 });
             } else if (scan.llmResponses.length === 1) {
