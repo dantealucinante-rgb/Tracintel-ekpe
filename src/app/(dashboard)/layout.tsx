@@ -100,7 +100,7 @@ export default function DashboardLayout({
                     <SidebarLink
                         href="/dashboard/settings"
                         icon={Settings}
-                        label="Configuration"
+                        label="Settings"
                         active={pathname === '/dashboard/settings'}
                     />
                 </div>
