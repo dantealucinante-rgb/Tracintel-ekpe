@@ -3,10 +3,10 @@ import { ScanService } from '@/lib/core/scan-service';
 
 export async function GET(
     request: Request,
-    { params }: { params: { id: string } }
+    { params }: { params: Promise<{ id: string }> }
 ) {
     try {
-        const scanId = params.id;
+        const { id: scanId } = await params;
         if (!scanId) {
             return NextResponse.json({ error: 'Missing Scan ID' }, { status: 400 });
         }

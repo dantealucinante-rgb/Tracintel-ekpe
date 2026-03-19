@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from 'react';
+import { useParams } from 'next/navigation';
 import { motion } from 'framer-motion';
 import {
     ChevronLeft,
@@ -23,8 +24,10 @@ import { DashboardSkeleton } from '@/components/dashboard/Skeleton';
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
-export default function ScanDetailPage({ params }: { params: { id: string } }) {
-    const { data: scan, error, isLoading } = useSWR(`/api/scans/${params.id}`, fetcher);
+export default function ScanDetailPage() {
+    const params = useParams();
+    const id = params.id as string;
+    const { data: scan, error, isLoading } = useSWR(`/api/scans/${id}`, fetcher);
 
     if (isLoading) return <div className="p-12"><DashboardSkeleton /></div>;
     if (error || !scan) return (
