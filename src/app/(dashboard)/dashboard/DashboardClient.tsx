@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import {
     AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer,
     BarChart, Bar, LineChart, Line, CartesianGrid, Legend,
@@ -57,7 +57,15 @@ export default function DashboardClient({ initialData, user }: DashboardClientPr
     const [isScanning, setIsScanning] = useState(false);
     const [showAuthOverlay, setShowAuthOverlay] = useState(false);
     const [isScanModalOpen, setIsScanModalOpen] = useState(false);
+    const [isMobile, setIsMobile] = useState(false);
     const router = useRouter();
+
+    useEffect(() => {
+        const check = () => setIsMobile(window.innerWidth <= 768);
+        check();
+        window.addEventListener('resize', check);
+        return () => window.removeEventListener('resize', check);
+    }, []);
 
     const { latestBaseline = null, history: rawHistory = [] } = stats ?? {};
     const latest = latestBaseline;
@@ -209,6 +217,7 @@ export default function DashboardClient({ initialData, user }: DashboardClientPr
             initial={{ opacity: 0, y: 5 }}
             animate={{ opacity: 1, y: 0 }}
             className="p-4 md:p-8 lg:p-12 space-y-8 md:space-y-12 max-w-[1600px] mx-auto"
+            style={isMobile ? { padding: '16px', paddingTop: '80px' } : undefined}
         >
             {!user && <SimulationBanner />}
 
@@ -227,15 +236,29 @@ export default function DashboardClient({ initialData, user }: DashboardClientPr
             </div>
 
             {/* Headline Metrics (Peec Style) */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div
+                className="grid md:grid-cols-3 gap-3 md:gap-6"
+                style={isMobile ? { gridTemplateColumns: '1fr 1fr', gap: '12px' } : undefined}
+            >
                 {[
                     { label: 'Avg Visibility Score', value: Math.round(score), color: 'text-[#2563EB]', border: 'border-t-[#2563EB]' },
                     { label: 'Total Scans', value: rawHistory.length, color: 'text-[#111827]', border: 'border-t-[#111827]', noPercent: true },
-                    { label: 'Active Sources', value: activeSources, color: 'text-[#111827]', border: 'border-t-[#111827]', noPercent: true }
-                ].map((item) => (
-                    <div key={item.label} className={cn("bg-white border border-[#E5E7EB] border-t-[3px] rounded-[10px] p-6 flex flex-col justify-between h-32 shadow-sm", item.border)}>
-                        <span className="text-[11px] font-semibold text-[#6B7280] uppercase tracking-[0.08em]">{item.label}</span>
-                        <span className={cn("text-[40px] font-bold leading-none tracking-[-0.02em]", item.color)}>
+                    { label: 'Active Sources', value: activeSources, color: 'text-[#111827]', border: 'border-t-[#111827]', noPercent: true, spanFull: true }
+                ].map((item: any) => (
+                    <div
+                        key={item.label}
+                        className={cn("bg-white border border-[#E5E7EB] border-t-[3px] rounded-[10px] flex flex-col justify-between shadow-sm", item.border)}
+                        style={{
+                            padding: isMobile ? '16px' : '24px',
+                            height: isMobile ? 'auto' : '128px',
+                            ...(isMobile && item.spanFull ? { gridColumn: 'span 2' } : {})
+                        }}
+                    >
+                        <span style={{ fontSize: isMobile ? '11px' : '11px' }} className="font-semibold text-[#6B7280] uppercase tracking-[0.08em]">{item.label}</span>
+                        <span
+                            className={cn("font-bold leading-none tracking-[-0.02em]", item.color)}
+                            style={{ fontSize: isMobile ? '28px' : '40px', marginTop: isMobile ? '8px' : '0' }}
+                        >
                             {item.noPercent ? item.value : `${item.value}%`}
                         </span>
                     </div>
@@ -264,23 +287,23 @@ export default function DashboardClient({ initialData, user }: DashboardClientPr
                         </div>
                     </div>
                 </div>
-                <div className="h-[200px] md:h-[360px]">
+                <div style={{ height: isMobile ? '180px' : '360px' }}>
                     {isScanning ? <ChartSkeleton /> : (
                         <ResponsiveContainer width="100%" height="100%">
-                            <LineChart data={history} margin={{ top: 5, right: 10, left: -20, bottom: 5 }}>
+                            <LineChart data={history} margin={isMobile ? { top: 8, right: 8, left: 0, bottom: 0 } : { top: 5, right: 10, left: -20, bottom: 5 }}>
                                 <CartesianGrid strokeDasharray="0 0" vertical={false} stroke="#F1F5F9" />
                                 <XAxis
                                     dataKey="date"
                                     tickFormatter={(val) => new Date(val).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
-                                    axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: '#94A3B8', fontWeight: 500 }} dy={10}
+                                    axisLine={false} tickLine={false} tick={{ fontSize: isMobile ? 10 : 11, fill: '#94A3B8', fontWeight: 500 }} dy={10}
                                 />
-                                <YAxis domain={[0, 100]} axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: '#94A3B8', fontWeight: 500 }} />
+                                <YAxis domain={[0, 100]} axisLine={false} tickLine={false} tick={{ fontSize: isMobile ? 10 : 11, fill: '#94A3B8', fontWeight: 500 }} />
                                 <Tooltip
                                     contentStyle={{ borderRadius: '6px', border: '1px solid #E2E8F0', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)', fontSize: '12px' }}
                                 />
-                                <Line name="mention freq" type="monotone" dataKey="mentionFrequency" stroke="#2563EB" strokeWidth={2.5} dot={false} activeDot={{ r: 4, strokeWidth: 0 }} />
-                                <Line name="sentiment" type="monotone" dataKey="sentimentScore" stroke="#16A34A" strokeWidth={2} strokeDasharray="4 4" dot={false} />
-                                <Line name="citations" type="monotone" dataKey="citationDensity" stroke="#D97706" strokeWidth={2} dot={false} />
+                                <Line name="mention freq" type="monotone" dataKey="mentionFrequency" stroke="#2563EB" strokeWidth={2.5} dot={false} activeDot={{ r: 4, strokeWidth: 0 }} legendType={isMobile ? 'none' : undefined} />
+                                <Line name="sentiment" type="monotone" dataKey="sentimentScore" stroke="#16A34A" strokeWidth={2} strokeDasharray="4 4" dot={false} legendType={isMobile ? 'none' : undefined} />
+                                <Line name="citations" type="monotone" dataKey="citationDensity" stroke="#D97706" strokeWidth={2} dot={false} legendType={isMobile ? 'none' : undefined} />
                             </LineChart>
                         </ResponsiveContainer>
                     )}
@@ -289,62 +312,127 @@ export default function DashboardClient({ initialData, user }: DashboardClientPr
 
             {/* Recent Scans List (Peec Pattern) */}
             <div className="bg-white border border-[#E5E7EB] rounded-[10px] overflow-hidden shadow-sm">
-                <div className="px-8 py-6 border-b border-[#E5E7EB] flex items-center justify-between">
+                <div className="px-4 md:px-8 py-4 md:py-6 border-b border-[#E5E7EB] flex items-center justify-between">
                     <h2 className="text-[18px] font-medium text-[#111827]">Scanning History</h2>
-                    <button className="text-[12px] font-bold text-[#2563EB] hover:underline uppercase tracking-widest">Archive Overview</button>
+                    <button style={{ fontSize: isMobile ? '12px' : '12px' }} className="font-bold text-[#2563EB] hover:underline uppercase tracking-widest">Archive Overview</button>
                 </div>
-                <div className="divide-y divide-[#E5E7EB]">
-                    {history.slice(-10).reverse().map((scan: any, i: number) => (
-                        <div
-                            key={i}
-                            onClick={() => router.push(`/dashboard/scans/${scan.id}`)}
-                            className="px-8 py-5 flex items-center justify-between hover:bg-[#F7F8FA] transition-colors cursor-pointer group"
-                        >
-                            <div className="flex items-center gap-5">
-                                <div className="w-10 h-10 rounded-full bg-[#F7F8FA] border border-[#E5E7EB] flex items-center justify-center text-[13px] font-bold text-[#2563EB]">
-                                    {scan.brand?.[0]?.toUpperCase() || 'B'}
-                                </div>
-                                <div className="min-w-[120px]">
-                                    <p className="text-[14px] font-bold text-[#111827]">{scan.brand}</p>
-                                    <p className="text-[11px] text-[#6B7280] font-medium">{new Date(scan.date).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}</p>
-                                </div>
-                            </div>
-                            <div className="flex-1 grid grid-cols-4 gap-8 items-center ml-12">
-                                <div>
-                                    <p className="text-[10px] font-bold text-[#94A3B8] uppercase tracking-[0.05em] mb-1">Impact Agent</p>
-                                    <p className="text-[13px] font-semibold text-[#111827]">{toTitleCase(scan.provider || 'Gemini Pro')}</p>
-                                </div>
-                                <div>
-                                    <p className="text-[10px] font-bold text-[#94A3B8] uppercase tracking-[0.05em] mb-1">Sentiment</p>
-                                    <div className={cn(
-                                        "inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-[0.02em]",
-                                        scan.sentimentScore > 0.7 ? "bg-[#16A34A]/[0.08] text-[#16A34A]" :
-                                            scan.sentimentScore < 0.4 ? "bg-[#DC2626]/[0.08] text-[#DC2626]" :
-                                                "bg-[#D97706]/[0.08] text-[#D97706]"
-                                    )}>
-                                        <div className={cn("w-1 h-1 rounded-full",
-                                            scan.sentimentScore > 0.7 ? "bg-[#16A34A]" :
-                                                scan.sentimentScore < 0.4 ? "bg-[#DC2626]" :
-                                                    "bg-[#D97706]"
-                                        )} />
-                                        {scan.sentimentScore > 0.7 ? 'Positive' : scan.sentimentScore < 0.4 ? 'Negative' : 'Neutral'}
+
+                {/* Mobile: Card-based list */}
+                {isMobile ? (
+                    <div style={{ padding: '12px' }}>
+                        {history.slice(-10).reverse().map((scan: any, i: number) => {
+                            const sentimentLabel = scan.sentimentScore > 0.7 ? 'Positive' : scan.sentimentScore < 0.4 ? 'Negative' : 'Neutral';
+                            const sentimentBg = scan.sentimentScore > 0.7 ? '#DCFCE7' : scan.sentimentScore < 0.4 ? '#FEE2E2' : '#FEF3C7';
+                            const sentimentColor = scan.sentimentScore > 0.7 ? '#16A34A' : scan.sentimentScore < 0.4 ? '#DC2626' : '#D97706';
+                            return (
+                                <div
+                                    key={i}
+                                    onClick={() => router.push(`/dashboard/scans/${scan.id}`)}
+                                    style={{
+                                        background: '#F7F8FA',
+                                        borderRadius: '8px',
+                                        padding: '12px',
+                                        marginBottom: '8px',
+                                        display: 'flex',
+                                        flexDirection: 'column',
+                                        gap: '8px',
+                                        cursor: 'pointer',
+                                    }}
+                                >
+                                    {/* Top row: avatar + brand + date */}
+                                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                                            <div style={{
+                                                width: '32px', height: '32px', borderRadius: '50%',
+                                                background: '#EFF6FF', color: '#2563EB',
+                                                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                                fontSize: '13px', fontWeight: 700,
+                                            }}>
+                                                {scan.brand?.[0]?.toUpperCase() || 'B'}
+                                            </div>
+                                            <span style={{ fontSize: '14px', fontWeight: 600, color: '#111827' }}>{scan.brand}</span>
+                                        </div>
+                                        <span style={{ fontSize: '12px', color: '#6B7280' }}>
+                                            {new Date(scan.date).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
+                                        </span>
+                                    </div>
+                                    {/* Bottom row: agent + sentiment + score */}
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                        <span style={{
+                                            fontSize: '12px', background: '#F3F4F6', color: '#374151',
+                                            padding: '2px 8px', borderRadius: '4px',
+                                        }}>
+                                            {toTitleCase(scan.provider || 'Gemini Pro')}
+                                        </span>
+                                        <span style={{
+                                            fontSize: '12px', background: sentimentBg, color: sentimentColor,
+                                            padding: '2px 8px', borderRadius: '4px', fontWeight: 500,
+                                        }}>
+                                            {sentimentLabel}
+                                        </span>
+                                        <span style={{ fontSize: '12px', fontWeight: 600, color: '#111827', marginLeft: 'auto' }}>
+                                            {scan.score}%
+                                        </span>
                                     </div>
                                 </div>
-                                <div>
-                                    <p className="text-[10px] font-bold text-[#94A3B8] uppercase tracking-[0.05em] mb-1">Mention Freq</p>
-                                    <p className="text-[13px] font-bold text-[#111827]">{scan.mentionFrequency}%</p>
+                            );
+                        })}
+                    </div>
+                ) : (
+                    /* Desktop: Table rows */
+                    <div className="divide-y divide-[#E5E7EB]">
+                        {history.slice(-10).reverse().map((scan: any, i: number) => (
+                            <div
+                                key={i}
+                                onClick={() => router.push(`/dashboard/scans/${scan.id}`)}
+                                className="px-8 py-5 flex items-center justify-between hover:bg-[#F7F8FA] transition-colors cursor-pointer group"
+                            >
+                                <div className="flex items-center gap-5">
+                                    <div className="w-10 h-10 rounded-full bg-[#F7F8FA] border border-[#E5E7EB] flex items-center justify-center text-[13px] font-bold text-[#2563EB]">
+                                        {scan.brand?.[0]?.toUpperCase() || 'B'}
+                                    </div>
+                                    <div className="min-w-[120px]">
+                                        <p className="text-[14px] font-bold text-[#111827]">{scan.brand}</p>
+                                        <p className="text-[11px] text-[#6B7280] font-medium">{new Date(scan.date).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}</p>
+                                    </div>
                                 </div>
-                                <div className="text-right pr-8">
-                                    <p className="text-[10px] font-bold text-[#94A3B8] uppercase tracking-[0.05em] mb-1">Ref Score</p>
-                                    <p className="text-[14px] font-bold text-[#2563EB]">{scan.score}%</p>
+                                <div className="flex-1 grid grid-cols-4 gap-8 items-center ml-12">
+                                    <div>
+                                        <p className="text-[10px] font-bold text-[#94A3B8] uppercase tracking-[0.05em] mb-1">Impact Agent</p>
+                                        <p className="text-[13px] font-semibold text-[#111827]">{toTitleCase(scan.provider || 'Gemini Pro')}</p>
+                                    </div>
+                                    <div>
+                                        <p className="text-[10px] font-bold text-[#94A3B8] uppercase tracking-[0.05em] mb-1">Sentiment</p>
+                                        <div className={cn(
+                                            "inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-[0.02em]",
+                                            scan.sentimentScore > 0.7 ? "bg-[#16A34A]/[0.08] text-[#16A34A]" :
+                                                scan.sentimentScore < 0.4 ? "bg-[#DC2626]/[0.08] text-[#DC2626]" :
+                                                    "bg-[#D97706]/[0.08] text-[#D97706]"
+                                        )}>
+                                            <div className={cn("w-1 h-1 rounded-full",
+                                                scan.sentimentScore > 0.7 ? "bg-[#16A34A]" :
+                                                    scan.sentimentScore < 0.4 ? "bg-[#DC2626]" :
+                                                        "bg-[#D97706]"
+                                            )} />
+                                            {scan.sentimentScore > 0.7 ? 'Positive' : scan.sentimentScore < 0.4 ? 'Negative' : 'Neutral'}
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <p className="text-[10px] font-bold text-[#94A3B8] uppercase tracking-[0.05em] mb-1">Mention Freq</p>
+                                        <p className="text-[13px] font-bold text-[#111827]">{scan.mentionFrequency}%</p>
+                                    </div>
+                                    <div className="text-right pr-8">
+                                        <p className="text-[10px] font-bold text-[#94A3B8] uppercase tracking-[0.05em] mb-1">Ref Score</p>
+                                        <p className="text-[14px] font-bold text-[#2563EB]">{scan.score}%</p>
+                                    </div>
                                 </div>
+                                <button className="w-8 h-8 rounded-full border border-[#E5E7EB] flex items-center justify-center text-[#6B7280] hover:text-[#2563EB] hover:border-[#2563EB]/20 hover:bg-[#EFF6FF] transition-all">
+                                    <ChevronRight className="w-4 h-4" />
+                                </button>
                             </div>
-                            <button className="w-8 h-8 rounded-full border border-[#E5E7EB] flex items-center justify-center text-[#6B7280] hover:text-[#2563EB] hover:border-[#2563EB]/20 hover:bg-[#EFF6FF] transition-all">
-                                <ChevronRight className="w-4 h-4" />
-                            </button>
-                        </div>
-                    ))}
-                </div>
+                        ))}
+                    </div>
+                )}
             </div>
 
 
