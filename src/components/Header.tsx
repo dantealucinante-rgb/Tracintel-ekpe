@@ -4,7 +4,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Zap, Menu, X, ArrowRight, User } from 'lucide-react';
+import { Menu, X, User } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
 
@@ -135,7 +135,7 @@ export default function Header() {
             <AnimatePresence>
                 {drawerOpen && (
                     <>
-                        {/* Backdrop */}
+                        {/* Overlay */}
                         <motion.div
                             key="backdrop"
                             initial={{ opacity: 0 }}
@@ -143,7 +143,13 @@ export default function Header() {
                             exit={{ opacity: 0 }}
                             transition={{ duration: 0.25 }}
                             onClick={() => setDrawerOpen(false)}
-                            className="fixed inset-0 z-[60] bg-black/60 backdrop-blur-sm md:hidden"
+                            style={{
+                                position: 'fixed',
+                                inset: 0,
+                                zIndex: 60,
+                                background: 'rgba(0,0,0,0.3)',
+                            }}
+                            className="md:hidden"
                         />
 
                         {/* Drawer Panel */}
@@ -153,114 +159,94 @@ export default function Header() {
                             animate={{ x: 0 }}
                             exit={{ x: '100%' }}
                             transition={{ type: 'spring', stiffness: 400, damping: 38 }}
-                            className="fixed top-0 right-0 bottom-0 z-[70] w-full max-w-sm bg-[#0a0a0a] flex flex-col md:hidden overflow-hidden"
+                            style={{
+                                position: 'fixed',
+                                top: 0,
+                                right: 0,
+                                bottom: 0,
+                                zIndex: 70,
+                                width: '100%',
+                                background: '#ffffff',
+                                padding: '24px',
+                                border: 'none',
+                                boxShadow: 'none',
+                                display: 'flex',
+                                flexDirection: 'column',
+                            }}
+                            className="md:hidden"
                         >
-                            {/* Breathing Canvas grid texture */}
-                            <div
-                                className="absolute inset-0 opacity-[0.04]"
-                                style={{
-                                    backgroundImage:
-                                        'linear-gradient(to right, #ffffff 1px, transparent 1px), linear-gradient(to bottom, #ffffff 1px, transparent 1px)',
-                                    backgroundSize: '28px 28px',
-                                }}
-                            />
-
-                            {/* Electric Blue glow blob */}
-                            <div className="absolute -top-32 -right-32 w-80 h-80 rounded-full bg-[#007AFF] opacity-10 blur-3xl" />
-                            <div className="absolute -bottom-32 -left-32 w-64 h-64 rounded-full bg-[#34C759] opacity-8 blur-3xl" />
-
-                            {/* Drawer Header */}
-                            <div className="relative z-10 flex items-center justify-between px-6 h-20 border-b border-white/5">
-                                <Link href="/" className="flex items-center gap-3" onClick={() => setDrawerOpen(false)}>
-                                    <div className="w-9 h-9 rounded-xl bg-white flex items-center justify-center shadow-lg">
-                                        <Zap className="h-5 w-5 text-black fill-black" />
+                            {/* Drawer Header Row */}
+                            <div style={{
+                                display: 'flex',
+                                justifyContent: 'space-between',
+                                alignItems: 'center',
+                                marginBottom: '32px',
+                            }}>
+                                <Link href="/" onClick={() => setDrawerOpen(false)} className="flex items-center gap-3">
+                                    <div className="w-9 h-9 relative">
+                                        <Image src="/2.png" alt="Tracintel Logo" fill className="object-contain" />
                                     </div>
-                                    <span className="font-extrabold text-xl tracking-tighter text-white">Tracintel</span>
+                                    <span style={{ fontWeight: 800, fontSize: '20px', letterSpacing: '-0.02em', color: '#111827' }}>Tracintel</span>
                                 </Link>
                                 <button
                                     onClick={() => setDrawerOpen(false)}
-                                    className="flex items-center justify-center w-10 h-10 rounded-xl hover:bg-white/10 transition-colors"
+                                    style={{
+                                        background: 'transparent',
+                                        border: 'none',
+                                        fontSize: '20px',
+                                        color: '#111827',
+                                        cursor: 'pointer',
+                                        padding: '4px',
+                                    }}
                                     aria-label="Close menu"
                                 >
-                                    <X className="h-5 w-5 text-white/70" />
+                                    <X style={{ width: 20, height: 20 }} />
                                 </button>
                             </div>
 
                             {/* Nav Links */}
-                            <nav className="relative z-10 flex-1 px-6 py-8 flex flex-col gap-2">
-                                {NAV_LINKS.map((link, i) => (
-                                    <motion.div
+                            <nav style={{ flex: 1 }}>
+                                {NAV_LINKS.map((link) => (
+                                    <Link
                                         key={link.href}
-                                        initial={{ opacity: 0, x: 20 }}
-                                        animate={{ opacity: 1, x: 0 }}
-                                        transition={{ delay: 0.08 + i * 0.06 }}
+                                        href={link.href}
+                                        onClick={() => setDrawerOpen(false)}
+                                        style={{
+                                            display: 'block',
+                                            padding: '16px 0',
+                                            fontSize: '17px',
+                                            fontWeight: 500,
+                                            color: '#111827',
+                                            borderBottom: '1px solid #F3F4F6',
+                                            textDecoration: 'none',
+                                            letterSpacing: '-0.01em',
+                                        }}
                                     >
-                                        <Link
-                                            href={link.href}
-                                            onClick={() => setDrawerOpen(false)}
-                                            className="group flex items-center justify-between py-4 border-b border-white/5 hover:border-[#007AFF]/30 transition-colors"
-                                        >
-                                            <span className="text-2xl font-bold tracking-tight text-white/80 group-hover:text-white transition-colors">
-                                                {link.label}
-                                            </span>
-                                            <ArrowRight className="h-5 w-5 text-white/20 group-hover:text-[#007AFF] group-hover:translate-x-1 transition-all" />
-                                        </Link>
-                                    </motion.div>
+                                        {link.label}
+                                    </Link>
                                 ))}
 
-                                {/* Auth links in drawer */}
-                                <div className="mt-6 pt-6 border-t border-white/5 flex flex-col gap-3">
-                                    {!session ? (
-                                        <Link
-                                            href="/login"
-                                            onClick={() => setDrawerOpen(false)}
-                                            className="text-sm font-medium text-white/40 hover:text-white/70 transition-colors"
-                                        >
-                                            Sign In
-                                        </Link>
-                                    ) : (
-                                        <Link
-                                            href="/dashboard"
-                                            onClick={() => setDrawerOpen(false)}
-                                            className="text-sm font-medium text-white/40 hover:text-white transition-colors"
-                                        >
-                                            Dashboard
-                                        </Link>
-                                    )}
-                                </div>
+                                {/* Dashboard link */}
+                                <Link
+                                    href="/dashboard"
+                                    onClick={() => setDrawerOpen(false)}
+                                    style={{
+                                        display: 'block',
+                                        marginTop: '24px',
+                                        padding: '14px 20px',
+                                        background: '#111827',
+                                        color: '#ffffff',
+                                        borderRadius: '8px',
+                                        fontSize: '15px',
+                                        fontWeight: 600,
+                                        textAlign: 'center',
+                                        textDecoration: 'none',
+                                        letterSpacing: '-0.01em',
+                                    }}
+                                >
+                                    Dashboard
+                                </Link>
                             </nav>
-
-                            {/* Drawer Footer CTA */}
-                            <motion.div
-                                className="relative z-10 px-6 pb-10"
-                                initial={{ opacity: 0, y: 20 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                transition={{ delay: 0.35 }}
-                            >
-                                {/* System status dot */}
-                                <div className="flex items-center gap-2 mb-6">
-                                    <div className="w-1.5 h-1.5 rounded-full bg-[#34C759] animate-pulse" />
-                                    <span className="text-[10px] font-mono uppercase tracking-[0.2em] text-white/30">System Active</span>
-                                </div>
-
-                                {!session ? (
-                                    <Link
-                                        href="/register"
-                                        onClick={() => setDrawerOpen(false)}
-                                        className="flex items-center justify-center gap-3 w-full h-14 rounded-2xl bg-gradient-to-r from-[#007AFF] to-indigo-600 text-white font-bold text-base shadow-2xl shadow-blue-500/30 hover:shadow-[0_0_30px_rgba(0,122,255,0.5)] transition-all"
-                                    >
-                                        Get Early Access <ArrowRight className="h-5 w-5" />
-                                    </Link>
-                                ) : (
-                                    <Link
-                                        href="/dashboard"
-                                        onClick={() => setDrawerOpen(false)}
-                                        className="flex items-center justify-center gap-3 w-full h-14 rounded-2xl bg-gradient-to-r from-[#007AFF] to-indigo-600 text-white font-bold text-base shadow-2xl shadow-blue-500/30 hover:shadow-[0_0_30px_rgba(0,122,255,0.5)] transition-all"
-                                    >
-                                        Open Dashboard <ArrowRight className="h-5 w-5" />
-                                    </Link>
-                                )}
-                            </motion.div>
                         </motion.div>
                     </>
                 )}
