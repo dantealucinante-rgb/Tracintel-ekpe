@@ -11,40 +11,40 @@ export default function HallucinationAlert() {
     ];
 
     return (
-        <div className="bg-red-50/50 border border-red-100 rounded-[24px] p-8">
+        <div className="bg-white border border-[#E5E7EB] rounded-[10px] p-8 shadow-sm">
             <div className="flex items-center justify-between mb-8">
-                <h3 className="text-sm font-bold uppercase tracking-wider text-red-600 flex items-center gap-2">
+                <h3 className="text-[11px] font-bold uppercase tracking-widest text-[#DC2626] flex items-center gap-2">
                     <ShieldAlert className="h-4 w-4" />
                     Model Reliability Alerts
                 </h3>
-                <div className="px-2 py-0.5 rounded bg-red-100 text-red-700 text-[10px] font-bold uppercase tracking-wider">Active Monitoring</div>
+                <div className="px-3 py-1 rounded-full bg-[#DC2626]/[0.08] text-[#DC2626] text-[10px] font-bold uppercase tracking-widest">Active Monitoring</div>
             </div>
 
             <div className="space-y-4">
                 {alerts.map((alert, i) => (
-                    <div key={i} className="bg-white border border-red-100/50 rounded-[16px] p-6 relative overflow-hidden group hover:border-red-200 transition-all shadow-sm">
-                        <div className="flex justify-between items-start mb-2">
-                            <span className="text-[11px] font-bold text-[#6B7280] uppercase tracking-wider">{alert.model}</span>
+                    <div key={i} className="bg-[#F7F8FA] border border-[#E5E7EB] rounded-[8px] p-6 relative overflow-hidden group hover:border-[#DC2626]/20 transition-all">
+                        <div className="flex justify-between items-start mb-3">
+                            <span className="text-[11px] font-bold text-[#6B7280] uppercase tracking-widest">{alert.model}</span>
                             <span className={cn(
-                                "text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-tight",
-                                alert.severity === 'HIGH' ? "bg-red-50 text-red-600 border border-red-100" : "bg-amber-50 text-amber-600 border border-amber-100"
+                                "text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-widest",
+                                alert.severity === 'HIGH' ? "bg-[#DC2626]/[0.08] text-[#DC2626]" : "bg-[#D97706]/[0.08] text-[#D97706]"
                             )}>
                                 {alert.severity} Severity
                             </span>
                         </div>
-                        <p className="text-[13px] text-[#374151] leading-relaxed pr-8 font-medium">
+                        <p className="text-[14px] text-[#111827] leading-relaxed pr-8 font-medium">
                             {alert.text}
                         </p>
-                        <div className="absolute right-4 bottom-4 opacity-10 group-hover:opacity-100 transition-opacity">
-                            <AlertTriangle className="h-4 w-4 text-red-600" />
+                        <div className="absolute right-4 bottom-4 opacity-5 group-hover:opacity-100 transition-opacity">
+                            <AlertTriangle className="h-4 w-4 text-[#DC2626]" />
                         </div>
                     </div>
                 ))}
             </div>
 
-            <div className="mt-8 flex items-start gap-3">
-                <Info className="h-4 w-4 text-red-400 mt-0.5" />
-                <p className="text-[11px] text-red-700/70 font-medium leading-relaxed">
+            <div className="mt-8 flex items-start gap-4">
+                <Info className="h-4 w-4 text-[#DC2626]/40 mt-0.5" />
+                <p className="text-[11px] text-[#DC2626] font-bold uppercase tracking-widest leading-relaxed opacity-60">
                     Reliability analysis: Hallucination score is slightly higher than baseline for Claude 3.5. We recommend reviewing data grounding for this model architecture.
                 </p>
             </div>

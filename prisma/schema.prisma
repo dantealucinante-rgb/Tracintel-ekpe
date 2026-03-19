@@ -64,6 +64,7 @@ model VisibilityScan {
   strategyInjected Boolean        @default(false)
   completedAt      DateTime?
   createdAt        DateTime       @default(now())
+  raw_passes       Json?
   llmResponses     LlmResponse[]
   signals          Signal[]
   signalPushes     SignalPush[]

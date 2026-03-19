@@ -19,7 +19,7 @@
   --color-paper: var(--color-surface);
   --color-border: var(--color-border);
   --font-sans: var(--font-body), ui-sans-serif, system-ui, sans-serif;
-  --font-display: var(--font-display), sans-serif;
+  --font-display: var(--font-serif), serif;
   --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
 }
 

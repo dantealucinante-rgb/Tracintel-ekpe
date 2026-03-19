@@ -16,5 +16,5 @@ export interface ScanResult {
 
 export interface AiProvider {
     name: string;
-    generateScan(input: ScanInput): Promise<ScanResult>;
+    generateScan(input: ScanInput, options?: { temperature?: number; customPrompt?: string }): Promise<ScanResult>;
 }

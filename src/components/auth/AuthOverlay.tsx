@@ -44,15 +44,11 @@ export function AuthOverlay({ isVisible }: AuthOverlayProps) {
                         initial={{ scale: 0.95, opacity: 0, y: 10 }}
                         animate={{ scale: 1, opacity: 1, y: 0 }}
                         exit={{ scale: 0.95, opacity: 0, y: 10 }}
-                        className="w-full max-w-sm p-10 bg-white border border-[#E5E7EB] shadow-2xl rounded-[24px] relative overflow-hidden"
+                        className="w-full max-w-sm p-10 bg-white border border-[#E5E7EB] shadow-2xl rounded-[12px] relative overflow-hidden"
                     >
-                        {/* Background subtle glow */}
-                        <div className="absolute -top-24 -left-24 w-48 h-48 bg-emerald-500/5 blur-[100px]" />
-                        <div className="absolute -bottom-24 -right-24 w-48 h-48 bg-amber-500/5 blur-[100px]" />
-
                         <div className="relative z-10 text-center">
-                            <div className="inline-flex p-3 rounded-xl bg-gray-50 border border-[#E5E7EB] mb-6">
-                                <ShieldCheck className="w-8 h-8 text-emerald-500" />
+                            <div className="inline-flex p-3 rounded-xl bg-[#F7F8FA] border border-[#E5E7EB] mb-6">
+                                <ShieldCheck className="w-8 h-8 text-[#2563EB]" />
                             </div>
 
                             <h2 className="text-2xl font-bold mb-3 tracking-tight text-[#111827]">Sign in to Dashboard</h2>
@@ -63,9 +59,9 @@ export function AuthOverlay({ isVisible }: AuthOverlayProps) {
 
                             <button
                                 onClick={handleGoogleLogin}
-                                className="w-full group relative flex items-center justify-center gap-3 bg-[#111827] text-white py-4 px-6 rounded-xl font-bold transition-all hover:bg-black active:scale-[0.98] shadow-sm"
+                                className="w-full group relative flex items-center justify-center gap-3 bg-[#2563EB] text-white py-3.5 px-6 rounded-[8px] font-bold transition-all hover:bg-[#1D4ED8] active:scale-[0.98] shadow-sm"
                             >
-                                <Zap className="w-5 h-5 fill-emerald-500 text-emerald-500" />
+                                <Zap className="w-5 h-5 fill-white text-white" />
                                 <span>Continue with Google</span>
                             </button>
 

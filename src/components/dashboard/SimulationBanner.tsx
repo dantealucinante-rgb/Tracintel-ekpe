@@ -8,11 +8,11 @@ export default function SimulationBanner() {
         <motion.div
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: 'auto', opacity: 1 }}
-            className="w-full bg-amber-400/10 border-b border-amber-400/20 py-3 px-12 flex items-center justify-center gap-3 overflow-hidden"
+            className="w-full bg-[#D97706]/[0.08] border-b border-[#D97706]/[0.1] py-3 px-12 flex items-center justify-center gap-4 overflow-hidden"
         >
-            <AlertTriangle className="w-4 h-4 text-amber-600" />
-            <p className="text-[12px] font-medium text-amber-900">
-                You&apos;re viewing simulated data. Sign up to run real Intelligence Scans for your brand.
+            <AlertTriangle className="w-4 h-4 text-[#D97706]" />
+            <p className="text-[11px] font-bold text-[#D97706] uppercase tracking-widest">
+                Viewing simulated intelligence. Sign up to run live vector scans for your brand.
             </p>
         </motion.div>
     );

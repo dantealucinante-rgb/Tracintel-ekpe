@@ -8,7 +8,7 @@ import AIAuthorityTable from '@/components/dashboard/AIAuthorityTable';
 import { DashboardSkeleton } from '@/components/dashboard/Skeleton';
 import { AuthOverlay } from '@/components/auth/AuthOverlay';
 import { createClient } from '@/lib/supabase/client';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { toast } from 'sonner';
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
@@ -44,7 +44,9 @@ export default function SourcesPage() {
         return () => subscription.unsubscribe();
     }, [supabase.auth]);
 
-    const { data: statsData, isLoading } = useSWR('/api/dashboard/stats', fetcher);
+    const { data: statsData, isLoading: statsLoading } = useSWR('/api/dashboard/stats', fetcher);
+    const { data: scans = [], isLoading: scansLoading } = useSWR('/api/scans', fetcher);
+    const isLoading = statsLoading || scansLoading;
 
     const stats = user ? statsData : { latest: true };
 
@@ -60,18 +62,18 @@ export default function SourcesPage() {
 
     if (!stats?.latest) {
         return (
-            <div className="min-h-screen bg-[#F9FAFB] text-[#374151] flex flex-col items-center justify-center p-10 text-center">
-                <div className="w-16 h-16 rounded-[12px] bg-white border border-[#E5E7EB] flex items-center justify-center mb-8 shadow-sm">
-                    <Database className="w-8 h-8 text-[#111827]" />
+            <div className="min-h-screen bg-[#F7F8FA] text-[#111827] flex flex-col items-center justify-center p-10 text-center">
+                <div className="w-16 h-16 rounded-[10px] bg-white border border-[#E5E7EB] flex items-center justify-center mb-8 shadow-sm">
+                    <Database className="w-8 h-8 text-[#2563EB]" />
                 </div>
-                <h2 className="text-[16px] font-bold text-[#111827] mb-2">No Data Points Indexed</h2>
-                <p className="text-[13px] text-[#6B7280] max-w-sm mb-8 leading-relaxed">The Dark Funnel mapping requires an initial systemic scan.</p>
+                <h2 className="text-[18px] font-semibold text-[#111827] mb-2">No Data Points Indexed</h2>
+                <p className="text-[14px] text-[#6B7280] max-w-sm mb-8 leading-relaxed">The Dark Funnel mapping requires an initial systemic scan.</p>
                 <button
                     onClick={() => {
                         if (!user) setShowAuthOverlay(true);
                         else window.location.href = "/dashboard";
                     }}
-                    className="h-12 px-8 bg-[#111827] text-white text-[13px] font-bold rounded-[8px] flex items-center gap-3 hover:bg-black transition-all"
+                    className="h-12 px-8 bg-[#2563EB] text-white text-[14px] font-medium rounded-[8px] flex items-center gap-3 hover:bg-[#1D4ED8] transition-all"
                 >
                     <Zap className="w-4 h-4" />
                     Initialize Scanning Protocol
@@ -80,89 +82,101 @@ export default function SourcesPage() {
         );
     }
 
+    const sourceSummary = useMemo(() => {
+        if (!scans || !scans.length) return [];
+
+        const summary: Record<string, any> = {};
+        const urlPattern = /https?:\/\/([a-zA-Z0-9.-]+\.[a-zA-Z]{2,})/g;
+
+        scans.forEach((scan: any) => {
+            const text = scan.rawText || '';
+            const matches = [...text.matchAll(urlPattern)];
+
+            matches.forEach(match => {
+                const domain = match[1].toLowerCase().replace(/^www\./, '');
+                if (!summary[domain]) {
+                    summary[domain] = {
+                        source: domain,
+                        count: 0,
+                        brands: new Set(),
+                        models: new Set(),
+                        authority: 'HIGH',
+                        weight: 0
+                    };
+                }
+                summary[domain].count += 1;
+                summary[domain].brands.add(scan.brand);
+                summary[domain].models.add(scan.provider || 'Gemini');
+            });
+        });
+
+        const values = Object.values(summary);
+        if (values.length === 0) return [];
+
+        const maxCount = Math.max(...values.map((s: any) => s.count), 1);
+
+        return values
+            .map((s: any) => ({
+                ...s,
+                weight: s.count / maxCount,
+                authority: s.count > 10 ? 'ELITE' : s.count > 5 ? 'HIGH' : 'MEDIUM'
+            }))
+            .sort((a, b) => b.count - a.count)
+            .slice(0, 10);
+    }, [scans]);
+
     return (
-        <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, ease: "easeOut" }}
-            className="p-8 md:p-12 space-y-12 max-w-[1700px] mx-auto"
-        >
-            {/* Page Header */}
-            <div className="max-w-4xl">
-                <h1 className="font-display font-bold text-2xl md:text-3xl text-[#101828] tracking-tight">
-                    AI Dark Funnel Intelligence
-                </h1>
-                <p className="font-sans text-[14px] text-[#667085] leading-relaxed mt-2 max-w-2xl font-medium">
-                    Map and monitor your brand authority across non-indexed repositories, research nodes, and specialized AI training sets.
-                </p>
+        <div className="p-8 md:p-12 space-y-10 max-w-[1400px] mx-auto min-h-screen">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+                <div>
+                    <h1 className="text-[24px] font-semibold text-[#111827] tracking-tight">Intelligence Sources</h1>
+                    <p className="text-[#6B7280] mt-1 text-[14px] font-medium">Deterministic mapping of citation domains and source node hierarchy.</p>
+                </div>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-                {/* Left Column: Authority Data */}
-                <div className="lg:col-span-8 space-y-8">
-                    <div className="bg-white border border-[#EAECF0] rounded-[16px] overflow-hidden shadow-sm transition-all hover:shadow-md">
-                        <AIAuthorityTable />
-                    </div>
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                {/* Main Table */}
+                <div className="lg:col-span-2 space-y-8">
+                    <AIAuthorityTable data={sourceSummary.length > 0 ? sourceSummary : undefined} />
+                </div>
 
-                    <div className="bg-white border border-[#EAECF0] rounded-[16px] p-8 md:p-10 shadow-sm transition-all hover:shadow-md relative overflow-hidden">
-                        <div className="relative z-10">
-                            <h2 className="font-display font-bold text-xl text-[#101828] mb-6 flex items-center gap-3">
-                                Entity Recognition Cycle
-                            </h2>
-                            <p className="font-sans text-[14px] text-[#667085] leading-relaxed mb-8 font-medium">
-                                AI models process information in distinct epochs. To maintain a high citation ranking,
-                                deterministic authority must be confirmed at the knowledge layer.
-                            </p>
-                            <div className="p-8 bg-[#F9FAFB] border border-[#EAECF0] rounded-[12px]">
-                                <h4 className="font-sans text-[11px] font-bold text-[#101828] uppercase tracking-wider mb-4 flex items-center gap-2">
-                                    <ShieldCheck className="h-4 w-4 bg-emerald-500 text-white rounded-full p-0.5" />
-                                    Authority Verification
-                                </h4>
-                                <p className="font-sans text-[13px] text-[#667085] font-medium leading-relaxed">
-                                    Ensuring technical specifications are synchronized with the exact nodes used for model grounding.
+                {/* Info Column */}
+                <div className="space-y-8">
+                    <div className="bg-white border border-[#E5E7EB] rounded-[10px] p-8 shadow-sm">
+                        <h3 className="text-[15px] font-bold text-[#111827] mb-6 flex items-center gap-2">
+                            <Zap className="w-4 h-4 text-[#2563EB]" />
+                            Model Training Bias
+                        </h3>
+                        <div className="space-y-6">
+                            <div className="p-4 bg-[#F7F8FA] rounded-[8px] border border-[#E5E7EB]">
+                                <p className="text-[11px] font-bold text-[#6B7280] uppercase tracking-widest mb-2">Primary Crawler Node</p>
+                                <p className="text-[14px] text-[#111827] font-medium leading-relaxed">
+                                    Common Crawl remains the dominant source node for initial entity discovery.
+                                </p>
+                            </div>
+                            <div className="p-4 bg-[#F7F8FA] rounded-[8px] border border-[#E5E7EB]">
+                                <p className="text-[11px] font-bold text-[#6B7280] uppercase tracking-widest mb-2">Citation Lag</p>
+                                <p className="text-[14px] text-[#111827] font-medium leading-relaxed">
+                                    Domain updates typically reflect in LLM inference paths within 4-6 weeks of ingestion.
                                 </p>
                             </div>
                         </div>
                     </div>
-                </div>
 
-                {/* Right Column: Optimization & Integration */}
-                <div className="lg:col-span-4 space-y-8">
-                    <div className="bg-white border border-[#EAECF0] rounded-[16px] p-8 shadow-sm transition-all hover:shadow-md">
-                        <h3 className="font-sans text-[11px] font-bold uppercase tracking-[0.06em] mb-8 text-[#667085]">Optimization Terms</h3>
-                        <nav className="space-y-4">
-                            {["Semantic Authority", "Model Manifold", "Knowledge Provenance", "Latent Space"].map((item, i) => (
-                                <div key={i} className="flex items-center justify-between group cursor-pointer border-b border-[#F2F4F7] pb-4 last:border-0 last:pb-0">
-                                    <span className="font-sans text-[13px] font-semibold text-[#101828] group-hover:text-[#0F172A] transition-colors">{item}</span>
-                                    <ChevronRight className="h-4 w-4 text-[#98A2B3] group-hover:translate-x-1 transition-transform" />
-                                </div>
-                            ))}
-                        </nav>
-                    </div>
-
-                    <div className="grid grid-cols-1 gap-4">
-                        {[
-                            { name: "OpenAI Indexer", status: isAiConfigured ? "Active" : "Keys Required", icon: ShieldCheck, color: isAiConfigured ? "bg-[#12B76A]" : "bg-[#F04438]", text: isAiConfigured ? "text-[#12B76A]" : "text-[#F04438]" },
-                            { name: "Shopify Sync", status: isShopifyConnected ? "Active" : "Setup Required", icon: Link2, color: isShopifyConnected ? "bg-[#12B76A]" : "bg-[#F79009]", text: isShopifyConnected ? "text-[#12B76A]" : "text-[#F79009]" },
-                            { name: "Google AI Bot", status: "Active", icon: Globe, color: "bg-[#12B76A]", text: "text-[#12B76A]" },
-                        ].map((row, i) => (
-                            <div key={i} className="bg-white border border-[#EAECF0] rounded-[16px] p-5 flex items-center justify-between shadow-sm transition-all hover:shadow-md">
-                                <div className="flex items-center gap-3">
-                                    <div className="w-8 h-8 rounded-lg bg-[#F9FAFB] flex items-center justify-center border border-[#EAECF0]">
-                                        <row.icon className="h-4 w-4 text-[#101828]" />
-                                    </div>
-                                    <span className="font-sans text-[13px] font-bold text-[#101828]">{row.name}</span>
-                                </div>
-                                <div className="flex items-center gap-2">
-                                    <div className={cn("w-1.5 h-1.5 rounded-full", row.color)} />
-                                    <span className={cn("font-sans text-[10px] font-bold uppercase tracking-wider", row.text)}>{row.status}</span>
-                                </div>
-                            </div>
-                        ))}
+                    <div className="bg-[#111827] rounded-[10px] p-8 shadow-xl relative overflow-hidden group">
+                        <div className="absolute top-0 right-0 p-8 opacity-10 group-hover:scale-110 transition-transform">
+                            <ShieldCheck className="w-24 h-24 text-white" />
+                        </div>
+                        <div className="relative z-10">
+                            <h3 className="text-[11px] font-bold uppercase tracking-widest text-[#2563EB] mb-4">Authority Hardening</h3>
+                            <p className="text-[14px] text-white leading-relaxed font-medium">
+                                To improve your brand's authority index, focus on securing mentions in <strong>.edu</strong> and <strong>.gov</strong> domains, which carry a 2.4x authority multiplier in current models.
+                            </p>
+                        </div>
                     </div>
                 </div>
             </div>
             <AuthOverlay isVisible={showAuthOverlay} />
-        </motion.div>
+        </div>
     );
 }

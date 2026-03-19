@@ -33,48 +33,48 @@ export default function PromptStrengthMeter({ description }: PromptStrengthMeter
     const aggregate = Math.round((groundedness + indexability) / 2);
 
     return (
-        <div className="bg-white border border-[#E5E7EB] rounded-[24px] p-8 shadow-sm">
+        <div className="bg-white border border-[#E5E7EB] rounded-[10px] p-8 shadow-sm">
             <div className="flex items-center justify-between mb-8">
-                <h3 className="text-sm font-bold uppercase tracking-wider text-[#111827] flex items-center gap-2">
-                    <Target className="h-4 w-4 text-[#111827]" />
+                <h3 className="text-[11px] font-bold uppercase tracking-widest text-[#6B7280] flex items-center gap-2">
+                    <Target className="h-4 w-4 text-[#2563EB]" />
                     Optimization Quality Score
                 </h3>
-                <div className="text-[10px] font-bold text-[#6B7280] uppercase tracking-wider">Inference Analysis</div>
+                <div className="text-[10px] font-bold text-[#6B7280] uppercase tracking-widest">Inference Analysis</div>
             </div>
 
             <div className="space-y-8">
                 <div>
-                    <div className="flex justify-between items-center mb-2">
-                        <span className="text-[11px] font-bold text-[#6B7280] uppercase tracking-wider">Fact Density</span>
-                        <span className="text-sm font-bold text-[#111827]">{groundedness}%</span>
+                    <div className="flex justify-between items-center mb-3">
+                        <span className="text-[11px] font-bold text-[#6B7280] uppercase tracking-widest">Fact Density</span>
+                        <span className="text-[18px] font-bold text-[#111827] leading-none">{groundedness}%</span>
                     </div>
-                    <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                    <div className="h-1 bg-[#F7F8FA] rounded-full overflow-hidden">
                         <motion.div
                             initial={{ width: 0 }}
                             animate={{ width: `${groundedness}%` }}
-                            className="h-full bg-[#111827]"
+                            className="h-full bg-[#2563EB]"
                         />
                     </div>
                 </div>
 
                 <div>
-                    <div className="flex justify-between items-center mb-2">
-                        <span className="text-[11px] font-bold text-[#6B7280] uppercase tracking-wider">Model Readability</span>
-                        <span className="text-sm font-bold text-emerald-600">{indexability}%</span>
+                    <div className="flex justify-between items-center mb-3">
+                        <span className="text-[11px] font-bold text-[#6B7280] uppercase tracking-widest">Model Readability</span>
+                        <span className="text-[18px] font-bold text-[#16A34A] leading-none">{indexability}%</span>
                     </div>
-                    <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                    <div className="h-1 bg-[#F7F8FA] rounded-full overflow-hidden">
                         <motion.div
                             initial={{ width: 0 }}
                             animate={{ width: `${indexability}%` }}
-                            className="h-full bg-emerald-500"
+                            className="h-full bg-[#16A34A]"
                         />
                     </div>
                 </div>
             </div>
 
-            <div className="mt-10 p-5 bg-gray-50 border border-[#E5E7EB] rounded-[16px] flex items-start gap-3">
+            <div className="mt-10 p-5 bg-[#F7F8FA] border border-[#E5E7EB] rounded-[8px] flex items-start gap-4">
                 <Info className="h-4 w-4 text-[#6B7280] mt-0.5" />
-                <p className="text-[12px] leading-relaxed text-[#6B7280] font-medium">
+                <p className="text-[13px] leading-relaxed text-[#6B7280] font-medium">
                     {aggregate > 80 ? (
                         "High Utility: This description is highly deterministic and likely to form a strong semantic reference in AI model training sets."
                     ) : aggregate > 40 ? (

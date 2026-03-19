@@ -78,7 +78,7 @@ export default function ScanForm({ onScan, isLoading }: ScanFormProps) {
         <form onSubmit={handleSubmit} className="w-full">
             <div className="flex flex-col gap-[20px] mb-[28px] text-left">
                 <div className="flex flex-col gap-2">
-                    <label className="font-sans text-[11px] font-bold text-[#667085] uppercase tracking-[0.06em]">
+                    <label className="text-[11px] font-bold text-[#6B7280] uppercase tracking-widest">
                         Brand Name
                     </label>
                     <input
@@ -87,12 +87,12 @@ export default function ScanForm({ onScan, isLoading }: ScanFormProps) {
                         value={brand}
                         onChange={(e) => setBrand(e.target.value)}
                         required
-                        className="w-full bg-white border border-[#D0D5DD] rounded-[10px] px-[14px] py-[12px] font-sans text-[14px] text-[#101828] focus:border-[#101828] focus:outline-none transition-colors placeholder:text-[#98A2B3]"
+                        className="w-full bg-[#F7F8FA] border border-[#E5E7EB] rounded-[8px] px-[14px] py-[12px] text-[14px] text-[#111827] focus:border-[#2563EB]/30 focus:bg-white focus:outline-none transition-all placeholder:text-[#94A3B8] font-medium"
                     />
                 </div>
 
                 <div className="flex flex-col gap-2">
-                    <label className="font-sans text-[11px] font-bold text-[#667085] uppercase tracking-[0.06em]">
+                    <label className="text-[11px] font-bold text-[#6B7280] uppercase tracking-widest">
                         Industry
                     </label>
                     <input
@@ -101,12 +101,12 @@ export default function ScanForm({ onScan, isLoading }: ScanFormProps) {
                         value={industry}
                         onChange={(e) => setIndustry(e.target.value)}
                         required
-                        className="w-full bg-white border border-[#D0D5DD] rounded-[10px] px-[14px] py-[12px] font-sans text-[14px] text-[#101828] focus:border-[#101828] focus:outline-none transition-colors placeholder:text-[#98A2B3]"
+                        className="w-full bg-[#F7F8FA] border border-[#E5E7EB] rounded-[8px] px-[14px] py-[12px] text-[14px] text-[#111827] focus:border-[#2563EB]/30 focus:bg-white focus:outline-none transition-all placeholder:text-[#94A3B8] font-medium"
                     />
                 </div>
 
                 <div className="flex flex-col gap-2 relative">
-                    <label className="font-sans text-[11px] font-bold text-[#667085] uppercase tracking-[0.06em]">
+                    <label className="text-[11px] font-bold text-[#6B7280] uppercase tracking-widest">
                         Competitors
                     </label>
                     <input
@@ -115,9 +115,9 @@ export default function ScanForm({ onScan, isLoading }: ScanFormProps) {
                         value={competitors}
                         onChange={(e) => setCompetitors(e.target.value)}
                         required
-                        className="w-full bg-white border border-[#D0D5DD] rounded-[10px] px-[14px] py-[12px] font-sans text-[14px] text-[#101828] focus:border-[#101828] focus:outline-none transition-colors placeholder:text-[#98A2B3] mb-1"
+                        className="w-full bg-[#F7F8FA] border border-[#E5E7EB] rounded-lg px-[14px] py-[12px] text-[14px] text-slate-900 focus:border-[#3B4EFF]/30 focus:bg-white focus:outline-none transition-all placeholder:text-[#94A3B8] mb-1 font-medium"
                     />
-                    <span className="font-sans text-[11px] text-[#98A2B3]">
+                    <span className="text-[10px] font-bold text-[#94A3B8] uppercase tracking-widest">
                         Separate multiple competitors with a comma
                     </span>
                 </div>
@@ -125,13 +125,13 @@ export default function ScanForm({ onScan, isLoading }: ScanFormProps) {
 
             {showProgress && (
                 <div className="mb-[24px] animate-in fade-in duration-300">
-                    <div className="w-full h-[6px] bg-[#EAECF0] rounded-full overflow-hidden mb-[12px]">
+                    <div className="w-full h-[3px] bg-[#F7F8FA] rounded-full overflow-hidden mb-[12px]">
                         <div
-                            className="h-full bg-[#101828] transition-all duration-1000 ease-out rounded-full"
+                            className="h-full bg-[#2563EB] transition-all duration-1000 ease-out rounded-full"
                             style={{ width: `${progress}%` }}
                         />
                     </div>
-                    <p className="font-sans text-[13px] text-[#667085] text-center transition-opacity duration-300">
+                    <p className="text-[11px] font-bold text-[#6B7280] text-center uppercase tracking-widest">
                         {stageLabel}
                     </p>
                 </div>
@@ -140,15 +140,15 @@ export default function ScanForm({ onScan, isLoading }: ScanFormProps) {
             <button
                 type="submit"
                 disabled={isLoading || !brand || !industry || !competitors}
-                className="w-full bg-[#101828] text-white font-sans font-semibold text-[14px] py-[14px] rounded-[10px] hover:bg-[#1E293B] transition-colors flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full bg-[#2563EB] text-white font-medium text-[14px] py-[14px] rounded-[8px] hover:bg-[#1D4ED8] transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed shadow-sm active:scale-[0.98]"
             >
                 {isLoading ? (
                     <>
                         <Loader2 className="h-4 w-4 animate-spin opacity-70" />
-                        {stageLabel || "Scanning..."}
+                        {stageLabel || "SCANNING..."}
                     </>
                 ) : (
-                    "Run Visibility Scan"
+                    "RUN VISIBILITY SCAN"
                 )}
             </button>
         </form>
