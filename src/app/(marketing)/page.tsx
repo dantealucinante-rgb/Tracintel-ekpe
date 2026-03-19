@@ -6,7 +6,7 @@ import { motion, useInView } from 'framer-motion';
 import { useRef } from 'react';
 import Footer from '@/components/Footer';
 import CTA from '@/components/CTA';
-import DashboardPreview from '@/components/DashboardPreview';
+import { DemoSection } from '@/components/DemoSection';
 import Header from '@/components/Header';
 
 export default function MarketingPage() {
@@ -194,7 +194,7 @@ export default function MarketingPage() {
                 </div>
             </section>
 
-            <DashboardPreview />
+            <DemoSection />
 
             {/* ── Section 1: The Invisible Search Shift ─────────────────────── */}
             <section className="py-32 px-6 bg-white border-t border-black/5 relative overflow-hidden">
