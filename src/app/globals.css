@@ -277,3 +277,14 @@
 .animate-mesh {
   animation: mesh-drift 20s ease-in-out infinite;
 }
+
+/* ─────────────────────────────────────────────────
+   Responsive grids for WhyTracintel / ModelIndex
+───────────────────────────────────────────────── */
+@media (max-width: 768px) {
+
+  .feature-grid,
+  .model-grid {
+    grid-template-columns: 1fr !important;
+  }
+}

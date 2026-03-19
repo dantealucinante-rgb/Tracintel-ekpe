@@ -7,6 +7,8 @@ import { useRef } from 'react';
 import Footer from '@/components/Footer';
 import CTA from '@/components/CTA';
 import { DemoSection } from '@/components/DemoSection';
+import { WhyTracintel } from '@/components/WhyTracintel';
+import { ModelIndex } from '@/components/ModelIndex';
 import Header from '@/components/Header';
 
 export default function MarketingPage() {
@@ -67,53 +69,6 @@ export default function MarketingPage() {
                         </motion.div>
                     </motion.div>
 
-                    {/* Hero Abstract - High Density Columnar Layout */}
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-12 text-left pt-16 border-t border-black/5">
-                        <motion.div
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ duration: 0.8, delay: 0.5 }}
-                            className="space-y-4"
-                        >
-                            <div className="text-[10px] font-mono font-bold text-black/30 uppercase tracking-[0.2em] flex items-center gap-2">
-                                <div className="w-1 h-1 rounded-full bg-black" />
-                                01 / The Attribution Problem
-                            </div>
-                            <p className="text-[13px] leading-relaxed text-black/60 font-medium">
-                                We are entering the "Dark Funnel" of AI chat. Over <span className="text-black font-bold">70% of brand mentions</span> inside generative interfaces go untracked by legacy analytics. Tracintel captures these signals before they are lost to the inference loop.
-                            </p>
-                        </motion.div>
-
-                        <motion.div
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ duration: 0.8, delay: 0.6 }}
-                            className="space-y-4"
-                        >
-                            <div className="text-[10px] font-mono font-bold text-black/30 uppercase tracking-[0.2em] flex items-center gap-2">
-                                <div className="w-1 h-1 rounded-full bg-black" />
-                                02 / The Sentiment Engine
-                            </div>
-                            <p className="text-[13px] leading-relaxed text-black/60 font-medium">
-                                Legacy sentiment tools rely on shallow keyword matching. Tracintel utilizes <span className="text-black font-bold">Vector-Based Semantic Analysis</span> to understand how models interpret your brand value prop across multi-dimensional latent space.
-                            </p>
-                        </motion.div>
-
-                        <motion.div
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ duration: 0.8, delay: 0.7 }}
-                            className="space-y-4"
-                        >
-                            <div className="text-[10px] font-mono font-bold text-black/30 uppercase tracking-[0.2em] flex items-center gap-2">
-                                <div className="w-1 h-1 rounded-full bg-black" />
-                                03 / The Future of Search
-                            </div>
-                            <p className="text-[13px] leading-relaxed text-black/60 font-medium">
-                                The transition from SERPs to <span className="text-black font-bold">Synthetic Answers</span> is absolute. Tracintel allows you to audit the training origins of these answers and claim your share of generative citations through structured intelligence.
-                            </p>
-                        </motion.div>
-                    </div>
 
                     {/* Trust badges */}
                     <motion.div
@@ -132,67 +87,13 @@ export default function MarketingPage() {
                         </div>
                     </motion.div>
 
-                    {/* The Tracintel Index */}
-                    <section className="mb-32">
-                        <div className="flex flex-col md:flex-row items-baseline justify-between mb-16 gap-8">
-                            <h2 className="text-5xl font-bold tracking-tighter text-black font-serif italic">
-                                The Tracintel Index
-                            </h2>
-                            <p className="max-w-md text-sm text-black/50 leading-relaxed font-medium">
-                                Real-time monitoring of model update cycles and their direct impact on brand citation volatility across the global generative landscape.
-                            </p>
-                        </div>
-
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                            {[
-                                {
-                                    model: "GPT-4o (OpenAI)",
-                                    status: "Active Tracking",
-                                    blurb: "Demonstrates high affinity for structured data and technical documentation. Retail brands with strong Schema.org implementations see a 12% higher 'Mindshare' ranking in direct product comparisons.",
-                                    trend: "+4.2% Citation Growth"
-                                },
-                                {
-                                    model: "Gemini 1.5 Pro (Google)",
-                                    status: "Active Tracking",
-                                    blurb: "Heavily weights authority signals from verified news sources and first-party case studies. Tech brands utilizing RAG-friendly whitepapers currently dominate recommendation loops.",
-                                    trend: "High Recommendation Consistency"
-                                },
-                                {
-                                    model: "Claude 3.5 Sonnet (Anthropic)",
-                                    status: "Active Tracking",
-                                    blurb: "Prioritizes nuanced, conversational value propositions. Brands with clear, non-generic brand voices are 3x more likely to be featured in 'Top choice' summaries during complex user queries.",
-                                    trend: "Improved Sentiment Precision"
-                                }
-                            ].map((item, i) => (
-                                <motion.div
-                                    key={i}
-                                    initial={{ opacity: 0, y: 20 }}
-                                    whileInView={{ opacity: 1, y: 0 }}
-                                    transition={{ delay: i * 0.1 }}
-                                    className="bento-card p-8 flex flex-col justify-between group hover:border-black/20 transition-all cursor-default"
-                                >
-                                    <div>
-                                        <div className="flex items-center justify-between mb-6">
-                                            <div className="text-[10px] font-mono font-bold text-black/30 uppercase tracking-widest">{item.status}</div>
-                                            <div className="px-2 py-0.5 rounded-full bg-black/5 text-[9px] font-mono font-bold text-black/50">{item.trend}</div>
-                                        </div>
-                                        <h4 className="text-xl font-bold text-black mb-4 font-serif">{item.model}</h4>
-                                        <p className="text-[13px] leading-relaxed text-black/50 font-medium">
-                                            {item.blurb}
-                                        </p>
-                                    </div>
-                                    <div className="mt-8 pt-6 border-t border-black/5 flex items-center justify-between">
-                                        <span className="text-[10px] font-mono font-bold text-black/20 uppercase tracking-widest">Model Index Score: 94.2</span>
-                                        <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                                    </div>
-                                </motion.div>
-                            ))}
-                        </div>
-                    </section>
 
                     {/* Dashboard Preview Section */}
                 </div>
             </section>
+
+            <WhyTracintel />
+            <ModelIndex />
 
             <DemoSection />
 
