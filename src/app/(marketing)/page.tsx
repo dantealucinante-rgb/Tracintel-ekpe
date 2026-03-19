@@ -6,8 +6,7 @@ import { motion, useInView } from 'framer-motion';
 import { useRef } from 'react';
 import Footer from '@/components/Footer';
 import CTA from '@/components/CTA';
-import BrandIntelligenceGraph from '@/components/BrandIntelligenceGraph';
-import TrafficShareChart from '@/components/TrafficShareChart';
+import DashboardPreview from '@/components/DashboardPreview';
 import Header from '@/components/Header';
 
 export default function MarketingPage() {
@@ -191,52 +190,11 @@ export default function MarketingPage() {
                         </div>
                     </section>
 
-                    {/* Animated Graph Force - 12-Column Grid */}
-                    <div className="grid grid-cols-12 gap-0 mt-24 w-full min-h-[800px] border-t border-black/5">
-                        {/* Left Metric Cabinet - col-span-3 */}
-                        <div className="col-span-3 border-r border-black/5 p-12 space-y-12 bg-gray-50/50">
-                            <div className="space-y-4">
-                                <p className="text-[10px] font-black font-mono tracking-[0.4em] text-black/30 uppercase">Visibility Epoch</p>
-                                <p className="text-6xl font-black font-serif italic text-black leading-none">82.2%</p>
-                                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-600 text-[10px] font-bold font-mono">
-                                    <TrendingUp className="w-3 h-3" />
-                                    +5.1% Δ
-                                </div>
-                            </div>
-
-                            <div className="pt-12 border-t border-black/5 space-y-8 text-left">
-                                <div>
-                                    <h4 className="text-[10px] font-black font-mono tracking-[0.3em] text-black/40 uppercase mb-4">Signal Integrity</h4>
-                                    <div className="space-y-3">
-                                        <div className="flex justify-between items-center text-[11px] font-bold font-mono">
-                                            <span className="text-black/30 uppercase">Latent_State</span>
-                                            <span className="text-black">LOCKED</span>
-                                        </div>
-                                        <div className="flex justify-between items-center text-[11px] font-bold font-mono">
-                                            <span className="text-black/30 uppercase">Vector_Sync</span>
-                                            <span className="text-emerald-500">ACTIVE</span>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <p className="text-[11px] leading-relaxed text-black/40 font-medium italic">
-                                    Brand intelligence vectors have achieved mathematical parity across all major generative nodes.
-                                </p>
-                            </div>
-                        </div>
-
-                        {/* Right Content Theater - col-span-9 */}
-                        <div className="col-span-9 bg-white">
-                            <div className="p-12 border-b border-black/5">
-                                <BrandIntelligenceGraph />
-                            </div>
-                            <div className="p-12">
-                                <TrafficShareChart />
-                            </div>
-                        </div>
-                    </div>
+                    {/* Dashboard Preview Section */}
                 </div>
             </section>
+
+            <DashboardPreview />
 
             {/* ── Section 1: The Invisible Search Shift ─────────────────────── */}
             <section className="py-32 px-6 bg-white border-t border-black/5 relative overflow-hidden">
@@ -316,7 +274,7 @@ export default function MarketingPage() {
             </section>
 
             {/* ── Section 2: GEO Infrastructure ─────────────────────────────── */}
-            <section className="py-32 px-6 bg-white border-t border-black/5 relative overflow-hidden">
+            <section className="py-32 px-6 bg-white border-t border-black/5 relative overflow-hidden" >
                 <div className="max-w-7xl mx-auto">
                     {/* Label + Heading */}
                     <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-xs font-mono uppercase tracking-[0.3em] text-black/30 mb-6 border-l-2 border-black pl-6">
@@ -444,7 +402,7 @@ export default function MarketingPage() {
             </section>
 
             {/* ── Section 3: Infrastructure at Scale ────────────────────────── */}
-            <section className="py-32 px-6 bg-white border-t border-black/5 relative overflow-hidden">
+            <section className="py-32 px-6 bg-white border-t border-black/5 relative overflow-hidden" >
                 <div className="max-w-7xl mx-auto">
                     <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-xs font-mono uppercase tracking-[0.3em] text-black/30 mb-6 border-l-2 border-black pl-6">
                         // 04 // GLOBAL SENTIMENT AGGREGATION
@@ -533,12 +491,12 @@ export default function MarketingPage() {
                         </div>
                     </div>
                 </div>
-            </section >
+            </section>
 
 
 
             {/* How It Works */}
-            < section className="py-32 md:py-64 px-6 bg-white border-t border-black/5" >
+            <section className="py-32 md:py-64 px-6 bg-white border-t border-black/5" >
                 <div className="max-w-6xl mx-auto">
                     <div className="text-center mb-32">
                         <div className="text-xs font-mono uppercase tracking-[0.3em] text-black/30 mb-8">// 03 // THE PROCESS</div>
@@ -588,11 +546,11 @@ export default function MarketingPage() {
                         </AnimatedCard>
                     </div>
                 </div>
-            </section >
+            </section>
 
 
             {/* Methodology Section */}
-            < section className="py-32 md:py-64 px-6 bg-white border-t border-black/5" >
+            <section className="py-32 md:py-64 px-6 bg-white border-t border-black/5" >
                 <div className="max-w-4xl mx-auto">
                     <motion.div
                         initial={{ opacity: 0, scale: 0.95 }}
@@ -619,13 +577,13 @@ export default function MarketingPage() {
                         </div>
                     </motion.div>
                 </div>
-            </section >
+            </section>
 
             {/* CTA Section */}
-            < CTA />
+            <CTA />
 
             <Footer />
-        </div >
+        </div>
     );
 }
 
