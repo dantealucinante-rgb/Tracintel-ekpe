@@ -162,25 +162,24 @@ export default function Header() {
                             style={{
                                 position: 'fixed',
                                 top: 0,
-                                right: 0,
-                                bottom: 0,
-                                zIndex: 70,
+                                left: 0,
                                 width: '100%',
+                                height: '100%',
+                                zIndex: 9999,
                                 background: '#ffffff',
-                                padding: '24px',
-                                border: 'none',
-                                boxShadow: 'none',
+                                padding: 0,
                                 display: 'flex',
                                 flexDirection: 'column',
                             }}
                             className="md:hidden"
                         >
-                            {/* Drawer Header Row */}
+                            {/* TOP — Header row */}
                             <div style={{
+                                padding: '20px 24px',
+                                borderBottom: '1px solid #F3F4F6',
                                 display: 'flex',
-                                justifyContent: 'space-between',
                                 alignItems: 'center',
-                                marginBottom: '32px',
+                                justifyContent: 'space-between',
                             }}>
                                 <Link href="/" onClick={() => setDrawerOpen(false)} className="flex items-center gap-3">
                                     <div className="w-9 h-9 relative">
@@ -191,21 +190,32 @@ export default function Header() {
                                 <button
                                     onClick={() => setDrawerOpen(false)}
                                     style={{
-                                        background: 'transparent',
+                                        background: '#F3F4F6',
                                         border: 'none',
-                                        fontSize: '20px',
+                                        borderRadius: '6px',
+                                        width: '32px',
+                                        height: '32px',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        fontSize: '16px',
                                         color: '#111827',
                                         cursor: 'pointer',
-                                        padding: '4px',
                                     }}
                                     aria-label="Close menu"
                                 >
-                                    <X style={{ width: 20, height: 20 }} />
+                                    <X style={{ width: 16, height: 16 }} />
                                 </button>
                             </div>
 
-                            {/* Nav Links */}
-                            <nav style={{ flex: 1 }}>
+                            {/* MIDDLE — Nav links */}
+                            <nav style={{
+                                flex: 1,
+                                padding: '8px 24px',
+                                display: 'flex',
+                                flexDirection: 'column',
+                                justifyContent: 'flex-start',
+                            }}>
                                 {NAV_LINKS.map((link) => (
                                     <Link
                                         key={link.href}
@@ -213,7 +223,7 @@ export default function Header() {
                                         onClick={() => setDrawerOpen(false)}
                                         style={{
                                             display: 'block',
-                                            padding: '16px 0',
+                                            padding: '18px 0',
                                             fontSize: '17px',
                                             fontWeight: 500,
                                             color: '#111827',
@@ -225,19 +235,24 @@ export default function Header() {
                                         {link.label}
                                     </Link>
                                 ))}
+                            </nav>
 
-                                {/* Dashboard link */}
+                            {/* BOTTOM — Dashboard button */}
+                            <div style={{
+                                padding: '24px',
+                                borderTop: '1px solid #F3F4F6',
+                            }}>
                                 <Link
                                     href="/dashboard"
                                     onClick={() => setDrawerOpen(false)}
                                     style={{
                                         display: 'block',
-                                        marginTop: '24px',
-                                        padding: '14px 20px',
+                                        width: '100%',
+                                        padding: '16px',
                                         background: '#111827',
                                         color: '#ffffff',
-                                        borderRadius: '8px',
-                                        fontSize: '15px',
+                                        borderRadius: '10px',
+                                        fontSize: '16px',
                                         fontWeight: 600,
                                         textAlign: 'center',
                                         textDecoration: 'none',
@@ -246,7 +261,7 @@ export default function Header() {
                                 >
                                     Dashboard
                                 </Link>
-                            </nav>
+                            </div>
                         </motion.div>
                     </>
                 )}
