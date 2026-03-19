@@ -89,14 +89,14 @@ export default function Header() {
                             <>
                                 <Link
                                     href="/login"
-                                    className="text-sm font-medium tracking-tight text-black/50 hover:text-blue-600 transition-colors"
+                                    className="text-[13px] font-medium tracking-tight text-black/50 hover:text-black transition-colors"
                                 >
                                     Sign In
                                 </Link>
-                                <motion.div whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }}>
+                                <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
                                     <Link
                                         href="/register"
-                                        className="bg-black text-white px-6 py-2.5 rounded-full text-sm font-bold transition-all shadow-xl shadow-black/20 hover:bg-black/80"
+                                        className="bg-[#111827] text-white px-5 py-2 rounded-[6px] text-[13px] font-semibold transition-all shadow-sm hover:bg-black"
                                     >
                                         Get Early Access
                                     </Link>
@@ -106,15 +106,15 @@ export default function Header() {
                             <>
                                 <Link
                                     href="/dashboard"
-                                    className="text-sm font-medium tracking-tight text-black/50 hover:text-blue-600 transition-colors"
+                                    className="text-[13px] font-medium tracking-tight text-black/50 hover:text-black transition-colors"
                                 >
                                     Dashboard
                                 </Link>
                                 <button
                                     onClick={handleSignOut}
-                                    className="w-10 h-10 border-2 border-black/5 hover:border-black/10 transition-colors rounded-full flex items-center justify-center overflow-hidden"
+                                    className="w-9 h-9 border border-[#E5E7EB] hover:border-[#D1D5DB] transition-colors rounded-full flex items-center justify-center overflow-hidden bg-white"
                                 >
-                                    <User className="h-5 w-5 text-black" />
+                                    <User className="h-4.5 w-4.5 text-[#4B5563]" />
                                 </button>
                             </>
                         )}
@@ -273,13 +273,13 @@ function NavLink({ href, label, active }: { href: string; label: string; active:
     return (
         <Link
             href={href}
-            className={`relative text-sm font-medium tracking-tight transition-colors group ${active ? 'text-[#007AFF]' : 'text-black/50 hover:text-[#007AFF]'
+            className={`relative text-[13px] font-medium tracking-[-0.01em] transition-colors group ${active ? 'text-black' : 'text-black/50 hover:text-black'
                 }`}
         >
             {label}
             {/* Animated underline */}
             <span
-                className={`absolute -bottom-0.5 left-0 h-px bg-[#007AFF] transition-all duration-300 ${active ? 'w-full' : 'w-0 group-hover:w-full'
+                className={`absolute -bottom-0.5 left-0 h-px bg-black transition-all duration-300 ${active ? 'w-full' : 'w-0 group-hover:w-full'
                     }`}
             />
         </Link>

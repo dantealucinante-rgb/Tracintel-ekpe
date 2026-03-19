@@ -208,34 +208,34 @@ export default function DashboardClient({ initialData, user }: DashboardClientPr
         <motion.div
             initial={{ opacity: 0, y: 5 }}
             animate={{ opacity: 1, y: 0 }}
-            className="p-8 md:p-12 space-y-12 max-w-[1600px] mx-auto"
+            className="p-4 md:p-8 lg:p-12 space-y-8 md:space-y-12 max-w-[1600px] mx-auto"
         >
             {!user && <SimulationBanner />}
 
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 md:gap-6">
                 <div>
-                    <h1 className="text-[24px] font-semibold text-slate-900 tracking-tight mb-2">Overview</h1>
-                    <p className="text-[14px] text-slate-500 font-medium tracking-tight">Enterprise intelligence mapping and visibility benchmarks.</p>
+                    <h1 className="text-[28px] font-bold text-[#111827] tracking-[-0.02em] mb-1">Overview</h1>
+                    <p className="text-[13px] text-[#6B7280] font-medium">Enterprise intelligence mapping and visibility benchmarks.</p>
                 </div>
                 <button
                     onClick={() => setIsScanModalOpen(true)}
-                    className="flex items-center gap-2.5 px-6 py-2.5 bg-[#2563EB] text-white text-[14px] font-semibold rounded-[8px] hover:bg-[#1D4ED8] transition-all shadow-sm active:scale-[0.98]"
+                    className="flex items-center justify-center gap-2.5 px-6 py-2.5 bg-[#111827] text-white text-[13px] font-semibold rounded-[6px] hover:bg-black transition-all shadow-sm active:scale-[0.98] w-full md:w-auto"
                 >
-                    <RefreshCw className={cn("w-4 h-4", isScanning && "animate-spin")} />
-                    Run New Scan
+                    <RefreshCw className={cn("w-3.5 h-3.5", isScanning && "animate-spin")} />
+                    Update Intelligence
                 </button>
             </div>
 
             {/* Headline Metrics (Peec Style) */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 {[
-                    { label: 'Avg Visibility Score', value: Math.round(score), color: 'text-[#2563EB]' },
-                    { label: 'Total Scans', value: rawHistory.length, color: 'text-[#111827]', noPercent: true },
-                    { label: 'Active Sources', value: activeSources, color: 'text-[#111827]', noPercent: true }
+                    { label: 'Avg Visibility Score', value: Math.round(score), color: 'text-[#2563EB]', border: 'border-t-[#2563EB]' },
+                    { label: 'Total Scans', value: rawHistory.length, color: 'text-[#111827]', border: 'border-t-[#111827]', noPercent: true },
+                    { label: 'Active Sources', value: activeSources, color: 'text-[#111827]', border: 'border-t-[#111827]', noPercent: true }
                 ].map((item) => (
-                    <div key={item.label} className="bg-white border border-[#E5E7EB] rounded-[10px] p-6 flex flex-col justify-between h-32 shadow-sm">
-                        <span className="text-[12px] font-bold text-[#6B7280] uppercase tracking-widest">{item.label}</span>
-                        <span className={cn("text-[36px] font-semibold leading-none", item.color)}>
+                    <div key={item.label} className={cn("bg-white border border-[#E5E7EB] border-t-[3px] rounded-[10px] p-6 flex flex-col justify-between h-32 shadow-sm", item.border)}>
+                        <span className="text-[11px] font-semibold text-[#6B7280] uppercase tracking-[0.08em]">{item.label}</span>
+                        <span className={cn("text-[40px] font-bold leading-none tracking-[-0.02em]", item.color)}>
                             {item.noPercent ? item.value : `${item.value}%`}
                         </span>
                     </div>
@@ -243,44 +243,44 @@ export default function DashboardClient({ initialData, user }: DashboardClientPr
             </div>
 
             {/* Combined Trend Chart */}
-            <div className="bg-white border border-[#E5E7EB] rounded-[10px] p-8 shadow-sm">
-                <div className="mb-10 flex items-center justify-between">
+            <div className="bg-white border border-[#E5E7EB] rounded-[10px] p-6 md:p-8 shadow-sm">
+                <div className="mb-8 md:mb-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
                     <div>
-                        <h2 className="text-[18px] font-medium text-[#111827]">Intelligence Trends</h2>
-                        <p className="text-[13px] text-[#6B7280] mt-1">Cross-metric analysis of brand authority over time.</p>
+                        <h2 className="text-[15px] font-bold text-[#111827] tracking-tight">Intelligence Trends</h2>
+                        <p className="text-[13px] text-[#6B7280]">Authority analysis across model updates.</p>
                     </div>
-                    <div className="flex gap-6">
+                    <div className="flex flex-wrap gap-4 md:gap-6">
                         <div className="flex items-center gap-2">
-                            <div className="w-2.5 h-2.5 rounded-full bg-[#2563EB]" />
-                            <span className="text-[11px] font-bold text-[#6B7280] uppercase tracking-tight">Mentions</span>
+                            <div className="w-1.5 h-1.5 rounded-full bg-[#2563EB]" />
+                            <span className="text-[11px] font-semibold text-[#6B7280] lowercase tracking-tight">mentions</span>
                         </div>
                         <div className="flex items-center gap-2">
-                            <div className="w-2.5 h-2.5 rounded-full bg-[#16A34A]" />
-                            <span className="text-[11px] font-bold text-[#6B7280] uppercase tracking-tight">Sentiment</span>
+                            <div className="w-1.5 h-1.5 rounded-full bg-[#16A34A]" />
+                            <span className="text-[11px] font-semibold text-[#6B7280] lowercase tracking-tight">sentiment</span>
                         </div>
                         <div className="flex items-center gap-2">
-                            <div className="w-2.5 h-2.5 rounded-full bg-[#D97706]" />
-                            <span className="text-[11px] font-bold text-[#6B7280] uppercase tracking-tight">Citations</span>
+                            <div className="w-1.5 h-1.5 rounded-full bg-[#D97706]" />
+                            <span className="text-[11px] font-semibold text-[#6B7280] lowercase tracking-tight">citations</span>
                         </div>
                     </div>
                 </div>
-                <div className="h-[360px]">
+                <div className="h-[200px] md:h-[360px]">
                     {isScanning ? <ChartSkeleton /> : (
-                        <ResponsiveContainer width="100%" height={320}>
-                            <LineChart data={history} margin={{ top: 5, right: 10, left: 0, bottom: 5 }}>
-                                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#F3F4F6" />
+                        <ResponsiveContainer width="100%" height="100%">
+                            <LineChart data={history} margin={{ top: 5, right: 10, left: -20, bottom: 5 }}>
+                                <CartesianGrid strokeDasharray="0 0" vertical={false} stroke="#F1F5F9" />
                                 <XAxis
                                     dataKey="date"
                                     tickFormatter={(val) => new Date(val).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
-                                    axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: '#94A3B8' }} dy={10}
+                                    axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: '#94A3B8', fontWeight: 500 }} dy={10}
                                 />
-                                <YAxis domain={[0, 100]} axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: '#94A3B8' }} />
+                                <YAxis domain={[0, 100]} axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: '#94A3B8', fontWeight: 500 }} />
                                 <Tooltip
-                                    contentStyle={{ borderRadius: '8px', border: '1px solid #E5E7EB', boxShadow: '0 1px 2px rgba(0,0,0,0.04)' }}
+                                    contentStyle={{ borderRadius: '6px', border: '1px solid #E2E8F0', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)', fontSize: '12px' }}
                                 />
-                                <Line name="Mention Freq" type="monotone" dataKey="mentionFrequency" stroke="#2563EB" strokeWidth={3} dot={{ r: 4, strokeWidth: 2, fill: '#FFF' }} />
-                                <Line name="Sentiment" type="monotone" dataKey="sentimentScore" stroke="#16A34A" strokeWidth={2} strokeDasharray="5 5" dot={false} />
-                                <Line name="Citations" type="monotone" dataKey="citationDensity" stroke="#D97706" strokeWidth={2} dot={false} />
+                                <Line name="mention freq" type="monotone" dataKey="mentionFrequency" stroke="#2563EB" strokeWidth={2.5} dot={false} activeDot={{ r: 4, strokeWidth: 0 }} />
+                                <Line name="sentiment" type="monotone" dataKey="sentimentScore" stroke="#16A34A" strokeWidth={2} strokeDasharray="4 4" dot={false} />
+                                <Line name="citations" type="monotone" dataKey="citationDensity" stroke="#D97706" strokeWidth={2} dot={false} />
                             </LineChart>
                         </ResponsiveContainer>
                     )}

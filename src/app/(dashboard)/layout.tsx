@@ -68,12 +68,12 @@ export default function DashboardLayout({
     const SidebarContent = () => (
         <div className="flex flex-col h-full bg-white border-r border-[#E5E7EB]">
             {/* Logo */}
-            <div className="h-20 flex items-center px-8">
+            <div className="pt-6 pb-8 flex items-center px-8">
                 <Link href="/dashboard" className="flex items-center gap-3">
                     <div className="w-8 h-8 rounded-lg bg-[#2563EB] flex items-center justify-center p-1.5">
                         <Image src="/1.png" alt="Logo" width={20} height={20} className="invert brightness-0" priority />
                     </div>
-                    <span className="font-sans font-bold text-[#111827] text-[18px] tracking-tight">Tracintel</span>
+                    <span className="font-bold text-[#111827] text-[18px] tracking-tight">Tracintel</span>
                 </Link>
             </div>
 
@@ -91,12 +91,12 @@ export default function DashboardLayout({
 
             {/* Status & User */}
             <div className="p-6 space-y-6 mt-auto">
-                <div className="flex items-center gap-2 px-3 py-2 bg-[#F7F8FA] rounded-md border border-[#E5E7EB]">
+                <div className="flex items-center gap-2 px-2.5 py-1 bg-[#F7F8FA] rounded-md border border-[#E5E7EB] w-fit">
                     <div className={cn(
-                        "w-1.5 h-1.5 rounded-full",
+                        "w-1 h-1 rounded-full",
                         process.env.NEXT_PUBLIC_ENABLE_SIMULATION_MODE === 'true' ? "bg-[#D97706]" : "bg-[#16A34A]"
                     )} />
-                    <span className="text-[10px] font-bold text-[#6B7280] uppercase tracking-widest">
+                    <span className="text-[11px] font-semibold text-[#6B7280] uppercase tracking-wider">
                         {process.env.NEXT_PUBLIC_ENABLE_SIMULATION_MODE === 'true' ? "Simulation" : "Live"}
                     </span>
                 </div>
@@ -140,7 +140,7 @@ export default function DashboardLayout({
                     </button>
                 </header>
 
-                <main className="flex-1 w-full relative">
+                <main className="flex-1 w-full relative bg-[#FAFAFA] shadow-[inset_1px_0_0_0_#E5E7EB]">
                     {children}
                 </main>
             </div>
@@ -177,10 +177,10 @@ function SidebarLink({ href, label, active }: { href: string; label: string; act
         <Link
             href={href}
             className={cn(
-                "flex items-center px-3 py-2 transition-all group rounded-md text-[14px] font-medium",
+                "flex items-center px-[14px] py-[10px] transition-all group text-[13px] font-medium border-l-[4px]",
                 active
-                    ? 'bg-[#EFF6FF] text-[#2563EB]'
-                    : 'text-[#6B7280] hover:text-[#111827] hover:bg-[#F7F8FA]'
+                    ? 'bg-[#EFF6FF] text-[#2563EB] border-[#2563EB]'
+                    : 'text-[#6B7280] hover:text-[#111827] hover:bg-[#F7F8FA] border-transparent'
             )}
         >
             <span>{label}</span>

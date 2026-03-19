@@ -26,7 +26,7 @@ export default function MarketingPage() {
                         initial={{ opacity: 0, y: 30 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.8 }}
-                        className="text-7xl md:text-[160px] font-bold tracking-tighter text-black mb-12 leading-[0.85] italic"
+                        className="text-6xl md:text-[clamp(80px,12vw,160px)] font-bold tracking-[-0.04em] text-black mb-12 leading-[0.85] font-serif italic"
                     >
                         Generative <br />
                         <span className="text-black/20">Optimization</span>
@@ -57,12 +57,12 @@ export default function MarketingPage() {
                         className="flex flex-col sm:flex-row items-center justify-center gap-8 mb-24"
                     >
                         <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.98 }}>
-                            <Link href="/register" className="h-16 px-12 rounded-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold flex items-center gap-3 transition-all shadow-2xl shadow-blue-500/20 hover:shadow-[0_0_20px_rgba(0,122,255,0.4)] text-lg">
-                                Get Early Access <ArrowRight className="h-5 w-5" />
+                            <Link href="/register" className="h-14 px-10 rounded-[6px] bg-[#111827] text-white font-semibold flex items-center gap-3 transition-all shadow-sm hover:bg-black text-[15px]">
+                                Get Early Access <ArrowRight className="h-4 w-4" />
                             </Link>
                         </motion.div>
-                        <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.98 }}>
-                            <Link href="/dashboard" className="h-16 px-12 rounded-full border border-black/10 hover:border-black/20 text-black/70 font-bold flex items-center gap-3 transition-all text-lg">
+                        <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+                            <Link href="/dashboard" className="h-14 px-10 rounded-[6px] border border-[#E5E7EB] hover:border-[#D1D5DB] text-[#4B5563] font-semibold flex items-center gap-3 transition-all text-[15px] bg-white">
                                 View Demo
                             </Link>
                         </motion.div>

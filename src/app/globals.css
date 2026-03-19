@@ -18,7 +18,7 @@
   --color-foreground: var(--color-text-primary);
   --color-paper: var(--color-surface);
   --color-border: var(--color-border);
-  --font-sans: var(--font-body), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
   --font-display: var(--font-serif), serif;
   --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
 }
@@ -32,6 +32,8 @@
     background: var(--color-bg);
     color: var(--color-text-primary);
     font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
     @apply font-normal;
   }
 
