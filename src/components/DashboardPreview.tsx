@@ -1,16 +1,16 @@
 "use client";
 
 import {
-    AreaChart,
-    Area,
+    LineChart,
+    Line,
     XAxis,
     YAxis,
     CartesianGrid,
     Tooltip,
-    ResponsiveContainer,
     Legend,
+    ResponsiveContainer,
 } from "recharts";
-import { TrendingUp, TrendingDown, Eye, Shield, Crosshair, Quote } from "lucide-react";
+import { TrendingUp, Eye, Shield, Crosshair, Quote } from "lucide-react";
 
 const mockData = [
     { date: "Jan", visibility: 61, sentiment: 72, citations: 45 },
@@ -95,14 +95,14 @@ export default function DashboardPreview() {
                 >
                     <div className="demo-panel-grid">
                         {/* ─── Left Column: Metrics ─── */}
-                        <div className="demo-panel-left">
+                        <div>
                             {/* Visibility Epoch */}
                             <div style={{ marginBottom: 32 }}>
                                 <p
                                     style={{
                                         fontSize: 10,
                                         fontWeight: 800,
-                                        fontFamily: "var(--font-mono, monospace)",
+                                        fontFamily: "monospace",
                                         letterSpacing: "0.4em",
                                         color: "rgba(0,0,0,0.3)",
                                         textTransform: "uppercase",
@@ -153,7 +153,7 @@ export default function DashboardPreview() {
                                     style={{
                                         fontSize: 10,
                                         fontWeight: 800,
-                                        fontFamily: "var(--font-mono, monospace)",
+                                        fontFamily: "monospace",
                                         letterSpacing: "0.3em",
                                         color: "rgba(0,0,0,0.4)",
                                         textTransform: "uppercase",
@@ -171,8 +171,8 @@ export default function DashboardPreview() {
                                             fontSize: 13,
                                         }}
                                     >
-                                        <span style={{ color: "#9CA3AF" }}>Latent_State</span>
-                                        <span style={{ fontWeight: 700, color: "#111827" }}>LOCKED</span>
+                                        <span style={{ color: "#9CA3AF" }}>Sentiment</span>
+                                        <span style={{ fontWeight: 700, color: "#16A34A" }}>POSITIVE</span>
                                     </div>
                                     <div
                                         style={{
@@ -182,18 +182,7 @@ export default function DashboardPreview() {
                                             fontSize: 13,
                                         }}
                                     >
-                                        <span style={{ color: "#9CA3AF" }}>Vector_Sync</span>
-                                        <span style={{ fontWeight: 700, color: "#16A34A" }}>ACTIVE</span>
-                                    </div>
-                                    <div
-                                        style={{
-                                            display: "flex",
-                                            justifyContent: "space-between",
-                                            alignItems: "center",
-                                            fontSize: 13,
-                                        }}
-                                    >
-                                        <span style={{ color: "#9CA3AF" }}>Model_Coverage</span>
+                                        <span style={{ color: "#9CA3AF" }}>Coverage</span>
                                         <span style={{ fontWeight: 700, color: "#111827" }}>3 / 3</span>
                                     </div>
                                     <div
@@ -204,8 +193,19 @@ export default function DashboardPreview() {
                                             fontSize: 13,
                                         }}
                                     >
-                                        <span style={{ color: "#9CA3AF" }}>Drift_Alert</span>
+                                        <span style={{ color: "#9CA3AF" }}>Drift</span>
                                         <span style={{ fontWeight: 700, color: "#D97706" }}>NOMINAL</span>
+                                    </div>
+                                    <div
+                                        style={{
+                                            display: "flex",
+                                            justifyContent: "space-between",
+                                            alignItems: "center",
+                                            fontSize: 13,
+                                        }}
+                                    >
+                                        <span style={{ color: "#9CA3AF" }}>Sync</span>
+                                        <span style={{ fontWeight: 700, color: "#16A34A" }}>ACTIVE</span>
                                     </div>
                                 </div>
 
@@ -218,13 +218,13 @@ export default function DashboardPreview() {
                                         marginTop: 20,
                                     }}
                                 >
-                                    Brand intelligence vectors have achieved mathematical parity across all major generative nodes.
+                                    Brand intelligence vectors are stable across all major generative models.
                                 </p>
                             </div>
                         </div>
 
                         {/* ─── Right Column: Chart & Metrics ─── */}
-                        <div className="demo-panel-right">
+                        <div>
                             {/* Metric Pills Row */}
                             <div className="metric-pills-grid">
                                 {metricPills.map((pill) => {
@@ -266,92 +266,50 @@ export default function DashboardPreview() {
                                 })}
                             </div>
 
-                            {/* Chart */}
-                            <div style={{ marginTop: 20, marginBottom: 20 }}>
-                                <ResponsiveContainer width="100%" height={280} className="chart-responsive">
-                                    <AreaChart
-                                        data={mockData}
-                                        margin={{ top: 10, right: 10, left: -10, bottom: 0 }}
-                                    >
-                                        <defs>
-                                            <linearGradient id="gradVisibility" x1="0" y1="0" x2="0" y2="1">
-                                                <stop offset="5%" stopColor="#2563EB" stopOpacity={0.1} />
-                                                <stop offset="95%" stopColor="#2563EB" stopOpacity={0} />
-                                            </linearGradient>
-                                            <linearGradient id="gradSentiment" x1="0" y1="0" x2="0" y2="1">
-                                                <stop offset="5%" stopColor="#16A34A" stopOpacity={0.1} />
-                                                <stop offset="95%" stopColor="#16A34A" stopOpacity={0} />
-                                            </linearGradient>
-                                            <linearGradient id="gradCitations" x1="0" y1="0" x2="0" y2="1">
-                                                <stop offset="5%" stopColor="#D97706" stopOpacity={0.1} />
-                                                <stop offset="95%" stopColor="#D97706" stopOpacity={0} />
-                                            </linearGradient>
-                                        </defs>
-                                        <CartesianGrid
-                                            strokeDasharray="3 3"
-                                            vertical={false}
-                                            stroke="#F3F4F6"
-                                        />
+                            {/* Chart — explicit height container for ResponsiveContainer */}
+                            <div style={{ height: "280px", width: "100%", marginTop: 20, marginBottom: 20 }}>
+                                <ResponsiveContainer width="100%" height="100%">
+                                    <LineChart data={mockData}>
+                                        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#F3F4F6" />
                                         <XAxis
                                             dataKey="date"
+                                            tick={{ fontSize: 12, fill: "#9CA3AF" }}
                                             axisLine={false}
                                             tickLine={false}
-                                            tick={{ fontSize: 12, fill: "#9CA3AF" }}
                                         />
                                         <YAxis
+                                            tick={{ fontSize: 12, fill: "#9CA3AF" }}
                                             axisLine={false}
                                             tickLine={false}
-                                            tick={{ fontSize: 12, fill: "#9CA3AF" }}
-                                            domain={[30, 100]}
+                                            domain={[0, 100]}
                                         />
-                                        <Tooltip
-                                            contentStyle={{
-                                                background: "#fff",
-                                                border: "1px solid #E5E7EB",
-                                                borderRadius: 8,
-                                                fontSize: 12,
-                                                boxShadow: "0 4px 12px rgba(0,0,0,0.08)",
-                                            }}
-                                        />
-                                        <Legend
-                                            verticalAlign="top"
-                                            align="left"
-                                            iconType="circle"
-                                            iconSize={8}
-                                            wrapperStyle={{
-                                                fontSize: 12,
-                                                paddingBottom: 12,
-                                                textTransform: "lowercase" as const,
-                                            }}
-                                        />
-                                        <Area
+                                        <Tooltip />
+                                        <Legend wrapperStyle={{ fontSize: "12px" }} />
+                                        <Line
                                             type="monotone"
                                             dataKey="visibility"
                                             stroke="#2563EB"
                                             strokeWidth={2}
-                                            fill="url(#gradVisibility)"
                                             dot={false}
-                                            activeDot={{ r: 4, strokeWidth: 0 }}
+                                            name="Visibility"
                                         />
-                                        <Area
+                                        <Line
                                             type="monotone"
                                             dataKey="sentiment"
                                             stroke="#16A34A"
                                             strokeWidth={2}
-                                            fill="url(#gradSentiment)"
                                             dot={false}
-                                            activeDot={{ r: 4, strokeWidth: 0 }}
+                                            name="Sentiment"
                                         />
-                                        <Area
+                                        <Line
                                             type="monotone"
                                             dataKey="citations"
                                             stroke="#D97706"
                                             strokeWidth={2}
-                                            fill="url(#gradCitations)"
                                             dot={false}
-                                            activeDot={{ r: 4, strokeWidth: 0 }}
+                                            name="Citations"
                                         />
-                                    </AreaChart>
+                                    </LineChart>
                                 </ResponsiveContainer>
                             </div>
 
@@ -394,7 +352,6 @@ export default function DashboardPreview() {
                 </div>
             </div>
 
-            {/* Scoped responsive styles */}
             <style jsx>{`
         .demo-panel-grid {
           display: grid;
@@ -408,7 +365,7 @@ export default function DashboardPreview() {
         }
         @media (max-width: 768px) {
           .dashboard-preview-section {
-            padding: 48px 0 !important;
+            padding: 48px 16px !important;
           }
           .demo-panel {
             padding: 20px !important;
